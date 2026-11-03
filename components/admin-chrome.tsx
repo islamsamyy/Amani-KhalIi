@@ -74,7 +74,7 @@ const ADMIN_NAV_ITEMS = [
   },
   {
     href: "/admin/content",
-    label: "المحتوى والتقييمات والمعرض",
+    label: "المحتوى والتقييمات",
     icon: FolderKanban,
     badge: "4",
   },
@@ -100,8 +100,11 @@ export function AdminChrome({
   const {
     bookings,
     reviews,
-    isSupabaseConnected,
+    packages,
+    invoices,
+    customers,
     currentUser,
+    isSupabaseConnected,
     signOutAdmin,
   } = useAppStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -111,8 +114,6 @@ export function AdminChrome({
   const profileRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = async () => {
-    setProfileMenuOpen(false);
-    setMobileMenuOpen(false);
     await signOutAdmin();
     router.push("/admin/login");
     router.refresh();
@@ -271,16 +272,23 @@ export function AdminChrome({
       >
         {/* Brand Logo Header */}
         <div className="pb-4 mb-4 border-b border-[#eedfe0] flex flex-col items-start gap-2">
-          <Link href="/admin" className="inline-block group focus:outline-none">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/logo.png"
-              alt="أماني خليل | Amani Khalil Makeup Artist"
-              width={120}
-              height={44}
-              style={{ maxHeight: "44px", width: "auto" }}
-              className="h-11 w-auto max-w-[185px] object-contain transition-transform duration-300 group-hover:scale-[1.02]"
-            />
+          <Link href="/admin" className="flex items-center gap-3 group focus:outline-none">
+            <div className="h-11 w-11 relative rounded-xl overflow-hidden shadow-sm border border-[#eedfe0] bg-[#2f020d] flex items-center justify-center p-1.5 transition-transform duration-300 group-hover:scale-[1.05]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/ak-monogram-hd.png"
+                alt="أماني خليل AK Monogram"
+                className="h-full w-full object-contain"
+              />
+            </div>
+            <div>
+              <span className="font-serif font-bold text-base text-[#2f020d] block leading-tight">
+                أماني خليل
+              </span>
+              <span className="text-[10px] text-[#735c00] tracking-wider uppercase font-semibold">
+                Haute Beauté Admin
+              </span>
+            </div>
           </Link>
           <div className="flex items-center gap-2">
             <Badge variant="gold" className="text-[10px] px-2.5 py-0.5">
@@ -319,9 +327,9 @@ export function AdminChrome({
           <Link href="/admin" className="lg:hidden shrink-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/logo.png"
+              src="/ak-monogram-hd.png"
               alt="أماني خليل"
-              className="h-9 w-auto max-w-[130px] object-contain"
+              className="h-9 w-9 rounded-lg object-contain bg-[#2f020d] p-1"
             />
           </Link>
 
@@ -457,12 +465,11 @@ export function AdminChrome({
           className="w-80 bg-[#fff0f1] border-l border-[#d7c1c3] p-5 flex flex-col"
         >
           <SheetHeader className="border-b border-[#eedfe0] pb-4 text-right">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/logo.png"
-              alt="أماني خليل"
-              className="h-10 w-auto max-w-[165px] object-contain"
-            />
+            <div className="flex items-center gap-2.5">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/ak-monogram-hd.png" alt="أماني خليل" className="h-10 w-10 rounded-xl object-contain bg-[#2f020d] p-1 shadow-sm" />
+              <span className="font-serif font-bold text-base text-[#2f020d]">أماني خليل</span>
+            </div>
             <SheetTitle className="text-lg font-bold text-[#2f020d] mt-2">
               لوحة التحكم الملكية
             </SheetTitle>

@@ -17,6 +17,7 @@ import {
   MessageCircle,
   ArrowLeft,
   ShieldCheck,
+  Minus,
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { AdminChrome } from "@/components/admin-chrome";
@@ -227,13 +228,29 @@ const WHATSAPP_PRESETS: Record<string, string> = {
 export function InteractiveShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { createBooking, packages } = useAppStore();
+  const { createBooking, packages, areas, bookings, reviews } = useAppStore();
 
   const [currentDir, setCurrentDir] = useState<"rtl" | "ltr">("rtl");
   const [navSheetOpen, setNavSheetOpen] = useState(false);
+  const [isDockMinimized, setIsDockMinimized] = useState(false);
   const [manualBookingOpen, setManualBookingOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(3);
+
+  const pendingBookingsNotifs = bookings.filter(
+    (b) => b.status === "PENDING_PAYMENT"
+  );
+  const unapprovedReviewsNotifs = reviews.filter((r) => !r.approved);
+  const confirmedBookingsNotifs = bookings.filter(
+    (b) => b.status === "CONFIRMED"
+  );
+  const actionableCount =
+    pendingBookingsNotifs.length + unapprovedReviewsNotifs.length;
+
+  const [unreadCount, setUnreadCount] = useState<number>(actionableCount);
+
+  useEffect(() => {
+    setUnreadCount(actionableCount);
+  }, [actionableCount]);
 
   // Package Quick-Booking Modal State
   const [packageDialogOpen, setPackageDialogOpen] = useState(false);
@@ -258,9 +275,8 @@ export function InteractiveShell({ children }: { children: React.ReactNode }) {
   // Quick manual booking form state
   const [brideName, setBrideName] = useState("");
   const [bridePhone, setBridePhone] = useState("");
-  const [selectedPkg, setSelectedPkg] = useState(
-    "باقة العروس الملكية VIP (3,500 ر.س)"
-  );
+  const [selectedPackageId, setSelectedPackageId] = useState<string>("vip-bridal");
+  const [selectedAreaId, setSelectedAreaId] = useState<string>("area_hotels_vip");
   const [bookingDate, setBookingDate] = useState("2025-10-26");
   const [district, setDistrict] = useState("حي الملقا - الرياض");
 
@@ -864,27 +880,28 @@ export function InteractiveShell({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const cleanPkgTitle = selectedPkg.replace(/\s*\([^)]*\)/, "").trim();
     const matchedPkg =
-      packages.find((p) => cleanPkgTitle.includes(p.title) || p.title.includes(cleanPkgTitle)) ||
-      packages[0];
+      packages.find((p) => p.id === selectedPackageId) || packages[0];
+    const matchedArea =
+      areas.find((a) => a.id === selectedAreaId) || areas[0];
 
-    const priceMatch = selectedPkg.match(/([\d,]+)/);
-    const totalNum = priceMatch
-      ? parseInt(priceMatch[1].replace(/,/g, ""), 10)
-      : matchedPkg?.price || 3500;
-    const depositNum = Math.round(totalNum * 0.3);
+    const isVipBridal = matchedPkg?.id === "vip-bridal";
+    const travelFee = isVipBridal ? 0 : (matchedArea?.travelFee ?? 0);
+    const totalNum = (matchedPkg?.price ?? 2800) + travelFee;
+    const depositNum = Math.round(
+      (totalNum * (matchedPkg?.depositPercentage ?? 30)) / 100
+    );
 
     const createdBooking = createBooking({
       clientName: brideName.trim(),
       phone: bridePhone.trim(),
       packageId: matchedPkg?.id || "vip-bridal",
-      packageName: cleanPkgTitle,
+      packageName: matchedPkg?.title || "باقة العروس الملكية VIP",
       date: bookingDate,
       timeSlot: "عصراً (02:00 م)",
       locationType: "HOTEL_HALL",
-      venue: district || "الرياض",
-      areaId: "area_hotels_vip",
+      venue: district || matchedArea?.nameAr || "الرياض",
+      areaId: matchedArea?.id || "area_hotels_vip",
       totalAmount: totalNum,
       depositAmount: depositNum,
       remainingAmount: totalNum - depositNum,
@@ -900,7 +917,7 @@ export function InteractiveShell({ children }: { children: React.ReactNode }) {
           ref: createdBooking.ref,
           brideName: brideName.trim(),
           bridePhone: bridePhone.trim(),
-          pkgTitle: cleanPkgTitle,
+          pkgTitle: matchedPkg?.title || "باقة العروس الملكية VIP",
           date: bookingDate,
           venue: district,
           grandTotal: totalNum,
@@ -974,47 +991,62 @@ export function InteractiveShell({ children }: { children: React.ReactNode }) {
 
       {children}
 
-      {/* Floating Royal Quick-Navigation & Interactive Dock (shadcn/ui powered) */}
-      <div
-        data-shell-ui="true"
-        dir="rtl"
-        className="hidden sm:flex fixed bottom-5 left-5 z-40 items-center gap-2 rounded-full border border-[#735c00]/30 bg-[#2f020d]/95 p-1.5 text-white shadow-[0_12px_32px_rgba(47,2,13,0.45)] backdrop-blur-xl transition-all hover:border-[#fed65b]/60"
-      >
-        <Button
-          variant="gold"
-          size="sm"
-          onClick={() => setNavSheetOpen(true)}
-          className="rounded-full px-4 py-2 text-xs font-bold shadow-md cursor-pointer"
-        >
-          <Compass className="h-4 w-4" />
-          <span>دليل الصفحات ({ALL_ROUTES.length})</span>
-        </Button>
+      {/* Floating Royal Quick-Navigation & Interactive Dock (shadcn/ui powered) - Public pages only to keep admin workspace clean */}
+      {!isAdminRoute && (
+        isDockMinimized ? (
+          <button
+            type="button"
+            onClick={() => setIsDockMinimized(false)}
+            className="hidden sm:flex fixed bottom-5 left-5 z-40 h-10 w-10 items-center justify-center rounded-full border border-[#735c00]/50 bg-[#2f020d]/95 text-[#fed65b] shadow-2xl backdrop-blur-xl transition-all hover:scale-110 hover:border-[#fed65b] cursor-pointer"
+            title="عرض دليل الصفحات والملاحة السريعة"
+            aria-label="عرض دليل الصفحات والملاحة السريعة"
+          >
+            <Compass className="h-5 w-5" />
+          </button>
+        ) : (
+          <div
+            data-shell-ui="true"
+            dir="rtl"
+            className="hidden sm:flex fixed bottom-5 left-5 z-40 items-center gap-2 rounded-full border border-[#735c00]/30 bg-[#2f020d]/95 p-1.5 text-white shadow-[0_12px_32px_rgba(47,2,13,0.45)] backdrop-blur-xl transition-all hover:border-[#fed65b]/60"
+          >
+            <Button
+              variant="gold"
+              size="sm"
+              onClick={() => setNavSheetOpen(true)}
+              className="rounded-full px-4 py-2 text-xs font-bold shadow-md cursor-pointer"
+            >
+              <Compass className="h-4 w-4" />
+              <span>دليل الصفحات ({ALL_ROUTES.length})</span>
+            </Button>
 
-        <Link
-          href="/book"
-          className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-[#4a1521] px-3.5 py-2 text-xs font-semibold text-[#ffd9dd] transition-colors hover:bg-[#71333f] hover:text-white"
-        >
-          <Calendar className="h-3.5 w-3.5 text-[#fed65b]" />
-          <span>حجز موعد</span>
-        </Link>
+            <Link
+              href="/book"
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-[#4a1521] px-3.5 py-2 text-xs font-semibold text-[#ffd9dd] transition-colors hover:bg-[#71333f] hover:text-white"
+            >
+              <Calendar className="h-3.5 w-3.5 text-[#fed65b]" />
+              <span>حجز موعد</span>
+            </Link>
 
-        <Link
-          href={isAdminRoute ? "/" : "/admin"}
-          className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/20"
-        >
-          {isAdminRoute ? (
-            <>
-              <Crown className="h-3.5 w-3.5 text-[#fed65b]" />
-              <span>الموقع العام</span>
-            </>
-          ) : (
-            <>
+            <Link
+              href="/admin"
+              className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/20"
+            >
               <LayoutDashboard className="h-3.5 w-3.5 text-[#fed65b]" />
               <span>لوحة التحكم</span>
-            </>
-          )}
-        </Link>
-      </div>
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => setIsDockMinimized(true)}
+              className="h-7 w-7 rounded-full text-white/60 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors cursor-pointer text-xs ms-0.5"
+              title="تصغير شريط التنقل"
+              aria-label="تصغير شريط التنقل"
+            >
+              <Minus className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        )
+      )}
 
       {/* shadcn Sheet: Mobile Navigation & Complete 22-Screen Sitemap */}
       <Sheet open={navSheetOpen} onOpenChange={setNavSheetOpen}>
@@ -1308,31 +1340,40 @@ export function InteractiveShell({ children }: { children: React.ReactNode }) {
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-[#2f020d]">
-                الباقة المختارة
-              </label>
-              <select
-                value={selectedPkg}
-                onChange={(e) => setSelectedPkg(e.target.value)}
-                className="flex h-11 w-full rounded-xl border border-[#d7c1c3] bg-white px-4 py-2 text-sm text-[#211a1b] focus:outline-none focus:ring-2 focus:ring-[#735c00]/40"
-              >
-                <option value="باقة العروس الملكية VIP (3,500 ر.س)">
-                  باقة العروس الملكية VIP (3,500 ر.س)
-                </option>
-                <option value="باقة العروس الكلاسيكية (2,800 ر.س)">
-                  باقة العروس الكلاسيكية (2,800 ر.س)
-                </option>
-                <option value="مكياج سهرة فاخر VIP (950 ر.س)">
-                  مكياج سهرة فاخر VIP (950 ر.س)
-                </option>
-                <option value="إطلالة سوفت غلام ناعمة (650 ر.س)">
-                  إطلالة سوفت غلام ناعمة (650 ر.س)
-                </option>
-                <option value="جناح العروس والمرافقات (4,800 ر.س)">
-                  جناح العروس والمرافقات (4,800 ر.س)
-                </option>
-              </select>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#2f020d]">
+                  الباقة المختارة *
+                </label>
+                <select
+                  value={selectedPackageId}
+                  onChange={(e) => setSelectedPackageId(e.target.value)}
+                  className="flex h-11 w-full rounded-xl border border-[#d7c1c3] bg-white px-3 py-2 text-xs text-[#211a1b] focus:outline-none focus:ring-2 focus:ring-[#735c00]/40"
+                >
+                  {packages.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.title} ({p.price.toLocaleString("ar-SA")} ر.س)
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#2f020d]">
+                  منطقة أو فندق الخدمة *
+                </label>
+                <select
+                  value={selectedAreaId}
+                  onChange={(e) => setSelectedAreaId(e.target.value)}
+                  className="flex h-11 w-full rounded-xl border border-[#d7c1c3] bg-white px-3 py-2 text-xs text-[#211a1b] focus:outline-none focus:ring-2 focus:ring-[#735c00]/40"
+                >
+                  {areas.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.nameAr} ({a.travelFee === 0 ? "تغطية مشمولة" : `+${a.travelFee} ر.س`})
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div className="space-y-1.5">
@@ -1380,60 +1421,83 @@ export function InteractiveShell({ children }: { children: React.ReactNode }) {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-3 my-2">
-            <div
-              onClick={() => {
-                setNotificationsOpen(false);
-                router.push("/admin/bookings");
-              }}
-              className="cursor-pointer rounded-2xl border border-[#d7c1c3] bg-white p-3.5 transition-all hover:border-[#735c00]"
-            >
-              <div className="flex items-center justify-between text-xs text-[#735c00] font-bold mb-1">
-                <span>تم سداد عربون جديد (30%)</span>
-                <span>منذ 5 دقائق</span>
+          <div className="space-y-3 my-2 max-h-[360px] overflow-y-auto">
+            {actionableCount === 0 && confirmedBookingsNotifs.length === 0 ? (
+              <div className="p-6 text-center text-xs text-[#857374] bg-[#fff8f7] rounded-2xl border border-[#eedfe0]">
+                لا توجد تنبيهات غير مقروءة حالياً ✓
               </div>
-              <p className="text-sm font-bold text-[#2f020d]">
-                العروس سارة بنت عبدالله — باقة العروس الملكية VIP
-              </p>
-              <p className="text-xs text-[#524345] mt-0.5">
-                تم تحصيل 1,050 ر.س عبر Apple Pay • المرجع #AK-2025-8942
-              </p>
-            </div>
+            ) : (
+              <>
+                {/* Pending Bookings requiring deposit */}
+                {pendingBookingsNotifs.slice(0, 3).map((b) => (
+                  <div
+                    key={b.id}
+                    onClick={() => {
+                      setNotificationsOpen(false);
+                      router.push("/admin/bookings");
+                    }}
+                    className="cursor-pointer rounded-2xl border border-[#d7c1c3] bg-white p-3.5 transition-all hover:border-[#735c00]"
+                  >
+                    <div className="flex items-center justify-between text-xs text-[#735c00] font-bold mb-1">
+                      <span>طلب حجز بانتظار سداد العربون</span>
+                      <span className="font-mono">#{b.ref}</span>
+                    </div>
+                    <p className="text-sm font-bold text-[#2f020d]">
+                      العروس {b.clientName} — {b.packageName}
+                    </p>
+                    <p className="text-xs text-[#524345] mt-0.5">
+                      العربون: {b.depositAmount.toLocaleString("en-US")} ر.س • الموعد: {b.date} ({b.timeSlot})
+                    </p>
+                  </div>
+                ))}
 
-            <div
-              onClick={() => {
-                setNotificationsOpen(false);
-                router.push("/admin/calendar");
-              }}
-              className="cursor-pointer rounded-2xl border border-[#d7c1c3] bg-white p-3.5 transition-all hover:border-[#735c00]"
-            >
-              <div className="flex items-center justify-between text-xs text-[#4a1521] font-bold mb-1">
-                <span>تذكير بموعد غداً</span>
-                <span>منذ ساعة</span>
-              </div>
-              <p className="text-sm font-bold text-[#2f020d]">
-                جلسة زفاف في فندق الريتز كارلتون - الجناح الملكي
-              </p>
-              <p className="text-xs text-[#524345] mt-0.5">
-                الساعة 2:00 مساءً • تم إرسال إرشادات العناية بالبشرة للعروس
-              </p>
-            </div>
+                {/* Unapproved Reviews requiring moderation */}
+                {unapprovedReviewsNotifs.slice(0, 2).map((r) => (
+                  <div
+                    key={r.id}
+                    onClick={() => {
+                      setNotificationsOpen(false);
+                      router.push("/admin/content");
+                    }}
+                    className="cursor-pointer rounded-2xl border border-[#d7c1c3] bg-white p-3.5 transition-all hover:border-[#735c00]"
+                  >
+                    <div className="flex items-center justify-between text-xs text-[#735c00] font-bold mb-1">
+                      <span>تقييم جديد بانتظار الاعتماد ⭐</span>
+                      <span>{r.date}</span>
+                    </div>
+                    <p className="text-sm font-bold text-[#2f020d]">
+                      {r.clientName} أضافت تقييماً {r.rating} نجوم
+                    </p>
+                    <p className="text-xs text-[#524345] mt-0.5 line-clamp-1">
+                      &ldquo;{r.comment}&rdquo;
+                    </p>
+                  </div>
+                ))}
 
-            <div
-              onClick={() => {
-                setNotificationsOpen(false);
-                router.push("/admin/content");
-              }}
-              className="cursor-pointer rounded-2xl border border-[#d7c1c3] bg-white p-3.5 transition-all hover:border-[#735c00]"
-            >
-              <div className="flex items-center justify-between text-xs text-[#735c00] font-bold mb-1">
-                <span>تقييم جديد بانتظار الاعتماد ⭐</span>
-                <span>منذ 3 ساعات</span>
-              </div>
-              <p className="text-sm font-bold text-[#2f020d]">
-                نورة السديري أضافت تقييماً 5 نجوم مع موافقة نشر
-              </p>
-            </div>
+                {/* Confirmed / Upcoming appointments */}
+                {confirmedBookingsNotifs.slice(0, 2).map((b) => (
+                  <div
+                    key={b.id}
+                    onClick={() => {
+                      setNotificationsOpen(false);
+                      router.push("/admin/calendar");
+                    }}
+                    className="cursor-pointer rounded-2xl border border-[#eedfe0] bg-white p-3.5 transition-all hover:border-[#735c00]"
+                  >
+                    <div className="flex items-center justify-between text-xs text-emerald-700 font-bold mb-1">
+                      <span>موعد مؤكد بالعربون ✓</span>
+                      <span>{b.date}</span>
+                    </div>
+                    <p className="text-sm font-bold text-[#2f020d]">
+                      جلسة {b.clientName} — {b.venue}
+                    </p>
+                    <p className="text-xs text-[#524345] mt-0.5">
+                      الساعة {b.timeSlot} • {b.packageName}
+                    </p>
+                  </div>
+                ))}
+              </>
+            )}
           </div>
 
           <DialogFooter>

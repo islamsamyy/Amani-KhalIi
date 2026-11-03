@@ -61,7 +61,15 @@ export function AdminLoginClient() {
     const cfg = getSupabaseConfig();
     if (cfg.url) setProjectUrl(cfg.url);
     if (cfg.key) setPublishableKey(cfg.key);
-  }, []);
+
+    const err = searchParams.get("error");
+    if (err === "not_admin") {
+      toast.error("تنبيه: يتطلب الدخول إلى لوحة التحكم صلاحيات مديرة النظام.", {
+        description:
+          "يرجى تسجيل الدخول بحساب المشرفة المعتمد للوصول إلى لوحة الإدارة.",
+      });
+    }
+  }, [searchParams]);
 
   const handleSaveSupabaseConfig = async (e: React.FormEvent) => {
     e.preventDefault();

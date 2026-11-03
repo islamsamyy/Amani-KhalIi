@@ -56,7 +56,7 @@ export function NewServiceClient() {
   };
 
   return (
-    <div dir="rtl" className="lg:pe-72 transition-all duration-300">
+    <div dir="rtl" className="lg:pr-72 transition-all duration-300">
       <main className="w-full pt-24 px-4 sm:px-6 lg:px-10 pb-16 bg-[#fff8f7] min-h-screen space-y-6">
         {/* Header */}
         <div className="flex items-center gap-3">

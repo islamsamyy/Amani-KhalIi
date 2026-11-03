@@ -169,6 +169,7 @@ export function SiteHeader({
                 height={48}
                 priority
                 unoptimized={true}
+                style={{ width: "auto" }}
                 className="h-10 sm:h-12 w-auto object-contain rounded-lg shadow-md group-hover:brightness-110 transition-all drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
               />
             </div>

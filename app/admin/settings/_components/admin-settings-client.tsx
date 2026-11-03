@@ -22,7 +22,9 @@ import { toast } from "sonner";
 export function AdminSettingsClient() {
   const { areas } = useAppStore();
 
-  const [atelierName, setAtelierName] = useState("أتيليه أماني خليل — Haute Beauté");
+  const [atelierName, setAtelierName] = useState(
+    "أتيليه أماني خليل — Haute Beauté"
+  );
   const [atelierPhone, setAtelierPhone] = useState("+966 50 128 4492");
   const [depositPct, setDepositPct] = useState(30);
   const [maxSessionsPerDay, setMaxSessionsPerDay] = useState(2);
@@ -30,12 +32,38 @@ export function AdminSettingsClient() {
     "مرحباً بكِ في أماني خليل. تم استلام طلب حجزكِ الملكي بنجاح، ومرفق لكِ العقد الموثق والفاتورة الرسمية."
   );
 
+  React.useEffect(() => {
+    try {
+      const stored = localStorage.getItem("amani_admin_settings_v1");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.atelierName) setAtelierName(parsed.atelierName);
+        if (parsed.atelierPhone) setAtelierPhone(parsed.atelierPhone);
+        if (parsed.depositPct) setDepositPct(parsed.depositPct);
+        if (parsed.maxSessionsPerDay) setMaxSessionsPerDay(parsed.maxSessionsPerDay);
+        if (parsed.whatsappTemplate) setWhatsappTemplate(parsed.whatsappTemplate);
+      }
+    } catch {}
+  }, []);
+
   const handleSave = () => {
-    toast.success("تم حفظ إعدادات النظام والصلاحيات بنجاح ✨");
+    try {
+      localStorage.setItem(
+        "amani_admin_settings_v1",
+        JSON.stringify({
+          atelierName,
+          atelierPhone,
+          depositPct,
+          maxSessionsPerDay,
+          whatsappTemplate,
+        })
+      );
+    } catch {}
+    toast.success("تم حفظ إعدادات النظام والصلاحيات بنجاح في قاعدة البيانات المحلية ✨");
   };
 
   return (
-    <div dir="rtl" className="lg:pe-72 transition-all duration-300">
+    <div dir="rtl" className="lg:pr-72 transition-all duration-300">
       <main className="w-full pt-24 px-4 sm:px-6 lg:px-10 pb-16 bg-[#fff8f7] min-h-screen space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

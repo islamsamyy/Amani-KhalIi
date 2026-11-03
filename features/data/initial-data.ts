@@ -53,7 +53,7 @@ export interface InvoiceRecord {
   depositPaid: number;
   remainingBalance: number;
   paymentMethod: "Apple Pay" | "mada" | "تحويل بنكي";
-  status: "مدفوع العربون (30%)" | "مسدد بالكامل" | "معلق";
+  status: "مدفوع العربون (30%)" | "مسدد بالكامل" | "معلق" | "ملغاة / مسترجعة";
 }
 
 export interface CustomerProfile {
