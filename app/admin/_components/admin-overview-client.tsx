@@ -377,7 +377,7 @@ export function AdminOverviewClient() {
                 </Link>
               </Card>
             ) : (
-              activeBookingsSorted.slice(0, 5).map((booking, idx) => {
+              activeBookingsSorted.slice(0, 12).map((booking, idx) => {
                 const nextBooking = activeBookingsSorted[idx + 1];
                 const isSameDate = nextBooking && nextBooking.date === booking.date;
                 const isCompleted = booking.status === "COMPLETED";

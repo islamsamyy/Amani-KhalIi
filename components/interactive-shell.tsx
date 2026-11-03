@@ -278,6 +278,7 @@ export function InteractiveShell({ children }: { children: React.ReactNode }) {
   const [selectedPackageId, setSelectedPackageId] = useState<string>("vip-bridal");
   const [selectedAreaId, setSelectedAreaId] = useState<string>("area_hotels_vip");
   const [bookingDate, setBookingDate] = useState("2025-10-26");
+  const [bookingTimeSlot, setBookingTimeSlot] = useState("عصراً (02:00 م)");
   const [district, setDistrict] = useState("حي الملقا - الرياض");
 
   const handleToggleLanguage = useCallback(() => {
@@ -377,501 +378,28 @@ export function InteractiveShell({ children }: { children: React.ReactNode }) {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, []);
 
-  // Global event delegation for links, forms, filters, pagination, and interactive buttons
+  // Smooth scroll for in-page anchor links without interfering with React forms or buttons
   useEffect(() => {
-    const handleSubmit = (e: SubmitEvent) => {
-      const form = e.target as HTMLFormElement | null;
-      if (!form) return;
-      // Do not intercept shadcn dialog forms inside React portals if they have their own handler
-      if (form.dataset.reactForm === "true") return;
-
-      e.preventDefault();
-      const msgEl = document.getElementById("formSuccessMessage");
-      if (msgEl) {
-        msgEl.classList.remove("hidden");
-        msgEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      }
-      toast.success("تم استلام طلبكِ بنجاح ✨", {
-        description: "سيتواصل معكِ مكتب أماني خليل عبر الواتساب خلال دقائق.",
-      });
-    };
-
-    const extractRowData = (el: HTMLElement): BookingInspectorData => {
-      const row = el.closest("tr") || el.closest("[class*='rounded-2xl']");
-      if (!row) {
-        return {
-          ref: "AK-2025-8942",
-          clientName: "سارة بنت فيصل آل سعود",
-          packageName: "باقة العروس الملكية VIP",
-          date: "الخميس، 9 أكتوبر 2025",
-          amount: "3,550 ر.س",
-          status: "مؤكد بالعربون (30%)",
-        };
-      }
-      const rawText = (row as HTMLElement).innerText || "";
-      const refMatch = rawText.match(/(?:AK|INV)-\d{4}-\d{3,5}/i);
-      const amountMatch = rawText.match(/[\d,٬]+\s*ر\.س/);
-      const cells = row.querySelectorAll("td");
-
-      let clientName = "سارة بنت فيصل آل سعود";
-      let packageName = "باقة العروس الملكية VIP";
-      let date = "أكتوبر 2025";
-      let status = "مؤكد بالعربون (30%)";
-
-      if (cells.length >= 4) {
-        clientName =
-          cells[0]?.querySelector(".font-bold, .font-semibold")?.textContent?.trim() ||
-          cells[1]?.querySelector(".font-bold, .font-semibold")?.textContent?.trim() ||
-          clientName;
-        packageName = cells[2]?.textContent?.trim().split("\n")[0] || packageName;
-        date = cells[3]?.textContent?.trim().split("\n")[0] || date;
-        status =
-          row.querySelector("span[class*='rounded-full']")?.textContent?.trim() ||
-          status;
-      } else {
-        const heading = row.querySelector("h3, h4, .font-bold");
-        if (heading?.textContent) clientName = heading.textContent.trim();
-      }
-
-      return {
-        ref: refMatch ? refMatch[0] : "AK-2025-8942",
-        clientName,
-        packageName,
-        date,
-        amount: amountMatch ? amountMatch[0] : "3,550 ر.س",
-        status,
-      };
-    };
-
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement | null;
       if (!target) return;
-
-      // Ignore clicks inside our custom React header/chrome/dialogs
-      if (target.closest("[data-shell-ui='true']")) return;
-
-      // 1. Check if clicked inside an <a> tag
       const anchor = target.closest("a");
-      if (anchor) {
-        const href = anchor.getAttribute("href");
-        if (href && href.startsWith("/") && !href.startsWith("//")) {
+      if (!anchor) return;
+      const href = anchor.getAttribute("href");
+      if (href && href.startsWith("#") && href.length > 1) {
+        const targetSection = document.querySelector(href);
+        if (targetSection) {
           e.preventDefault();
-          router.push(href);
-          return;
-        }
-        if (href && href.startsWith("#") && href.length > 1) {
-          const targetSection = document.querySelector(href);
-          if (targetSection) {
-            e.preventDefault();
-            targetSection.scrollIntoView({ behavior: "smooth" });
-            return;
-          }
-        }
-      }
-
-      // 2. Check if clicked inside a <tr onclick="selectBooking(...)"> or similar
-      const button = target.closest("button");
-      if (!button) return;
-
-      const btnText = (button.innerText || "").replace(/\s+/g, " ").trim();
-      const hasOnClick = button.hasAttribute("onclick");
-
-      // Skip buttons that already have dedicated page-level JS listeners
-      if (
-        button.classList.contains("filter-btn") ||
-        button.classList.contains("filter-pill") ||
-        button.classList.contains("content-tab-btn") ||
-        button.classList.contains("faq-toggle") ||
-        button.classList.contains("gallery-tab") ||
-        button.classList.contains("date-chip") ||
-        button.classList.contains("time-slot") ||
-        button.id === "tab-pass" ||
-        button.id === "tab-otp" ||
-        button.id === "tab-bio" ||
-        button.id === "open-upload-modal-btn" ||
-        button.id === "close-upload-modal-btn" ||
-        button.id === "cancel-upload-btn" ||
-        button.id === "clear-search" ||
-        button.id === "reset-search-btn"
-      ) {
-        return;
-      }
-
-      // Mobile menu button -> Open shadcn Navigation Sheet
-      if (btnText === "menu") {
-        e.preventDefault();
-        setNavSheetOpen(true);
-        return;
-      }
-
-      // Language switcher button
-      if (btnText.includes("language") || btnText.includes("EN |")) {
-        e.preventDefault();
-        handleToggleLanguage();
-        return;
-      }
-
-      // Notifications button in Admin
-      if (btnText === "notifications") {
-        e.preventDefault();
-        setNotificationsOpen(true);
-        return;
-      }
-
-      // Manual booking / Add client / New invoice buttons in Admin
-      if (
-        btnText.includes("إضافة حجز يدوي") ||
-        btnText.includes("حجز يدوي جديد") ||
-        btnText.includes("إضافة حجز / إغلاق يوم") ||
-        btnText.includes("حجز موعد جديد للعروس") ||
-        btnText.includes("إصدار فاتورة / سند قبض جديد") ||
-        btnText.includes("تسجيل دفعة جديدة") ||
-        btnText.includes("إضافة عميلة جديدة")
-      ) {
-        e.preventDefault();
-        setManualBookingOpen(true);
-        return;
-      }
-
-      // Add New Package / Edit Package buttons in Admin Services
-      if (
-        btnText.includes("إضافة باقة جديدة") ||
-        btnText.includes("تعديل الباقة") ||
-        btnText.includes("إضافة خدمة تكميلية")
-      ) {
-        e.preventDefault();
-        router.push("/admin/services/new");
-        return;
-      }
-
-      // Public Services "إضافة للحجز" button -> toggle checkbox or open package modal
-      if (btnText === "إضافة للحجز") {
-        e.preventDefault();
-        const card = button.closest("div");
-        const checkbox = card?.querySelector<HTMLInputElement>(
-          "input[type='checkbox']"
-        );
-        if (checkbox) {
-          checkbox.checked = !checkbox.checked;
-          checkbox.dispatchEvent(new Event("change", { bubbles: true }));
-          toast.success(
-            checkbox.checked
-              ? "تمت إضافة الخدمة التكميلية لحاسبة الحجز ✨"
-              : "تمت إزالة الخدمة التكميلية"
-          );
-        } else {
-          setSelectedPackageInfo({
-            name: "خدمة تكميلية للعروس",
-            price: 500,
-          });
-          setPackageDialogOpen(true);
-        }
-        return;
-      }
-
-      // Pause / Resume Service Package in Admin Services
-      if (btnText === "pause_circle" || btnText === "play_circle") {
-        e.preventDefault();
-        const iconSpan = button.querySelector(".material-symbols-outlined") || button;
-        const card = button.closest<HTMLElement>("[class*='rounded-2xl']");
-        const isPaused = iconSpan.textContent?.trim() === "play_circle";
-
-        if (isPaused) {
-          iconSpan.textContent = "pause_circle";
-          if (card) card.style.opacity = "1";
-          toast.success("تم إعادة تفعيل الباقة واستقبال الحجوزات ✨");
-        } else {
-          iconSpan.textContent = "play_circle";
-          if (card) card.style.opacity = "0.62";
-          toast.info("تم إيقاف استقبال الحجوزات لهذه الباقة مؤقتاً");
-        }
-        return;
-      }
-
-      // Delete / Hide / Unpin with Undo action
-      if (
-        btnText === "delete" ||
-        btnText === "delete_outline" ||
-        btnText === "visibility_off" ||
-        btnText.includes("إلغاء التثبيت") ||
-        btnText === "إفساح"
-      ) {
-        if (!hasOnClick) {
-          e.preventDefault();
-          const container =
-            button.closest<HTMLElement>("tr") ||
-            button.closest<HTMLElement>("[class*='rounded-xl']") ||
-            button.closest<HTMLElement>("[class*='rounded-2xl']");
-          if (container) {
-            container.style.display = "none";
-            toast.success("تم تحديث العنصر بنجاح", {
-              description: "يمكنكِ التراجع عن هذا الإجراء فوراً إذا رغبتِ.",
-              action: {
-                label: "تراجع",
-                onClick: () => {
-                  container.style.display = "";
-                  toast.success("تمت استعادة العنصر كما كان");
-                },
-              },
-            });
-          }
-          return;
-        }
-      }
-
-      // WhatsApp Variable Chips in Admin Settings: {اسم_العروس}, {موعد_المناسبة}, etc.
-      if (/^\{.+\}$/.test(btnText)) {
-        e.preventDefault();
-        const textarea = document.querySelector<HTMLTextAreaElement>("main textarea");
-        if (textarea) {
-          const start = textarea.selectionStart ?? textarea.value.length;
-          const end = textarea.selectionEnd ?? textarea.value.length;
-          textarea.value =
-            textarea.value.slice(0, start) +
-            " " +
-            btnText +
-            " " +
-            textarea.value.slice(end);
-          textarea.focus();
-          toast.success(`تم إدراج المتغير ${btnText} في القالب`);
-        }
-        return;
-      }
-
-      // WhatsApp Preset Switchers in Admin Settings ("1. تأكيد...", "2. تذكير...", "3. شكر...")
-      if (/^[123]\.\s/.test(btnText)) {
-        e.preventDefault();
-        const key = btnText.charAt(0);
-        const textarea = document.querySelector<HTMLTextAreaElement>("main textarea");
-        if (textarea && WHATSAPP_PRESETS[key]) {
-          textarea.value = WHATSAPP_PRESETS[key];
-          textarea.focus();
-        }
-        const parent = button.parentElement;
-        if (parent) {
-          parent.querySelectorAll("button").forEach((b) => {
-            b.classList.remove("bg-primary-container", "text-on-primary");
-          });
-          button.classList.add("bg-primary-container", "text-on-primary");
-        }
-        toast.success(`تم تحميل قالب: ${btnText}`);
-        return;
-      }
-
-      // Save changes buttons across admin & reviews pages
-      if (
-        btnText.includes("حفظ كافة التغييرات") ||
-        btnText.includes("حفظ التعديلات") ||
-        btnText.includes("حفظ السياسات والأسعار") ||
-        btnText.includes("حفظ الملاحظة") ||
-        btnText.includes("حفظ ونشر العمل") ||
-        btnText.includes("حفظ وتفعيل الباقة") ||
-        btnText.includes("حفظ كمسودة") ||
-        btnText.includes("تحديث صياغة بنود العقد") ||
-        btnText.includes("إرسال التقييم للاعتماد")
-      ) {
-        if (!hasOnClick) {
-          e.preventDefault();
-          toast.success("تم حفظ البيانات بنجاح ✨", {
-            description: "تم تحديث السجل ومزامنته فورياً في النظام.",
-          });
-          return;
-        }
-      }
-
-      // Approve / Feature review buttons in Admin Content & Overview
-      if (
-        btnText.includes("اعتماد") ||
-        btnText.includes("تمييز (Featured)") ||
-        btnText === "تثبيت يدوي" ||
-        btnText === "تم التوثيق"
-      ) {
-        e.preventDefault();
-        button.classList.add("opacity-75");
-        toast.success("تم التوثيق والاعتماد الرسمي بنجاح ⭐");
-        return;
-      }
-
-      // Receipt / View icon buttons in Admin Bookings, Invoices, CRM, Services
-      if (
-        btnText === "receipt_long" ||
-        (btnText === "visibility" && !hasOnClick) ||
-        btnText === "تفاصيل الإطلالة"
-      ) {
-        e.preventDefault();
-        if (pathname === "/admin/services" || pathname === "/admin/services/new") {
-          router.push("/services");
-          return;
-        }
-        const details = extractRowData(button);
-        setBookingDetails(details);
-        setBookingDetailsOpen(true);
-        return;
-      }
-
-      // Export PDF / Excel / Print buttons
-      if (
-        btnText.includes("تصدير") ||
-        btnText.includes("التقرير الضريبي") ||
-        btnText.includes("كشف بوابات الدفع") ||
-        btnText.includes("طباعة") ||
-        btnText === "download"
-      ) {
-        if (!hasOnClick) {
-          e.preventDefault();
-          toast.success("جارٍ تجهيز وتصدير المستند الرسمي (PDF)", {
-            description: "سيبدأ تنزيل الملف المعتمد خلال لحظات.",
-          });
-          return;
-        }
-      }
-
-      // Sync / Reset filter buttons
-      if (
-        btnText.includes("مزامنة") ||
-        btnText.includes("تحديث فوري") ||
-        btnText.includes("تحديث العروض") ||
-        btnText === "refresh" ||
-        btnText === "filter_alt_off" ||
-        btnText.includes("إعادة ضبط") ||
-        btnText.includes("استعادة الافتراضي")
-      ) {
-        e.preventDefault();
-        // Also unhide any filtered table rows
-        document
-          .querySelectorAll<HTMLElement>("main tbody tr")
-          .forEach((tr) => (tr.style.display = ""));
-        toast.success("تم التحديث وإعادة ضبط العرض بنجاح");
-        return;
-      }
-
-      // WhatsApp reminder / send buttons in Admin
-      if (
-        btnText.includes("تذكير واتساب") ||
-        btnText.includes("تذكير بالسداد") ||
-        btnText.includes("إرسال إشعار الدفع") ||
-        btnText.includes("إرسال تجريبي") ||
-        btnText.includes("توليد وإرسال عبر الواتساب") ||
-        btnText.includes("طلب تقييم") ||
-        btnText === "sms" ||
-        btnText === "send" ||
-        btnText === "chat"
-      ) {
-        e.preventDefault();
-        toast.success("تم إرسال رسالة الواتساب الرسمية بنجاح 💬", {
-          description: "تم تسليم الإشعار الموثق إلى جوال العميلة.",
-        });
-        return;
-      }
-
-      // Pagination buttons (1, 2, 3, 29, chevron_right, chevron_left)
-      if (
-        /^\d+$/.test(btnText) ||
-        btnText === "chevron_right" ||
-        btnText === "chevron_left"
-      ) {
-        const parent = button.parentElement;
-        if (parent && parent.querySelectorAll("button").length >= 3) {
-          e.preventDefault();
-          if (/^\d+$/.test(btnText)) {
-            parent.querySelectorAll("button").forEach((b) => {
-              if (/^\d+$/.test((b.innerText || "").trim())) {
-                b.classList.remove(
-                  "bg-primary-container",
-                  "bg-primary",
-                  "text-on-primary",
-                  "text-white"
-                );
-              }
-            });
-            button.classList.add("bg-primary-container", "text-on-primary");
-          }
-          toast.success(
-            /^\d+$/.test(btnText)
-              ? `تم الانتقال إلى الصفحة ${btnText}`
-              : "تم تحديث صفحة السجل"
-          );
-          return;
-        }
-      }
-
-      // Generic Filter Pills / View Mode Switchers (siblings inside a pill bar)
-      if (!hasOnClick && button.parentElement) {
-        const siblings = Array.from(
-          button.parentElement.querySelectorAll(":scope > button")
-        );
-        if (siblings.length >= 2 && siblings.length <= 8) {
-          const looksLikeFilterGroup = siblings.some(
-            (s) =>
-              s.className.includes("bg-primary") ||
-              s.className.includes("bg-surface-container") ||
-              (s.textContent || "").includes("الكل")
-          );
-          if (looksLikeFilterGroup) {
-            e.preventDefault();
-            siblings.forEach((s) => {
-              s.classList.remove(
-                "bg-primary-container",
-                "bg-primary",
-                "text-on-primary",
-                "text-white",
-                "shadow-sm"
-              );
-              s.classList.add("text-on-surface-variant");
-            });
-            button.classList.remove("text-on-surface-variant");
-            button.classList.add(
-              "bg-primary-container",
-              "text-on-primary",
-              "shadow-sm"
-            );
-
-            // Filter table rows if on an admin table page
-            const rows = document.querySelectorAll<HTMLElement>("main tbody tr");
-            if (rows.length > 0) {
-              if (btnText.includes("الكل") || btnText.includes("كافة")) {
-                rows.forEach((r) => (r.style.display = ""));
-              } else {
-                const keywords: string[] = [];
-                if (btnText.includes("عربون") || btnText.includes("مؤكد"))
-                  keywords.push("عربون", "مؤكد");
-                if (btnText.includes("مسدد") || btnText.includes("مكتمل"))
-                  keywords.push("مسدد", "مكتمل");
-                if (btnText.includes("بانتظار") || btnText.includes("معلق"))
-                  keywords.push("بانتظار", "معلق");
-                if (btnText.includes("ملغي") || btnText.includes("مسترجع"))
-                  keywords.push("ملغي", "مسترجع");
-                if (btnText.includes("VIP") || btnText.includes("عرائس"))
-                  keywords.push("VIP", "عروس", "ملكي");
-
-                if (keywords.length > 0) {
-                  let shown = 0;
-                  rows.forEach((r) => {
-                    const txt = r.innerText || "";
-                    const match = keywords.some((k) => txt.includes(k));
-                    r.style.display = match ? "" : "none";
-                    if (match) shown++;
-                  });
-                  if (shown === 0) {
-                    // Fallback: keep all visible if mock rows don't contain exact label
-                    rows.forEach((r) => (r.style.display = ""));
-                  }
-                }
-              }
-            }
-            return;
-          }
+          targetSection.scrollIntoView({ behavior: "smooth" });
         }
       }
     };
 
-    document.addEventListener("submit", handleSubmit);
     document.addEventListener("click", handleClick);
     return () => {
-      document.removeEventListener("submit", handleSubmit);
       document.removeEventListener("click", handleClick);
     };
-  }, [router, pathname, handleToggleLanguage]);
+  }, []);
 
   const handleCreateManualBooking = (e: React.FormEvent) => {
     e.preventDefault();
@@ -898,7 +426,7 @@ export function InteractiveShell({ children }: { children: React.ReactNode }) {
       packageId: matchedPkg?.id || "vip-bridal",
       packageName: matchedPkg?.title || "باقة العروس الملكية VIP",
       date: bookingDate,
-      timeSlot: "عصراً (02:00 م)",
+      timeSlot: bookingTimeSlot,
       locationType: "HOTEL_HALL",
       venue: district || matchedArea?.nameAr || "الرياض",
       areaId: matchedArea?.id || "area_hotels_vip",
@@ -1313,7 +841,7 @@ export function InteractiveShell({ children }: { children: React.ReactNode }) {
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-[#2f020d]">
                   رقم الجوال (واتساب) *
@@ -1337,6 +865,23 @@ export function InteractiveShell({ children }: { children: React.ReactNode }) {
                   onChange={(e) => setBookingDate(e.target.value)}
                   required
                 />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#2f020d]">
+                  الفترة الزمنية *
+                </label>
+                <select
+                  value={bookingTimeSlot}
+                  onChange={(e) => setBookingTimeSlot(e.target.value)}
+                  className="flex h-11 w-full rounded-xl border border-[#d7c1c3] bg-white px-3 py-2 text-xs text-[#211a1b] focus:outline-none focus:ring-2 focus:ring-[#735c00]/40"
+                >
+                  <option value="صباحاً (11:00 ص)">صباحاً (11:00 ص)</option>
+                  <option value="عصراً (02:00 م)">عصراً (02:00 م)</option>
+                  <option value="عصراً (02:30 م)">عصراً (02:30 م)</option>
+                  <option value="مساءً (04:30 م)">مساءً (04:30 م)</option>
+                  <option value="مساءً (06:45 م)">مساءً (06:45 م)</option>
+                  <option value="مساءً (08:30 م)">مساءً (08:30 م)</option>
+                </select>
               </div>
             </div>
 

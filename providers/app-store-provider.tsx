@@ -130,7 +130,7 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const refreshRef = useRef<() => Promise<void>>(async () => { });
+  const refreshRef = useRef<() => Promise<void>>(async () => {});
 
   const refreshFromDatabase = useCallback(async () => {
     const supabase = createClient();
@@ -141,36 +141,39 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
 
     setIsSyncing(true);
     try {
-      const adminCheck = await supabase.rpc("is_admin");
-      const isAdminUser = adminCheck.data === true;
       const [
         pkgRes,
         addonRes,
         areaRes,
-        bookRes,
-        invRes,
-        custRes,
+        adminSnapRes,
         revRes,
         galRes,
         blogRes,
         faqRes,
         blkRes,
       ] = await Promise.all([
-        supabase.from("service_packages").select("*").order("created_at", { ascending: true }),
-        supabase.from("addons").select("*").order("created_at", { ascending: true }),
+        supabase
+          .from("service_packages")
+          .select("*")
+          .order("created_at", { ascending: true }),
+        supabase
+          .from("addons")
+          .select("*")
+          .order("created_at", { ascending: true }),
         supabase.from("riyadh_areas").select("*"),
-        isAdminUser
-          ? supabase.from("bookings").select("*").order("created_at", { ascending: false })
-          : supabase.rpc("get_booked_slots"),
-        isAdminUser
-          ? supabase.from("invoices").select("*").order("created_at", { ascending: false })
-          : Promise.resolve({ data: null, error: { message: "admin only" } }),
-        isAdminUser
-          ? supabase.from("customers").select("*").order("created_at", { ascending: false })
-          : Promise.resolve({ data: null, error: { message: "admin only" } }),
-        supabase.from("reviews").select("*").order("created_at", { ascending: false }),
-        supabase.from("gallery_looks").select("*").order("created_at", { ascending: true }),
-        supabase.from("blog_posts").select("*").order("published_at", { ascending: false }),
+        supabase.rpc("get_admin_dashboard_snapshot"),
+        supabase
+          .from("reviews")
+          .select("*")
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("gallery_looks")
+          .select("*")
+          .order("created_at", { ascending: true }),
+        supabase
+          .from("blog_posts")
+          .select("*")
+          .order("published_at", { ascending: false }),
         supabase.from("faqs").select("*"),
         supabase.from("blocked_dates").select("*"),
       ]);
@@ -234,97 +237,118 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
           );
         }
 
-        if (!isAdminUser && !bookRes.error && bookRes.data) {
-          // Public visitors only receive anonymised slot availability (no PII).
-          setBookings(
-            (bookRes.data as { date: string; time_slot: string }[]).map((s, i) => ({
-              id: `slot-${i}`,
-              ref: `slot-${i}`,
-              clientName: "",
-              phone: "",
-              packageId: "",
-              packageName: "",
-              date: s.date,
-              timeSlot: s.time_slot,
-              locationType: "STUDIO",
-              venue: "",
-              areaId: "",
-              totalAmount: 0,
-              depositAmount: 0,
-              remainingAmount: 0,
-              status: "CONFIRMED",
-              addonIds: [],
-              createdAt: "",
-            }))
-          );
-        } else if (isAdminUser && !bookRes.error && bookRes.data) {
-          type BookingRow = {
-            id: string; ref: string; client_name: string; phone: string;
-            package_id: string; package_name: string; date: string; time_slot: string;
-            location_type: BookingRecord["locationType"]; venue: string; area_id: string;
-            total_amount: number; deposit_amount: number; remaining_amount: number;
-            status: BookingRecord["status"]; addon_ids: unknown; notes: string | null; created_at: string;
+        if (!adminSnapRes.error && adminSnapRes.data) {
+          const snap = adminSnapRes.data as {
+            bookings?: Array<{
+              id: string;
+              ref: string;
+              client_name: string;
+              phone: string;
+              package_id: string;
+              package_name: string;
+              date: string;
+              time_slot: string;
+              location_type: BookingRecord["locationType"];
+              venue: string;
+              area_id: string;
+              total_amount: number;
+              deposit_amount: number;
+              remaining_amount: number;
+              status: BookingRecord["status"];
+              addon_ids: unknown;
+              notes: string | null;
+              created_at: string;
+            }>;
+            invoices?: Array<{
+              id: string;
+              invoice_number: string;
+              booking_ref: string;
+              client_name: string;
+              package_name: string;
+              issue_date: string;
+              total_amount: number;
+              deposit_paid: number;
+              remaining_balance: number;
+              payment_method: InvoiceRecord["paymentMethod"];
+              status: InvoiceRecord["status"];
+            }>;
+            customers?: Array<{
+              id: string;
+              name: string;
+              phone: string;
+              tier: CustomerProfile["tier"];
+              skin_type: string;
+              undertone: string;
+              allergies?: string | null;
+              favorite_palette: string;
+              total_bookings?: number;
+              last_visit: string;
+              notes?: string | null;
+            }>;
           };
-          const mappedBookings: BookingRecord[] = ((bookRes.data || []) as unknown as BookingRow[]).map((b) => ({
-            id: b.id,
-            ref: b.ref,
-            clientName: b.client_name,
-            phone: b.phone,
-            packageId: b.package_id,
-            packageName: b.package_name,
-            date: b.date,
-            timeSlot: b.time_slot,
-            locationType: b.location_type,
-            venue: b.venue,
-            areaId: b.area_id,
-            totalAmount: Number(b.total_amount),
-            depositAmount: Number(b.deposit_amount),
-            remainingAmount: Number(b.remaining_amount),
-            status: b.status,
-            addonIds: Array.isArray(b.addon_ids) ? b.addon_ids : [],
-            notes: b.notes || undefined,
-            createdAt: b.created_at,
-          }));
-          if (mappedBookings.length > 0) {
+
+          if (Array.isArray(snap.bookings) && snap.bookings.length > 0) {
+            const mappedBookings: BookingRecord[] = snap.bookings.map((b) => ({
+              id: b.id,
+              ref: b.ref,
+              clientName: b.client_name,
+              phone: b.phone,
+              packageId: b.package_id,
+              packageName: b.package_name,
+              date: b.date,
+              timeSlot: b.time_slot
+                ? b.time_slot.replace(/\u200B/g, "")
+                : "عصراً (02:00 م)",
+              locationType: b.location_type,
+              venue: b.venue,
+              areaId: b.area_id,
+              totalAmount: Number(b.total_amount),
+              depositAmount: Number(b.deposit_amount),
+              remainingAmount: Number(b.remaining_amount),
+              status: b.status,
+              addonIds: Array.isArray(b.addon_ids) ? b.addon_ids : [],
+              notes: b.notes || undefined,
+              createdAt: b.created_at,
+            }));
             setBookings(mappedBookings);
             setLastConfirmedBooking(mappedBookings[0]);
           }
-        }
 
-        if (!invRes.error && invRes.data && invRes.data.length > 0) {
-          setInvoices(
-            invRes.data.map((i) => ({
-              id: i.id,
-              invoiceNumber: i.invoice_number,
-              bookingRef: i.booking_ref,
-              clientName: i.client_name,
-              packageName: i.package_name,
-              issueDate: i.issue_date,
-              totalAmount: Number(i.total_amount),
-              depositPaid: Number(i.deposit_paid),
-              remainingBalance: Number(i.remaining_balance),
-              paymentMethod: i.payment_method,
-              status: i.status,
-            }))
-          );
-        }
+          if (Array.isArray(snap.invoices) && snap.invoices.length > 0) {
+            setInvoices(
+              snap.invoices.map((i) => ({
+                id: i.id,
+                invoiceNumber: i.invoice_number,
+                bookingRef: i.booking_ref,
+                clientName: i.client_name,
+                packageName: i.package_name,
+                issueDate: i.issue_date,
+                totalAmount: Number(i.total_amount),
+                depositPaid: Number(i.deposit_paid),
+                remainingBalance: Number(i.remaining_balance),
+                paymentMethod: i.payment_method,
+                status: i.status,
+              }))
+            );
+          }
 
-        if (!custRes.error && custRes.data && custRes.data.length > 0) {
-          setCustomers(
-            custRes.data.map((c) => ({
-              id: c.id,
-              name: c.name,
-              phone: c.phone,
-              tier: c.tier,
-              skinType: c.skin_type,
-              undertone: c.undertone,
-              allergies: c.allergies || undefined,
-              favoritePalette: c.favorite_palette,
-              totalBookings: Number(c.total_bookings ?? 1),
-              lastVisit: c.last_visit,
-              notes: c.notes || "",
-            }))
-          );
+          if (Array.isArray(snap.customers) && snap.customers.length > 0) {
+            setCustomers(
+              snap.customers.map((c) => ({
+                id: c.id,
+                name: c.name,
+                phone: c.phone,
+                tier: c.tier,
+                skinType: c.skin_type,
+                undertone: c.undertone,
+                allergies: c.allergies || undefined,
+                favoritePalette: c.favorite_palette,
+                totalBookings: Number(c.total_bookings ?? 1),
+                lastVisit: c.last_visit,
+                notes: c.notes || "",
+              }))
+            );
+          }
         }
 
         if (!revRes.error && revRes.data && revRes.data.length > 0) {
@@ -425,7 +449,9 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
         }
         await seedDatabase();
         await refreshFromDatabase();
-        toast.success("تم الاتصال بقاعدة بيانات Supabase ومزامنة البيانات بنجاح ✨");
+        toast.success(
+          "تم الاتصال بقاعدة بيانات Supabase ومزامنة البيانات بنجاح ✨"
+        );
         return true;
       } catch {
         toast.error("تعذر حفظ إعدادات الاتصال");
@@ -452,7 +478,13 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
       if (stored) {
         const parsed = JSON.parse(stored);
         if (parsed.packages) setPackages(parsed.packages);
-        if (parsed.bookings) setBookings(parsed.bookings);
+        if (
+          Array.isArray(parsed.bookings) &&
+          parsed.bookings.length > 0 &&
+          !String(parsed.bookings[0]?.id || "").startsWith("slot-")
+        ) {
+          setBookings(parsed.bookings);
+        }
         if (parsed.invoices) setInvoices(parsed.invoices);
         if (parsed.customers) setCustomers(parsed.customers);
         if (parsed.reviews) setReviews(parsed.reviews);
@@ -463,7 +495,7 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
         if (parsed.lastConfirmedBooking)
           setLastConfirmedBooking(parsed.lastConfirmedBooking);
       }
-    } catch { }
+    } catch {}
     setIsLoaded(true);
 
     const { isConfigured } = getSupabaseConfig();
@@ -528,7 +560,7 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
           lastConfirmedBooking,
         })
       );
-    } catch { }
+    } catch {}
   }, [
     isLoaded,
     packages,
@@ -551,28 +583,26 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
     const supabase = createClient();
     if (supabase) {
       void (async () => {
-        const { error } = await supabase
-          .from("service_packages")
-          .insert({
-            id: newPkg.id,
-            title: newPkg.title,
-            title_en: newPkg.titleEn || "",
-            price: newPkg.price,
-            deposit_percentage: newPkg.depositPercentage,
-            duration: newPkg.duration,
-            category: newPkg.category,
-            popular: Boolean(newPkg.popular),
-            active: newPkg.active,
-            description: newPkg.description,
-            features: newPkg.features,
-            badge: newPkg.badge ?? null,
-          });
+        const { error } = await supabase.from("service_packages").insert({
+          id: newPkg.id,
+          title: newPkg.title,
+          title_en: newPkg.titleEn || "",
+          price: newPkg.price,
+          deposit_percentage: newPkg.depositPercentage,
+          duration: newPkg.duration,
+          category: newPkg.category,
+          popular: Boolean(newPkg.popular),
+          active: newPkg.active,
+          description: newPkg.description,
+          features: newPkg.features,
+          badge: newPkg.badge ?? null,
+        });
         if (error) {
           toast.error("تعذر حفظ الباقة الجديدة في قاعدة البيانات", {
             description: error.message,
           });
-          if (refreshRef.current) await refreshRef.current();
         }
+        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
@@ -581,7 +611,7 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
     setPackages((prev) =>
       prev.map((p) => (p.id === id ? { ...p, ...updates } : p))
     );
-    toast.success("تم تحديث بيانات الباقة بنجاح");
+    toast.success("تم تحديث بيانات الباقة بنجاح ✨");
 
     const supabase = createClient();
     if (supabase) {
@@ -601,13 +631,16 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
       if (updates.badge !== undefined) dbUpdates.badge = updates.badge;
 
       void (async () => {
-        const { error } = await supabase.from("service_packages").update(dbUpdates).eq("id", id);
+        const { error } = await supabase
+          .from("service_packages")
+          .update(dbUpdates)
+          .eq("id", id);
         if (error) {
           toast.error("تعذر تحديث بيانات الباقة في قاعدة البيانات", {
             description: error.message,
           });
-          if (refreshRef.current) await refreshRef.current();
         }
+        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
@@ -640,8 +673,8 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
           toast.error("تعذر تغيير حالة تفعيل الباقة", {
             description: error.message,
           });
-          if (refreshRef.current) await refreshRef.current();
         }
+        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
@@ -653,13 +686,19 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
     const supabase = createClient();
     if (supabase) {
       void (async () => {
-        const { error } = await supabase.from("service_packages").delete().eq("id", id);
+        const { error } = await supabase
+          .from("service_packages")
+          .delete()
+          .eq("id", id);
         if (error) {
           // Package is referenced by existing bookings (FK) -> archive instead of delete.
-          await supabase.from("service_packages").update({ active: false }).eq("id", id);
+          await supabase
+            .from("service_packages")
+            .update({ active: false })
+            .eq("id", id);
           toast.info("الباقة مرتبطة بحجوزات سابقة، تم إخفاؤها بدلاً من حذفها.");
-          if (refreshRef.current) await refreshRef.current();
         }
+        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
@@ -721,27 +760,27 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
     );
     const crmCustomer: CustomerProfile = existingCustomer
       ? {
-        ...existingCustomer,
-        totalBookings: existingCustomer.totalBookings + 1,
-        lastVisit: newBooking.date,
-        notes: newBooking.notes
-          ? `${existingCustomer.notes} | حجز #${ref}: ${newBooking.notes}`
-          : existingCustomer.notes,
-      }
+          ...existingCustomer,
+          totalBookings: existingCustomer.totalBookings + 1,
+          lastVisit: newBooking.date,
+          notes: newBooking.notes
+            ? `${existingCustomer.notes} | حجز #${ref}: ${newBooking.notes}`
+            : existingCustomer.notes,
+        }
       : {
-        id: "c-" + Date.now(),
-        name: newBooking.clientName,
-        phone: newBooking.phone,
-        tier: newBooking.totalAmount >= 2500 ? "VIP Royal" : "Diamond",
-        skinType: bookingData.skinType || "مختلطة نضرة",
-        undertone: "دافئ (Warm Golden)",
-        favoritePalette: "Dior Backstage & Charlotte Tilbury Pillow Talk",
-        totalBookings: 1,
-        lastVisit: newBooking.date,
-        notes:
-          newBooking.notes ||
-          `تم إنشاء ملف العميلة تلقائياً مع الحجز #${ref} (${newBooking.packageName}).`,
-      };
+          id: "c-" + Date.now(),
+          name: newBooking.clientName,
+          phone: newBooking.phone,
+          tier: newBooking.totalAmount >= 2500 ? "VIP Royal" : "Diamond",
+          skinType: bookingData.skinType || "مختلطة نضرة",
+          undertone: "دافئ (Warm Golden)",
+          favoritePalette: "Dior Backstage & Charlotte Tilbury Pillow Talk",
+          totalBookings: 1,
+          lastVisit: newBooking.date,
+          notes:
+            newBooking.notes ||
+            `تم إنشاء ملف العميلة تلقائياً مع الحجز #${ref} (${newBooking.packageName}).`,
+        };
 
     setCustomers((prev) =>
       existingCustomer
@@ -783,14 +822,14 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
         if (error) {
           const msg = error.message || "";
           toast.error(
-            msg.includes("SLOT_TAKEN")
-              ? "عذراً، هذا الموعد تم حجزه للتو. يرجى اختيار موعد آخر."
-              : msg.includes("DATE_BLOCKED")
-                ? "هذا التاريخ غير متاح للحجز."
-                : "تعذر حفظ الحجز في قاعدة البيانات. يرجى المحاولة مرة أخرى."
+            msg.includes("DATE_BLOCKED")
+              ? "هذا التاريخ غير متاح للحجز."
+              : "تعذر حفظ الحجز في قاعدة البيانات. يرجى المحاولة مرة أخرى."
           );
           setBookings((prev) => prev.filter((b) => b.ref !== newBooking.ref));
-          setInvoices((prev) => prev.filter((i) => i.bookingRef !== newBooking.ref));
+          setInvoices((prev) =>
+            prev.filter((i) => i.bookingRef !== newBooking.ref)
+          );
         }
         if (refreshRef.current) await refreshRef.current();
       })();
@@ -816,9 +855,7 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
     } else if (status === "CANCELLED") {
       setInvoices((prev) =>
         prev.map((i) =>
-          i.bookingRef === ref
-            ? { ...i, status: "ملغاة / مسترجعة" }
-            : i
+          i.bookingRef === ref ? { ...i, status: "ملغاة / مسترجعة" } : i
         )
       );
     }
@@ -828,34 +865,16 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
     const supabase = createClient();
     if (supabase) {
       void (async () => {
-        const { error: bookingErr } = await supabase
-          .from("bookings")
-          .update({ status })
-          .eq("ref", ref);
-
-        if (bookingErr) {
+        const { error } = await supabase.rpc("admin_update_booking_status", {
+          p_ref: ref,
+          p_status: status,
+        });
+        if (error) {
           toast.error("تعذر تحديث حالة الحجز في قاعدة البيانات", {
-            description: bookingErr.message,
+            description: error.message,
           });
-          if (refreshRef.current) await refreshRef.current();
-          return;
         }
-
-        if (status === "COMPLETED") {
-          const { error: invErr } = await supabase
-            .from("invoices")
-            .update({ status: "مسدد بالكامل", remaining_balance: 0 })
-            .eq("booking_ref", ref);
-
-          if (invErr) {
-            toast.error("تعذر تحديث الفاتورة المرتبطة بالحجز");
-          }
-        } else if (status === "CANCELLED") {
-          await supabase
-            .from("invoices")
-            .update({ status: "ملغاة / مسترجعة" })
-            .eq("booking_ref", ref);
-        }
+        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
@@ -874,9 +893,8 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
 
     const supabase = createClient();
     if (supabase) {
-      supabase
-        .from("reviews")
-        .insert({
+      void (async () => {
+        await supabase.from("reviews").insert({
           id: newRev.id,
           client_name: newRev.clientName,
           package_title: newRev.packageTitle,
@@ -886,8 +904,9 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
           comment: newRev.comment,
           approved: newRev.approved,
           featured: newRev.featured,
-        })
-        .then();
+        });
+        if (refreshRef.current) await refreshRef.current();
+      })();
     }
   };
 
@@ -913,8 +932,8 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
           .eq("id", id);
         if (error) {
           toast.error("تعذر تحديث حالة اعتماد التقييم");
-          if (refreshRef.current) await refreshRef.current();
         }
+        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
@@ -941,8 +960,8 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
           .eq("id", id);
         if (error) {
           toast.error("تعذر تحديث تمييز التقييم");
-          if (refreshRef.current) await refreshRef.current();
         }
+        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
@@ -956,12 +975,11 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
         const { error } = await supabase.from("reviews").delete().eq("id", id);
         if (error) {
           toast.error("تعذر حذف التقييم من قاعدة البيانات");
-          if (refreshRef.current) await refreshRef.current();
         }
+        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
-
 
   const updateCustomerNotes = (id: string, notes: string) => {
     setCustomers((prev) =>
@@ -972,11 +990,14 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
     const supabase = createClient();
     if (supabase) {
       void (async () => {
-        const { error } = await supabase.from("customers").update({ notes }).eq("id", id);
+        const { error } = await supabase.rpc("admin_update_customer_notes", {
+          p_id: id,
+          p_notes: notes,
+        });
         if (error) {
           toast.error("تعذر حفظ ملاحظات ملف العميلة في قاعدة البيانات");
-          if (refreshRef.current) await refreshRef.current();
         }
+        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
@@ -1001,7 +1022,10 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
       void (async () => {
         let err;
         if (wasBlocked) {
-          const res = await supabase.from("blocked_dates").delete().eq("date", date);
+          const res = await supabase
+            .from("blocked_dates")
+            .delete()
+            .eq("date", date);
           err = res.error;
         } else {
           const res = await supabase
@@ -1011,8 +1035,8 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
         }
         if (err) {
           toast.error("تعذر تحديث حالة إغلاق التاريخ في قاعدة البيانات");
-          if (refreshRef.current) await refreshRef.current();
         }
+        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
@@ -1028,29 +1052,29 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
     const supabase = createClient();
     if (supabase) {
       void (async () => {
-        const { error } = await supabase
-          .from("blog_posts")
-          .insert({
-            id: newPost.id,
-            slug: newPost.slug,
-            title: newPost.title,
-            excerpt: newPost.excerpt,
-            content: newPost.content,
-            category: newPost.category,
-            category_ar: newPost.categoryAr,
-            author: newPost.author,
-            author_role: newPost.authorRole,
-            read_time: newPost.readTime,
-            published_at: newPost.publishedAt,
-            cover_image: newPost.coverImage,
-            featured: Boolean(newPost.featured),
-            published: newPost.published,
-            tags: newPost.tags,
-          });
+        const { error } = await supabase.from("blog_posts").insert({
+          id: newPost.id,
+          slug: newPost.slug,
+          title: newPost.title,
+          excerpt: newPost.excerpt,
+          content: newPost.content,
+          category: newPost.category,
+          category_ar: newPost.categoryAr,
+          author: newPost.author,
+          author_role: newPost.authorRole,
+          read_time: newPost.readTime,
+          published_at: newPost.publishedAt,
+          cover_image: newPost.coverImage,
+          featured: Boolean(newPost.featured),
+          published: newPost.published,
+          tags: newPost.tags,
+        });
         if (error) {
-          toast.error("تعذر نشر المقال في قاعدة البيانات", { description: error.message });
-          if (refreshRef.current) await refreshRef.current();
+          toast.error("تعذر نشر المقال في قاعدة البيانات", {
+            description: error.message,
+          });
         }
+        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
@@ -1077,11 +1101,14 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
       if (updates.tags !== undefined) dbUpdates.tags = updates.tags;
 
       void (async () => {
-        const { error } = await supabase.from("blog_posts").update(dbUpdates).eq("id", id);
+        const { error } = await supabase
+          .from("blog_posts")
+          .update(dbUpdates)
+          .eq("id", id);
         if (error) {
           toast.error("تعذر تحديث بيانات المقال");
-          if (refreshRef.current) await refreshRef.current();
         }
+        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
@@ -1093,11 +1120,14 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
     const supabase = createClient();
     if (supabase) {
       void (async () => {
-        const { error } = await supabase.from("blog_posts").delete().eq("id", id);
+        const { error } = await supabase
+          .from("blog_posts")
+          .delete()
+          .eq("id", id);
         if (error) {
           toast.error("تعذر حذف المقال من قاعدة البيانات");
-          if (refreshRef.current) await refreshRef.current();
         }
+        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
@@ -1124,8 +1154,8 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
           .eq("id", id);
         if (error) {
           toast.error("تعذر تحديث حالة نشر المقال");
-          if (refreshRef.current) await refreshRef.current();
         }
+        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
@@ -1152,8 +1182,8 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
           .eq("id", id);
         if (error) {
           toast.error("تعذر تحديث تمييز المقال");
-          if (refreshRef.current) await refreshRef.current();
         }
+        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };

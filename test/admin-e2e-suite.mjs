@@ -218,7 +218,74 @@ async function run() {
     assert('Admin updates blog post published & featured status', Array.isArray(blogPatchData) && blogPatchData.length > 0, blogPatchData);
   }
 
-  // H. Clean up test records and verify cascading invoice deletion
+  // H. Test creating a booking on the default frontend date/slot (2025-10-18 + عصراً (02:00 م))
+  const defaultSlotRef = 'AK-DEF-' + Date.now();
+  const defRes = await fetch(`${U}/rest/v1/rpc/create_booking`, {
+    method: 'POST',
+    headers: H(),
+    body: JSON.stringify({
+      p: {
+        id: 'b-' + defaultSlotRef,
+        ref: defaultSlotRef,
+        client_name: 'عروس افتراضية',
+        phone: '0598888888',
+        package_id: 'vip-bridal',
+        date: '2025-10-18',
+        time_slot: 'عصراً (02:00 م)',
+        location_type: 'HOTEL_HALL',
+        venue: 'فندق الريتز-كارلتون، الرياض',
+        area_id: 'area_hotels_vip',
+        status: 'CONFIRMED',
+        addon_ids: ['addon_hair', 'addon_facial'],
+        notes: 'اختبار التاريخ الافتراضي للواجهة',
+        invoice: {
+          id: 'inv-' + defaultSlotRef,
+          invoice_number: 'INV-' + defaultSlotRef,
+          issue_date: '2025-10-18',
+          payment_method: 'Apple Pay',
+          status: 'مدفوع العربون (30%)',
+        },
+      },
+    }),
+  });
+  const defVal = await json(defRes);
+  assert('Frontend default date/slot (2025-10-18 عصراً) booking syncs to backend without SLOT_TAKEN failure', defRes.status === 200 && defVal.ref === defaultSlotRef, defVal);
+
+  // I. Test editing a service package from the Admin Dashboard and verifying DB persistence
+  const origPrice = targetPkg.price;
+  const newPrice = origPrice + 150;
+  const editPkgRes = await fetch(`${U}/rest/v1/service_packages?id=eq.${targetPkg.id}`, {
+    method: 'PATCH',
+    headers: H(),
+    body: JSON.stringify({ price: newPrice }),
+  });
+  const editPkgData = await json(editPkgRes);
+  assert('Admin edits service package price and persists to Supabase DB', Array.isArray(editPkgData) && editPkgData[0]?.price === newPrice, editPkgData);
+
+  // Restore original package price
+  await fetch(`${U}/rest/v1/service_packages?id=eq.${targetPkg.id}`, {
+    method: 'PATCH',
+    headers: H(),
+    body: JSON.stringify({ price: origPrice }),
+  });
+
+  // J. Test get_admin_dashboard_snapshot RPC returns full bookings, invoices, customers
+  const snapRes = await fetch(`${U}/rest/v1/rpc/get_admin_dashboard_snapshot`, {
+    method: 'POST',
+    headers: H(),
+    body: JSON.stringify({}),
+  });
+  const snapData = await json(snapRes);
+  assert('get_admin_dashboard_snapshot RPC returns live bookings, invoices, and customers', Array.isArray(snapData?.bookings) && snapData.bookings.some((b) => b.ref === defaultSlotRef), snapData?.bookings?.length);
+
+  // K. Clean up test records and verify cascading invoice deletion
+  const delDefBooking = await fetch(`${U}/rest/v1/bookings?ref=eq.${defaultSlotRef}`, {
+    method: 'DELETE',
+    headers: H(token),
+  });
+  assert('Clean up default-slot test booking', delDefBooking.status === 200 || delDefBooking.status === 204, delDefBooking.status);
+  await fetch(`${U}/rest/v1/customers?phone=eq.0598888888`, { method: 'DELETE', headers: H(token) });
+
   const delBooking = await fetch(`${U}/rest/v1/bookings?ref=eq.${testRef}`, {
     method: 'DELETE',
     headers: H(token),

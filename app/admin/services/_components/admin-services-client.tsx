@@ -34,6 +34,7 @@ export function AdminServicesClient() {
   // Edit form state
   const [editTitle, setEditTitle] = useState("");
   const [editPrice, setEditPrice] = useState(0);
+  const [editDepositPercentage, setEditDepositPercentage] = useState(30);
   const [editDuration, setEditDuration] = useState("");
   const [editDesc, setEditDesc] = useState("");
 
@@ -41,6 +42,7 @@ export function AdminServicesClient() {
     setEditingPkg(pkg);
     setEditTitle(pkg.title);
     setEditPrice(pkg.price);
+    setEditDepositPercentage(pkg.depositPercentage ?? 30);
     setEditDuration(pkg.duration);
     setEditDesc(pkg.description);
   };
@@ -51,6 +53,7 @@ export function AdminServicesClient() {
     updatePackage(editingPkg.id, {
       title: editTitle,
       price: Number(editPrice),
+      depositPercentage: Number(editDepositPercentage),
       duration: editDuration,
       description: editDesc,
     });
@@ -190,7 +193,7 @@ export function AdminServicesClient() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="text-xs font-bold text-[#2f020d] block mb-1">السعر (ر.س)</label>
                   <input
@@ -198,6 +201,18 @@ export function AdminServicesClient() {
                     required
                     value={editPrice}
                     onChange={(e) => setEditPrice(Number(e.target.value))}
+                    className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">نسبة العربون (%)</label>
+                  <input
+                    type="number"
+                    required
+                    min={0}
+                    max={100}
+                    value={editDepositPercentage}
+                    onChange={(e) => setEditDepositPercentage(Number(e.target.value))}
                     className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
                   />
                 </div>
