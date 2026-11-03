@@ -33,7 +33,7 @@ export function AdminLoginClient() {
   const searchParams = useSearchParams();
   const nextPath = searchParams.get("next") || "/admin";
 
-  const { refreshFromDatabase } = useAppStore();
+  const { isSupabaseConnected, refreshFromDatabase } = useAppStore();
 
   const [tab, setTab] = useState<"pass" | "otp" | "bio">("pass");
   const authMode = "signin" as "signin" | "signup";
