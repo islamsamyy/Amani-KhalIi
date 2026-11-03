@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@/providers/app-store-provider";
 import { SiteFooter } from "@/components/site-footer";
+import { AnimatedStudioBanner } from "@/components/animated-studio-banner";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -53,32 +54,32 @@ import { toast } from "sonner";
 // Authentic Studio Photos of Makeup Artist Amani Khalil
 const AMANI_STUDIO_LOOKS = [
   {
-    id: "look-hero",
-    src: "/amani-hero.jpg",
-    title: "استوديو التجهيز الملكي السينمائي",
-    subtitle: "مرايا الإضاءة السينمائية 4K ومستحضرات الهوت كوتور الفاخرة",
-    tag: "الاستوديو الملكي بالرياض",
+    id: "look-monogram-banner",
+    src: "/amani-monogram-banner.jpg",
+    title: "أتيليه أماني خليل — الهوية الملكية الرسمية",
+    subtitle: "جلسات التجهيز الفندقي والقصور الفاخرة بأرقى مستحضرات الهوت كوتور",
+    tag: "البانر الرسمي المعتمد",
   },
   {
-    id: "look-emerald",
-    src: "/amani-1.jpg",
-    title: "البورتريه الملكي المعتمد — أماني خليل",
-    subtitle: "إشراقة الأناقة الزمردية ونقاء البشرة الزجاجية Glass Skin",
-    tag: "البورتريه الرسمي 2025",
+    id: "look-vanity-brush",
+    src: "/amani-vanity-brush.jpg",
+    title: "استوديو التجهيز السينمائي الملكي 4K",
+    subtitle: "مرايا هوليوود المتطورة وأدوات كونتور وإضاءة العين والوجنتين",
+    tag: "أتيليه الرياض",
   },
   {
-    id: "look-brush",
-    src: "/amani-2.jpg",
-    title: "انتقاء فراشي الدمج الاحترافية بالاستوديو",
-    subtitle: "أدوات مخصصة لكل خطوة في كونتور وإضاءة العين والوجنتين",
-    tag: "كواليس العمل بالأكاديمية",
+    id: "look-client-bridal",
+    src: "/amani-client-bridal.jpg",
+    title: "تجهيز العروس الملكية مباشرة بالاستوديو",
+    subtitle: "تطبيق معايير دبلوم CIDESCO الدولي لتهيئة البشرة وتناغم الفاونديشن",
+    tag: "جلسة عروس حصرية",
   },
   {
-    id: "look-palette",
-    src: "/amani-3.jpg",
-    title: "تنسيق باليتات الظلال والفاونديشن العالمي",
-    subtitle: "مواءمة درجات الألوان بدقة سينمائية مع إضاءة قاعات الأفراح",
-    tag: "تجهيز المستحضرات",
+    id: "look-mirror-glam",
+    src: "/amani-mirror-glam.jpg",
+    title: "إشراقة الملامح وسحر البشرة الزجاجية Glass Skin",
+    subtitle: "إبراز الجمال الطبيعي بدقة عالية وتثبيت هيدروليكي يدوم ١٨ ساعة",
+    tag: "كواليس الجلسة",
   },
 ];
 
@@ -618,6 +619,11 @@ export function HomeClient() {
             </div>
           </div>
         </section>
+      </ScrollReveal>
+
+            {/* 2.2 CINEMATIC ANIMATED STUDIO SHOWCASE BANNER */}
+      <ScrollReveal>
+        <AnimatedStudioBanner />
       </ScrollReveal>
 
       {/* 2.5 MEET THE ARTIST: AMANI KHALIL (DEDICATED LUXURY SPOTLIGHT & AUTHENTIC STUDIO PHOTOS) */}

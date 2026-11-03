@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { DEFAULT_PUBLISHABLE_KEY } from "@/lib/supabase/config";
 import { useAppStore } from "@/providers/app-store-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,10 +33,7 @@ export function AdminLoginClient() {
   const searchParams = useSearchParams();
   const nextPath = searchParams.get("next") || "/admin";
 
-  const {
-    isSupabaseConnected,
-    configureSupabaseConnection,
-    refreshFrom} = useAppStore();
+  const { refreshFromDatabase } = useAppStore();
 
   const [tab, setTab] = useState<"pass" | "otp" | "bio">("pass");
   const authMode = "signin" as "signin" | "signup";
