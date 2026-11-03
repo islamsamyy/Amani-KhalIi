@@ -257,7 +257,14 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
             }))
           );
         } else if (isAdminUser && !bookRes.error && bookRes.data) {
-          const mappedBookings: BookingRecord[] = ((bookRes.data || []) as unknown as BookingRecord[]).map((b) => ({
+          type BookingRow = {
+            id: string; ref: string; client_name: string; phone: string;
+            package_id: string; package_name: string; date: string; time_slot: string;
+            location_type: BookingRecord["locationType"]; venue: string; area_id: string;
+            total_amount: number; deposit_amount: number; remaining_amount: number;
+            status: BookingRecord["status"]; addon_ids: unknown; notes: string | null; created_at: string;
+          };
+          const mappedBookings: BookingRecord[] = ((bookRes.data || []) as unknown as BookingRow[]).map((b) => ({
             id: b.id,
             ref: b.ref,
             clientName: b.client_name,
