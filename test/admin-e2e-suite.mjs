@@ -257,17 +257,51 @@ async function run() {
   const editPkgRes = await fetch(`${U}/rest/v1/service_packages?id=eq.${targetPkg.id}`, {
     method: 'PATCH',
     headers: H(),
-    body: JSON.stringify({ price: newPrice }),
+    body: JSON.stringify({
+      price: newPrice,
+      duration: '٥ ساعات تفرغ كامل',
+      features: ['ميزة اختبار معدلة ١', 'ميزة اختبار معدلة ٢'],
+      badge: 'شارة اختبار معدلة',
+    }),
   });
   const editPkgData = await json(editPkgRes);
-  assert('Admin edits service package price and persists to Supabase DB', Array.isArray(editPkgData) && editPkgData[0]?.price === newPrice, editPkgData);
+  assert(
+    'Admin edits service package price and full details and persists to Supabase DB',
+    Array.isArray(editPkgData) &&
+      editPkgData[0]?.price === newPrice &&
+      editPkgData[0]?.features?.includes('ميزة اختبار معدلة ١') &&
+      editPkgData[0]?.badge === 'شارة اختبار معدلة',
+    editPkgData
+  );
 
-  // Restore original package price
+  // Restore original package price and details
   await fetch(`${U}/rest/v1/service_packages?id=eq.${targetPkg.id}`, {
     method: 'PATCH',
     headers: H(),
-    body: JSON.stringify({ price: origPrice }),
+    body: JSON.stringify({ price: origPrice, duration: '٤ إلى ٥ ساعات تفرغ كامل' }),
   });
+
+  // I2. Test editing all blog post fields (title, author, author_role, read_time, cover_image) and verifying DB persistence
+  const editBlogRes = await fetch(`${U}/rest/v1/blog_posts?id=eq.post-1`, {
+    method: 'PATCH',
+    headers: H(),
+    body: JSON.stringify({
+      title: 'عنوان تجريبي محدث بالكامل',
+      author: 'أماني خليل المعتمدة',
+      author_role: 'خبير دولي CIDESCO',
+      read_time: '٦ دقائق قراءة',
+      cover_image: '/gallery/IMG_5729.webp',
+    }),
+  });
+  const editBlogData = await json(editBlogRes);
+  assert(
+    'Admin edits blog post details (title, author, author_role, read_time) and persists to Supabase DB',
+    Array.isArray(editBlogData) &&
+      editBlogData[0]?.title === 'عنوان تجريبي محدث بالكامل' &&
+      editBlogData[0]?.author === 'أماني خليل المعتمدة' &&
+      editBlogData[0]?.read_time === '٦ دقائق قراءة',
+    editBlogData
+  );
 
   // J. Test get_admin_dashboard_snapshot RPC returns full bookings, invoices, customers
   const snapRes = await fetch(`${U}/rest/v1/rpc/get_admin_dashboard_snapshot`, {

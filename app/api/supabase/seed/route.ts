@@ -38,7 +38,7 @@ export async function POST() {
         features: p.features,
         badge: p.badge ?? null,
       })),
-      { onConflict: "id" }
+      { onConflict: "id", ignoreDuplicates: true }
     );
 
     await supabase.from("addons").upsert(
@@ -49,7 +49,7 @@ export async function POST() {
         description: a.description,
         popular: Boolean(a.popular),
       })),
-      { onConflict: "id" }
+      { onConflict: "id", ignoreDuplicates: true }
     );
 
     await supabase.from("riyadh_areas").upsert(
@@ -60,7 +60,7 @@ export async function POST() {
         zone: a.zone,
         travel_fee: a.travelFee,
       })),
-      { onConflict: "id" }
+      { onConflict: "id", ignoreDuplicates: true }
     );
 
     await supabase.from("bookings").upsert(
@@ -84,7 +84,7 @@ export async function POST() {
         notes: b.notes ?? null,
         created_at: b.createdAt,
       })),
-      { onConflict: "ref" }
+      { onConflict: "ref", ignoreDuplicates: true }
     );
 
     await supabase.from("invoices").upsert(
@@ -118,7 +118,7 @@ export async function POST() {
         last_visit: c.lastVisit,
         notes: c.notes,
       })),
-      { onConflict: "id" }
+      { onConflict: "id", ignoreDuplicates: true }
     );
 
     await supabase.from("reviews").upsert(
@@ -133,7 +133,7 @@ export async function POST() {
         approved: r.approved,
         featured: r.featured,
       })),
-      { onConflict: "id" }
+      { onConflict: "id", ignoreDuplicates: true }
     );
 
     await supabase.from("gallery_looks").upsert(
@@ -146,7 +146,7 @@ export async function POST() {
         client_type: g.clientType,
         style_tags: g.styleTags,
       })),
-      { onConflict: "id" }
+      { onConflict: "id", ignoreDuplicates: true }
     );
 
     await supabase.from("blog_posts").upsert(
@@ -167,7 +167,7 @@ export async function POST() {
         published: p.published,
         tags: p.tags,
       })),
-      { onConflict: "id" }
+      { onConflict: "id", ignoreDuplicates: true }
     );
 
     await supabase.from("faqs").upsert(
@@ -179,7 +179,7 @@ export async function POST() {
         answer: f.answer,
         keywords: f.keywords,
       })),
-      { onConflict: "id" }
+      { onConflict: "id", ignoreDuplicates: true }
     );
 
     await supabase.from("blocked_dates").upsert(

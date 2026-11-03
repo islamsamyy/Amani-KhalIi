@@ -33,29 +33,52 @@ export function AdminServicesClient() {
 
   // Edit form state
   const [editTitle, setEditTitle] = useState("");
+  const [editTitleEn, setEditTitleEn] = useState("");
   const [editPrice, setEditPrice] = useState(0);
   const [editDepositPercentage, setEditDepositPercentage] = useState(30);
   const [editDuration, setEditDuration] = useState("");
+  const [editCategory, setEditCategory] = useState<ServicePackage["category"]>("bridal");
+  const [editBadge, setEditBadge] = useState("");
   const [editDesc, setEditDesc] = useState("");
+  const [editFeatures, setEditFeatures] = useState("");
+  const [editPopular, setEditPopular] = useState(false);
+  const [editActive, setEditActive] = useState(true);
 
   const startEdit = (pkg: ServicePackage) => {
     setEditingPkg(pkg);
     setEditTitle(pkg.title);
+    setEditTitleEn(pkg.titleEn || "");
     setEditPrice(pkg.price);
     setEditDepositPercentage(pkg.depositPercentage ?? 30);
     setEditDuration(pkg.duration);
+    setEditCategory(pkg.category);
+    setEditBadge(pkg.badge || "");
     setEditDesc(pkg.description);
+    setEditFeatures((pkg.features || []).join("\n"));
+    setEditPopular(Boolean(pkg.popular));
+    setEditActive(Boolean(pkg.active));
   };
 
   const handleSaveEdit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingPkg) return;
+    const parsedFeatures = editFeatures
+      .split("\n")
+      .map((f) => f.trim())
+      .filter(Boolean);
+
     updatePackage(editingPkg.id, {
-      title: editTitle,
+      title: editTitle.trim(),
+      titleEn: editTitleEn.trim() || editTitle.trim(),
       price: Number(editPrice),
       depositPercentage: Number(editDepositPercentage),
-      duration: editDuration,
-      description: editDesc,
+      duration: editDuration.trim(),
+      category: editCategory,
+      badge: editBadge.trim() || undefined,
+      description: editDesc.trim(),
+      features: parsedFeatures.length > 0 ? parsedFeatures : editingPkg.features,
+      popular: editPopular,
+      active: editActive,
     });
     setEditingPkg(null);
   };
@@ -171,41 +194,54 @@ export function AdminServicesClient() {
 
         {/* Edit Package Modal Dialog */}
         <Dialog open={editingPkg !== null} onOpenChange={(open) => !open && setEditingPkg(null)}>
-          <DialogContent className="max-w-lg bg-[#fff8f7] border border-[#d7c1c3] p-6 text-right">
+          <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto bg-[#fff8f7] border border-[#d7c1c3] p-6 text-right rounded-3xl" dir="rtl">
             <DialogHeader className="text-right">
               <DialogTitle className="text-lg font-bold text-[#2f020d]">
-                تعديل بيانات الباقة: {editingPkg?.title}
+                تعديل بيانات وتفاصيل الباقة: {editingPkg?.title}
               </DialogTitle>
               <DialogDescription className="text-xs text-[#524345]">
-                تحديث السعر والمدة والوصف الرسمي المنشور في الموقع العام.
+                تحديث السعر الرسمي، نسبة العربون، تفاصيل المميزات، التصنيف، والوصف المعروض في الموقع العام.
               </DialogDescription>
             </DialogHeader>
 
             <form onSubmit={handleSaveEdit} className="space-y-4 my-2">
-              <div>
-                <label className="text-xs font-bold text-[#2f020d] block mb-1">اسم الباقة</label>
-                <input
-                  type="text"
-                  required
-                  value={editTitle}
-                  onChange={(e) => setEditTitle(e.target.value)}
-                  className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">اسم الباقة (عربي) *</label>
+                  <input
+                    type="text"
+                    required
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">اسم الباقة (English)</label>
+                  <input
+                    type="text"
+                    value={editTitleEn}
+                    onChange={(e) => setEditTitleEn(e.target.value)}
+                    placeholder="e.g. Royal Bridal VIP"
+                    className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="text-xs font-bold text-[#2f020d] block mb-1">السعر (ر.س)</label>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">السعر الرسمي (ر.س) *</label>
                   <input
                     type="number"
                     required
+                    min={0}
                     value={editPrice}
                     onChange={(e) => setEditPrice(Number(e.target.value))}
                     className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-[#2f020d] block mb-1">نسبة العربون (%)</label>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">نسبة العربون (%) *</label>
                   <input
                     type="number"
                     required
@@ -217,28 +253,94 @@ export function AdminServicesClient() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-[#2f020d] block mb-1">مدة الجلسة</label>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">مدة الجلسة *</label>
                   <input
                     type="text"
                     required
                     value={editDuration}
                     onChange={(e) => setEditDuration(e.target.value)}
+                    placeholder="٤ إلى ٥ ساعات"
+                    className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">التصنيف</label>
+                  <select
+                    value={editCategory}
+                    onChange={(e) => setEditCategory(e.target.value as ServicePackage["category"])}
+                    className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
+                  >
+                    <option value="bridal">عرائس ملكي (Bridal)</option>
+                    <option value="engagement">عقد قران وملكة (Engagement)</option>
+                    <option value="evening">سهرات ومناسبات (Evening)</option>
+                    <option value="trial">جلسات التجربة (Trial)</option>
+                    <option value="group">مرافقات ومجموعات (Group)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">شارة الباقة (Badge)</label>
+                  <input
+                    type="text"
+                    value={editBadge}
+                    onChange={(e) => setEditBadge(e.target.value)}
+                    placeholder="مثال: الأكثر طلباً للعرائس"
                     className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-bold text-[#2f020d] block mb-1">الوصف المختصر</label>
+                <label className="text-xs font-bold text-[#2f020d] block mb-1">الوصف العام للباقة</label>
                 <textarea
-                  rows={3}
+                  rows={2}
                   value={editDesc}
                   onChange={(e) => setEditDesc(e.target.value)}
                   className="w-full p-3 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2">
+              <div>
+                <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                  المميزات والتفاصيل الملكية (كل ميزة في سطر منفصل)
+                </label>
+                <textarea
+                  rows={4}
+                  value={editFeatures}
+                  onChange={(e) => setEditFeatures(e.target.value)}
+                  placeholder="حضور حصري لعروس واحدة يومياً&#10;رموش Mink 3D مخصصة لمورفولوجيا العين&#10;حقيبة رتوش فاخرة هدية"
+                  className="w-full p-3 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00] font-sans leading-relaxed"
+                />
+                <span className="text-[11px] text-[#857374] block mt-0.5">
+                  اكتبي كل ميزة في سطر جديد وستظهر كعلامة صح ✓ في بطاقة الباقة.
+                </span>
+              </div>
+
+              <div className="pt-2 flex items-center gap-6 border-t border-[#eedfe0]">
+                <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-[#2f020d]">
+                  <input
+                    type="checkbox"
+                    checked={editActive}
+                    onChange={(e) => setEditActive(e.target.checked)}
+                    className="rounded text-[#2f020d] focus:ring-0"
+                  />
+                  <span>تفعيل الباقة في الموقع العام للعميلات</span>
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-[#2f020d]">
+                  <input
+                    type="checkbox"
+                    checked={editPopular}
+                    onChange={(e) => setEditPopular(e.target.checked)}
+                    className="rounded text-[#2f020d] focus:ring-0"
+                  />
+                  <span>تمييز الباقة كأكثر طلباً</span>
+                </label>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3 border-t border-[#eedfe0]">
                 <Button variant="outline" type="button" onClick={() => setEditingPkg(null)} className="rounded-full text-xs">
                   إلغاء
                 </Button>

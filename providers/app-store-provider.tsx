@@ -602,7 +602,6 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
             description: error.message,
           });
         }
-        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
@@ -631,16 +630,38 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
       if (updates.badge !== undefined) dbUpdates.badge = updates.badge;
 
       void (async () => {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("service_packages")
           .update(dbUpdates)
-          .eq("id", id);
+          .eq("id", id)
+          .select()
+          .single();
         if (error) {
           toast.error("تعذر تحديث بيانات الباقة في قاعدة البيانات", {
             description: error.message,
           });
+        } else if (data) {
+          setPackages((prev) =>
+            prev.map((p) =>
+              p.id === id
+                ? {
+                    id: data.id,
+                    title: data.title,
+                    titleEn: data.title_en || "",
+                    price: Number(data.price),
+                    depositPercentage: Number(data.deposit_percentage ?? 30),
+                    duration: data.duration,
+                    category: data.category,
+                    popular: Boolean(data.popular),
+                    active: Boolean(data.active),
+                    description: data.description,
+                    features: Array.isArray(data.features) ? data.features : [],
+                    badge: data.badge || undefined,
+                  }
+                : p
+            )
+          );
         }
-        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
@@ -674,7 +695,6 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
             description: error.message,
           });
         }
-        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
@@ -698,7 +718,6 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
             .eq("id", id);
           toast.info("الباقة مرتبطة بحجوزات سابقة، تم إخفاؤها بدلاً من حذفها.");
         }
-        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
@@ -1074,7 +1093,6 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
             description: error.message,
           });
         }
-        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
@@ -1083,7 +1101,7 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
     setBlogPosts((prev) =>
       prev.map((p) => (p.id === id ? { ...p, ...updates } : p))
     );
-    toast.success("تم تحديث بيانات المقال بنجاح");
+    toast.success("تم تحديث بيانات المقال بنجاح ✨");
 
     const supabase = createClient();
     if (supabase) {
@@ -1095,20 +1113,56 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
       if (updates.category !== undefined) dbUpdates.category = updates.category;
       if (updates.categoryAr !== undefined)
         dbUpdates.category_ar = updates.categoryAr;
+      if (updates.author !== undefined) dbUpdates.author = updates.author;
+      if (updates.authorRole !== undefined)
+        dbUpdates.author_role = updates.authorRole;
+      if (updates.readTime !== undefined)
+        dbUpdates.read_time = updates.readTime;
+      if (updates.publishedAt !== undefined)
+        dbUpdates.published_at = updates.publishedAt;
+      if (updates.coverImage !== undefined)
+        dbUpdates.cover_image = updates.coverImage;
       if (updates.published !== undefined)
         dbUpdates.published = updates.published;
       if (updates.featured !== undefined) dbUpdates.featured = updates.featured;
       if (updates.tags !== undefined) dbUpdates.tags = updates.tags;
 
       void (async () => {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("blog_posts")
           .update(dbUpdates)
-          .eq("id", id);
+          .eq("id", id)
+          .select()
+          .single();
         if (error) {
-          toast.error("تعذر تحديث بيانات المقال");
+          toast.error("تعذر تحديث بيانات المقال في قاعدة البيانات", {
+            description: error.message,
+          });
+        } else if (data) {
+          setBlogPosts((prev) =>
+            prev.map((p) =>
+              p.id === id
+                ? {
+                    id: data.id,
+                    slug: data.slug,
+                    title: data.title,
+                    excerpt: data.excerpt,
+                    content: data.content,
+                    category: data.category,
+                    categoryAr: data.category_ar,
+                    author: data.author,
+                    authorRole: data.author_role,
+                    readTime: data.read_time,
+                    publishedAt: data.published_at,
+                    coverImage: data.cover_image,
+                    featured: Boolean(data.featured),
+                    published: Boolean(data.published),
+                    tags: Array.isArray(data.tags) ? data.tags : [],
+                  }
+                : p
+            )
+          );
         }
-        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
@@ -1127,7 +1181,6 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
         if (error) {
           toast.error("تعذر حذف المقال من قاعدة البيانات");
         }
-        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
@@ -1155,7 +1208,6 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
         if (error) {
           toast.error("تعذر تحديث حالة نشر المقال");
         }
-        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };
@@ -1181,9 +1233,8 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
           .update({ featured: nextFeat })
           .eq("id", id);
         if (error) {
-          toast.error("تعذر تحديث تمييز المقال");
+          toast.error("تعذر تحديث تمييز المقال في قاعدة البيانات");
         }
-        if (refreshRef.current) await refreshRef.current();
       })();
     }
   };

@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { getSupabaseConfig, DEFAULT_PUBLISHABLE_KEY } from "@/lib/supabase/config";
+import { DEFAULT_PUBLISHABLE_KEY } from "@/lib/supabase/config";
 import { useAppStore } from "@/providers/app-store-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,7 +25,6 @@ import {
   Loader2,
   CheckCircle2,
   ExternalLink,
-  Database,
   UserPlus,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -38,29 +37,20 @@ export function AdminLoginClient() {
   const {
     isSupabaseConnected,
     configureSupabaseConnection,
-    refreshFromDatabase,
-  } = useAppStore();
+    refreshFrom} = useAppStore();
 
   const [tab, setTab] = useState<"pass" | "otp" | "bio">("pass");
   const authMode = "signin" as "signin" | "signup";
-  const [email, setEmail] = useState("admin@amanikhalil.sa");
-  const [password, setPassword] = useState("AmaniAtelier2025!");
-  const [phone, setPhone] = useState("+966501284492");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otpCode, setOtpCode] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Supabase connection helper state
-  const [showDbSetup, setShowDbSetup] = useState(false);
-  const [projectUrl, setProjectUrl] = useState("");
-  const [publishableKey, setPublishableKey] = useState(DEFAULT_PUBLISHABLE_KEY);
-
   useEffect(() => {
-    const cfg = getSupabaseConfig();
-    if (cfg.url) setProjectUrl(cfg.url);
-    if (cfg.key) setPublishableKey(cfg.key);
 
     const err = searchParams.get("error");
     if (err === "not_admin") {
@@ -71,15 +61,7 @@ export function AdminLoginClient() {
     }
   }, [searchParams]);
 
-  const handleSaveSupabaseConfig = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    await configureSupabaseConnection(projectUrl, publishableKey);
-    setIsLoading(false);
-    setShowDbSetup(false);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -94,7 +76,7 @@ export function AdminLoginClient() {
               "اضغطي على زر إعداد اتصال Supabase أعلاه وألصقي رابط المشروع.",
           }
         );
-        setShowDbSetup(true);
+        
         setIsLoading(false);
         return;
       }
@@ -130,7 +112,7 @@ export function AdminLoginClient() {
         if (data.user) {
           await refreshFromDatabase();
           toast.success(
-            "تم التحقق عبر Supabase Auth بنجاح • مرحباً بكِ في لوحة تحكم أماني خليل ✨"
+            "تم التحقق الرسمي بنجاح • مرحباً بكِ في لوحة تحكم أماني خليل ✨"
           );
           window.location.href = nextPath;
           return;
@@ -149,7 +131,7 @@ export function AdminLoginClient() {
             },
           });
           if (error) {
-            toast.error("تعذر إرسال رمز التحقق عبر Supabase Auth", {
+            toast.error("تعذر إرسال رمز التحقق الرسمي", {
               description: error.message,
             });
           } else {
@@ -205,90 +187,6 @@ export function AdminLoginClient() {
       data-shell-ui="true"
       className="min-h-screen bg-[#fff8f7] flex flex-col justify-between"
     >
-      {/* Top Security & Supabase Status Banner */}
-      <div className="w-full py-3 px-6 sm:px-12 flex flex-wrap items-center justify-between gap-2 border-b border-[#f3dedf] text-xs text-[#524345]">
-        <div className="flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-[#735c00]" />
-          <span className="font-medium tracking-wide">
-            Supabase Auth SSR • Protected Atelier Gateway
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setShowDbSetup((v) => !v)}
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold transition-all cursor-pointer border ${
-              isSupabaseConnected
-                ? "bg-emerald-50 text-emerald-800 border-emerald-200"
-                : "bg-amber-50 text-amber-900 border-amber-300"
-            }`}
-          >
-            <Database className="w-3.5 h-3.5" />
-            <span>
-              {isSupabaseConnected
-                ? "قاعدة بيانات Supabase متصلة ✓"
-                : "إعداد رابط مشروع Supabase"}
-            </span>
-          </button>
-          <div className="text-[11px] font-mono text-[#795900] bg-[#faee9e]/50 px-2.5 py-0.5 rounded-full hidden sm:block">
-            @supabase/ssr • RLS Active
-          </div>
-        </div>
-      </div>
-
-      {/* Collapsible Supabase Project URL Setup Bar */}
-      {showDbSetup && (
-        <div className="w-full bg-[#fff0f1] border-b border-[#d7c1c3] px-4 py-4">
-          <form
-            data-react-form="true"
-            onSubmit={handleSaveSupabaseConfig}
-            className="max-w-4xl mx-auto space-y-3"
-          >
-            <div className="flex items-center justify-between">
-              <h3 className="text-xs font-bold text-[#2f020d] flex items-center gap-1.5">
-                <Database className="w-4 h-4 text-[#735c00]" />
-                <span>إعداد الاتصال المباشر بمشروع Supabase (Amani Khalil)</span>
-              </h3>
-              <span className="text-[11px] text-[#524345]">
-                انسخي رابط المشروع من زر Connect الأخضر في لوحة Supabase
-              </span>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
-              <div className="md:col-span-5">
-                <Input
-                  type="url"
-                  dir="ltr"
-                  required
-                  value={projectUrl}
-                  onChange={(e) => setProjectUrl(e.target.value)}
-                  placeholder="https://lbcywxlfbdshflznapxx.supabase.co"
-                  className="bg-white text-xs h-10 font-mono"
-                />
-              </div>
-              <div className="md:col-span-5">
-                <Input
-                  type="text"
-                  dir="ltr"
-                  required
-                  value={publishableKey}
-                  onChange={(e) => setPublishableKey(e.target.value)}
-                  placeholder="sb_publishable_..."
-                  className="bg-white text-xs h-10 font-mono"
-                />
-              </div>
-              <div className="md:col-span-2">
-                <Button
-                  type="submit"
-                  className="w-full h-10 rounded-xl bg-[#4a1521] hover:bg-[#2f020d] text-white text-xs font-bold"
-                >
-                  حفظ واتصال
-                </Button>
-              </div>
-            </div>
-          </form>
-        </div>
-      )}
-
       {/* Main Container */}
       <main className="flex-1 flex items-center justify-center p-4 sm:p-8">
         <div className="w-full max-w-5xl rounded-3xl bg-white shadow-[0_16px_50px_rgba(74,21,33,0.08)] border border-[#f3dedf] overflow-hidden grid grid-cols-1 lg:grid-cols-12">
@@ -325,7 +223,7 @@ export function AdminLoginClient() {
               <div className="w-12 h-1 bg-[#faee9e] my-4 rounded-full" />
               <p className="text-xs text-white/80 leading-relaxed">
                 المنصة الحصرية الخاصة بإدارة جلسات كبار الشخصيات، تقويم حجوزات العرائس الملكية،
-                والتنسيق اللوجستي لأتيليه الرياض عبر Supabase Auth.
+                والتنسيق اللوجستي لأتيليه الرياض الرسمي.
               </p>
             </div>
 
@@ -357,17 +255,17 @@ export function AdminLoginClient() {
               <div className="flex items-center justify-between pb-4 border-b border-[#f3dedf] mb-6">
                 <Link href="/" className="inline-block">
                   <Image
-                    src="/logo.png"
-                    alt="أماني خليل | Amani Khalil"
-                    width={180}
+                    src="/ak-monogram-hd.png"
+                    alt="أماني خليل | AK Monogram"
+                    width={44}
                     height={48}
-                    className="h-10 sm:h-12 w-auto object-contain"
+                    unoptimized
+                    style={{ width: "auto" }}
+                    className="h-11 w-11 object-contain rounded-xl bg-[#2f020d] p-1.5 border border-[#eedfe0] shadow-sm"
                     priority
                   />
                 </Link>
-                <span className="text-[11px] font-medium text-[#735c00] bg-[#faee9e]/50 px-3 py-1 rounded-full">
-                  Supabase Auth الموثق
-                </span>
+                
               </div>
 
               <div className="flex items-center justify-between gap-2 mb-6">
@@ -379,7 +277,7 @@ export function AdminLoginClient() {
                   </h1>
                   <p className="text-xs text-[#524345]">
                     {authMode === "signin"
-                      ? "أدخلي بيانات حسابك في Supabase للوصول إلى لوحة التحكم المحمية."
+                      ? "أدخلي بيانات حسابك للوصول إلى لوحة التحكم المحمية."
                       : "سجلي بريدك الإلكتروني وكلمة المرور لإنشاء حساب المديرة في Supabase Auth."}
                   </p>
                 </div>
@@ -430,7 +328,8 @@ export function AdminLoginClient() {
                           dir="ltr"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          placeholder="admin@amanikhalil.sa"
+                          autoComplete="username"
+                          placeholder="name@domain.sa"
                           className="pe-10 bg-[#fff8f7] border-[#d7c1c3] text-xs h-11 rounded-xl text-left font-mono"
                           required
                         />
@@ -457,6 +356,7 @@ export function AdminLoginClient() {
                           dir="ltr"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
+                          autoComplete="current-password"
                           placeholder="••••••••••••"
                           minLength={6}
                           className="pe-10 ps-10 bg-[#fff8f7] border-[#d7c1c3] text-xs h-11 rounded-xl text-left"
@@ -489,6 +389,8 @@ export function AdminLoginClient() {
                           type="email"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
+                          autoComplete="email"
+                          placeholder="name@domain.sa"
                           className="pe-10 bg-[#fff8f7] border-[#d7c1c3] text-xs h-11 rounded-xl font-mono text-left"
                           dir="ltr"
                           required={tab === "otp"}
@@ -511,7 +413,7 @@ export function AdminLoginClient() {
                         </div>
                       )}
                       <p className="text-[11px] text-[#524345]">
-                        سيتم إرسال رمز تحقق فوري ورابط دخول مباشر عبر Supabase Auth.
+                        سيتم إرسال رمز تحقق فوري ورابط دخول مباشر الرسمي.
                       </p>
                     </div>
                   </TabsContent>
@@ -543,9 +445,7 @@ export function AdminLoginClient() {
                       />
                       <span>البقاء متصلاً عبر الكوكيز الآمنة (SSR Session)</span>
                     </label>
-                    <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-semibold">
-                      Supabase JWT
-                    </span>
+                    
                   </div>
 
                   {/* Submit Button */}
@@ -557,7 +457,7 @@ export function AdminLoginClient() {
                     {isLoading ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>جارٍ المصادقة عبر Supabase Auth...</span>
+                        <span>جارٍ المصادقة الرسمي...</span>
                       </>
                     ) : (
                       <>
@@ -565,7 +465,7 @@ export function AdminLoginClient() {
                           {tab === "otp"
                             ? otpSent
                               ? "تأكيد رمز OTP والدخول"
-                              : "إرسال رمز التحقق عبر Supabase"
+                              : "إرسال رمز التحقق "
                             : authMode === "signup"
                             ? "إنشاء الحساب الإداري والدخول"
                             : "تسجيل الدخول الآمن"}

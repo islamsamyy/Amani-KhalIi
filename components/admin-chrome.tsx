@@ -285,24 +285,11 @@ export function AdminChrome({
               <span className="font-serif font-bold text-base text-[#2f020d] block leading-tight">
                 أماني خليل
               </span>
-              <span className="text-[10px] text-[#735c00] tracking-wider uppercase font-semibold">
-                Haute Beauté Admin
-              </span>
+              <Badge variant="gold" className="text-[10px] px-2 py-0.5 w-fit mt-1">
+                لوحة الإدارة الملكية
+              </Badge>
             </div>
           </Link>
-          <div className="flex items-center gap-2">
-            <Badge variant="gold" className="text-[10px] px-2.5 py-0.5">
-              لوحة الإدارة الملكية
-            </Badge>
-            <span className="inline-flex items-center gap-1 text-[11px] text-[#524345]">
-              <span
-                className={`h-2 w-2 rounded-full animate-pulse ${
-                  isSupabaseConnected ? "bg-emerald-500" : "bg-amber-500"
-                }`}
-              />
-              {isSupabaseConnected ? "Supabase متصل" : "وضع محلي"}
-            </span>
-          </div>
         </div>
 
         <div className="flex-1">{renderSidebarLinks()}</div>
