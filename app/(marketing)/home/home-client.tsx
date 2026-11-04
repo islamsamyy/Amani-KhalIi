@@ -54,11 +54,11 @@ import { toast } from "sonner";
 // Authentic Studio Photos of Makeup Artist Amani Khalil
 const AMANI_STUDIO_LOOKS = [
   {
-    id: "look-monogram-banner",
-    src: "/amani-monogram-banner.jpg",
+    id: "amani-hero",
+    src: "/amani-hero.jpg",
     title: "أتيليه أماني خليل — الهوية الملكية الرسمية",
     subtitle: "جلسات التجهيز الفندقي والقصور الفاخرة بأرقى مستحضرات الهوت كوتور",
-    tag: "البانر الرسمي المعتمد",
+    tag: "أماني خليل",
   },
   {
     id: "look-vanity-brush",
@@ -215,7 +215,7 @@ export function HomeClient() {
         "amani_booking_lookup",
         JSON.stringify({ ref: booking.ref, phone: clientPhone, name: clientName })
       );
-    } catch {}
+    } catch { }
 
     toast.success("تم تأكيد موعدكِ بنجاح وتوليد الفاتورة الرسمية ✨");
   };
@@ -557,11 +557,10 @@ export function HomeClient() {
                     key={look.id}
                     type="button"
                     onClick={() => setHeroLookIdx(idx)}
-                    className={`relative rounded-2xl overflow-hidden aspect-[16/10] border-2 transition-all cursor-pointer group/thumb hover-lift ${
-                      heroLookIdx === idx
+                    className={`relative rounded-2xl overflow-hidden aspect-[16/10] border-2 transition-all cursor-pointer group/thumb hover-lift ${heroLookIdx === idx
                         ? "border-[#fed65b] ring-2 ring-[#fed65b]/50 shadow-lg scale-105"
                         : "border-white/20 opacity-70 hover:opacity-100 hover:border-white/50"
-                    }`}
+                      }`}
                   >
                     <Image
                       src={look.src}
@@ -645,7 +644,7 @@ export function HomeClient() {
         </section>
       </ScrollReveal>
 
-            {/* 2.2 CINEMATIC ANIMATED STUDIO SHOWCASE BANNER */}
+      {/* 2.2 CINEMATIC ANIMATED STUDIO SHOWCASE BANNER */}
       <ScrollReveal>
         <AnimatedStudioBanner />
       </ScrollReveal>
@@ -833,11 +832,10 @@ export function HomeClient() {
               {activePackages.slice(0, 3).map((pkg) => (
                 <Card
                   key={pkg.id}
-                  className={`relative flex flex-col justify-between overflow-hidden rounded-3xl transition-all duration-300 hover-lift ${
-                    pkg.popular
+                  className={`relative flex flex-col justify-between overflow-hidden rounded-3xl transition-all duration-300 hover-lift ${pkg.popular
                       ? "border-2 border-[#735c00] shadow-[0_12px_32px_rgba(74,21,33,0.12)] bg-[#fff8f7]"
                       : "border border-[#eedfe0] bg-white shadow-sm hover:shadow-xl"
-                  }`}
+                    }`}
                 >
                   {pkg.popular && (
                     <div className="bg-[#4a1521] text-white text-center py-1.5 text-xs font-bold animate-shimmer">
@@ -876,11 +874,10 @@ export function HomeClient() {
                   <div className="p-6 pt-0 sm:p-8 sm:pt-0 space-y-2">
                     <Button
                       onClick={() => handleScrollToWizard(pkg.id)}
-                      className={`w-full h-12 rounded-full text-xs font-bold shadow-md cursor-pointer hover-shine ${
-                        pkg.popular
+                      className={`w-full h-12 rounded-full text-xs font-bold shadow-md cursor-pointer hover-shine ${pkg.popular
                           ? "bg-[#4a1521] hover:bg-[#2f020d] text-white"
                           : "bg-[#faeaeb] hover:bg-[#eedfe0] text-[#2f020d]"
-                      }`}
+                        }`}
                     >
                       <Calendar className="h-4 w-4 ms-2 text-[#fed65b]" />
                       <span>حجز فوري بالمعالج أدناه ↓</span>
@@ -940,347 +937,344 @@ export function HomeClient() {
                 </div>
               </div>
 
-            {/* Step indicators */}
-            <div className="grid grid-cols-4 bg-[#faeaeb] border-b border-[#eedfe0] text-center text-xs font-bold">
-              {[
-                { s: 1, label: "١. الباقة والخدمات التكميلية" },
-                { s: 2, label: "٢. تاريخ وتوقيت الموعد" },
-                { s: 3, label: "٣. تفاصيل موقع الحفل" },
-                { s: 4, label: "٤. مراجعة وتأكيد الحجز" },
-              ].map((st) => (
-                <button
-                  key={st.s}
-                  type="button"
-                  onClick={() => setWizardStep(st.s)}
-                  className={`py-3.5 transition-colors cursor-pointer ${
-                    wizardStep === st.s
-                      ? "bg-[#2f020d] text-white"
-                      : wizardStep > st.s
-                      ? "bg-[#faeaeb] text-[#735c00] hover:bg-[#eedfe0]"
-                      : "text-[#857374] hover:bg-white/50"
-                  }`}
-                >
-                  {st.label}
-                </button>
-              ))}
-            </div>
+              {/* Step indicators */}
+              <div className="grid grid-cols-4 bg-[#faeaeb] border-b border-[#eedfe0] text-center text-xs font-bold">
+                {[
+                  { s: 1, label: "١. الباقة والخدمات التكميلية" },
+                  { s: 2, label: "٢. تاريخ وتوقيت الموعد" },
+                  { s: 3, label: "٣. تفاصيل موقع الحفل" },
+                  { s: 4, label: "٤. مراجعة وتأكيد الحجز" },
+                ].map((st) => (
+                  <button
+                    key={st.s}
+                    type="button"
+                    onClick={() => setWizardStep(st.s)}
+                    className={`py-3.5 transition-colors cursor-pointer ${wizardStep === st.s
+                        ? "bg-[#2f020d] text-white"
+                        : wizardStep > st.s
+                          ? "bg-[#faeaeb] text-[#735c00] hover:bg-[#eedfe0]"
+                          : "text-[#857374] hover:bg-white/50"
+                      }`}
+                  >
+                    {st.label}
+                  </button>
+                ))}
+              </div>
 
-            <CardContent className="p-6 sm:p-10">
-              {wizardConfirmed ? (
-                <div className="text-center py-8 space-y-4">
-                  <div className="h-16 w-16 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center">
-                    <CheckCircle2 className="h-8 w-8" />
+              <CardContent className="p-6 sm:p-10">
+                {wizardConfirmed ? (
+                  <div className="text-center py-8 space-y-4">
+                    <div className="h-16 w-16 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center">
+                      <CheckCircle2 className="h-8 w-8" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-[#2f020d]">تم استقبال طلب حجزكِ الملكي بنجاح 💍</h3>
+                    <p className="text-sm text-[#524345] max-w-md mx-auto">
+                      رقم مرجع الحجز الرسمي: <span className="font-bold text-[#4a1521]">#{wizardBookingRef}</span>.
+                      تم إرسال إشعار التثبيت لخبيرة التجميل أماني خليل.
+                    </p>
+                    <div className="pt-4 flex flex-wrap justify-center gap-3">
+                      <Link
+                        href={`/book/confirmation?ref=${encodeURIComponent(wizardBookingRef)}&name=${encodeURIComponent(wizardName.trim() || "عميلة ملكية")}&phone=${encodeURIComponent(wizardPhone.trim() || "0550000000")}`}
+                        className="h-11 px-6 rounded-full bg-[#4a1521] text-white font-bold text-xs flex items-center gap-2 hover:bg-[#2f020d]"
+                      >
+                        <span>معاينة الفاتورة الرسمية</span>
+                        <ArrowLeft className="h-4 w-4" />
+                      </Link>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setWizardConfirmed(false);
+                          setWizardStep(1);
+                        }}
+                        className="rounded-full text-xs"
+                      >
+                        حجز موعد آخر
+                      </Button>
+                    </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-[#2f020d]">تم استقبال طلب حجزكِ الملكي بنجاح 💍</h3>
-                  <p className="text-sm text-[#524345] max-w-md mx-auto">
-                    رقم مرجع الحجز الرسمي: <span className="font-bold text-[#4a1521]">#{wizardBookingRef}</span>.
-                    تم إرسال إشعار التثبيت لخبيرة التجميل أماني خليل.
-                  </p>
-                  <div className="pt-4 flex flex-wrap justify-center gap-3">
-                    <Link
-                      href={`/book/confirmation?ref=${encodeURIComponent(wizardBookingRef)}&name=${encodeURIComponent(wizardName.trim() || "عميلة ملكية")}&phone=${encodeURIComponent(wizardPhone.trim() || "0550000000")}`}
-                      className="h-11 px-6 rounded-full bg-[#4a1521] text-white font-bold text-xs flex items-center gap-2 hover:bg-[#2f020d]"
-                    >
-                      <span>معاينة الفاتورة الرسمية</span>
-                      <ArrowLeft className="h-4 w-4" />
-                    </Link>
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setWizardConfirmed(false);
-                        setWizardStep(1);
-                      }}
-                      className="rounded-full text-xs"
-                    >
-                      حجز موعد آخر
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <form onSubmit={handleWizardSubmit} className="space-y-6">
-                  {wizardStep === 1 && (
-                    <div className="space-y-6">
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-base font-bold text-[#2f020d]">١. اختاري باقة الجمال المطلوبة:</h4>
-                          <span className="text-xs text-[#735c00] font-medium">باقة رئيسية واحدة</span>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          {packages.map((pkg) => (
-                            <label
-                              key={pkg.id}
-                              className={`p-4 rounded-2xl border cursor-pointer flex flex-col justify-between gap-2 transition-all ${
-                                wizardPkg === pkg.id
-                                  ? "border-[#4a1521] bg-[#fff0f1] ring-2 ring-[#4a1521] shadow-sm"
-                                  : "border-[#eedfe0] hover:bg-[#fff8f7]"
-                              }`}
-                            >
-                              <div className="flex items-center justify-between">
-                                <span className="font-bold text-sm text-[#2f020d]">{pkg.title}</span>
-                                <input
-                                  type="radio"
-                                  name="pkg"
-                                  checked={wizardPkg === pkg.id}
-                                  onChange={() => setWizardPkg(pkg.id)}
-                                  className="text-[#4a1521] focus:ring-[#735c00]"
-                                />
-                              </div>
-                              <span className="text-xs font-bold text-[#735c00]">
-                                {pkg.price.toLocaleString("ar-SA")} ر.س
-                              </span>
-                            </label>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Complementary Services / Add-ons section */}
-                      <div className="pt-6 border-t border-[#eedfe0] space-y-3">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="text-sm font-bold text-[#2f020d] flex items-center gap-2">
-                              <Sparkles className="w-4 h-4 text-[#735c00]" />
-                              <span>٢. الخدمات التكميلية والمرافقة (اختياري):</span>
-                            </h4>
-                            <p className="text-xs text-[#524345] mt-0.5">
-                              أضيفي لمسات استثنائية لراحتكِ وراحة مرافقتكِ بيوم المناسبة
-                            </p>
+                ) : (
+                  <form onSubmit={handleWizardSubmit} className="space-y-6">
+                    {wizardStep === 1 && (
+                      <div className="space-y-6">
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <h4 className="text-base font-bold text-[#2f020d]">١. اختاري باقة الجمال المطلوبة:</h4>
+                            <span className="text-xs text-[#735c00] font-medium">باقة رئيسية واحدة</span>
                           </div>
-                          {wizardAddons.length > 0 && (
-                            <button
-                              type="button"
-                              onClick={() => setWizardAddons([])}
-                              className="text-xs font-semibold text-[#ba1a1a] hover:underline"
-                            >
-                              إلغاء التحديد ({wizardAddons.length})
-                            </button>
-                          )}
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          {addons.map((addon) => {
-                            const isChecked = wizardAddons.includes(addon.id);
-                            return (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {packages.map((pkg) => (
                               <label
-                                key={addon.id}
-                                className={`p-3.5 rounded-2xl border cursor-pointer flex flex-col justify-between gap-2.5 transition-all ${
-                                  isChecked
-                                    ? "border-[#735c00] bg-[#fff8f7] ring-2 ring-[#735c00] shadow-sm"
-                                    : "border-[#eedfe0] bg-white hover:bg-[#fff8f7]"
-                                }`}
+                                key={pkg.id}
+                                className={`p-4 rounded-2xl border cursor-pointer flex flex-col justify-between gap-2 transition-all ${wizardPkg === pkg.id
+                                    ? "border-[#4a1521] bg-[#fff0f1] ring-2 ring-[#4a1521] shadow-sm"
+                                    : "border-[#eedfe0] hover:bg-[#fff8f7]"
+                                  }`}
                               >
-                                <div className="flex items-start gap-3">
+                                <div className="flex items-center justify-between">
+                                  <span className="font-bold text-sm text-[#2f020d]">{pkg.title}</span>
                                   <input
-                                    type="checkbox"
-                                    name={addon.id}
-                                    checked={isChecked}
-                                    onChange={() => toggleWizardAddon(addon.id)}
-                                    className="rounded text-[#4a1521] focus:ring-[#735c00] mt-0.5 h-4 w-4 cursor-pointer"
+                                    type="radio"
+                                    name="pkg"
+                                    checked={wizardPkg === pkg.id}
+                                    onChange={() => setWizardPkg(pkg.id)}
+                                    className="text-[#4a1521] focus:ring-[#735c00]"
                                   />
-                                  <div className="flex-1">
-                                    <div className="flex items-center justify-between gap-2">
-                                      <span className="font-bold text-xs text-[#2f020d]">{addon.title}</span>
-                                      {addon.popular && (
-                                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#faeaeb] text-[#735c00] font-bold">
-                                          ★ الأكثر طلباً
-                                        </span>
-                                      )}
-                                    </div>
-                                    <p className="text-[11px] text-[#524345] leading-relaxed mt-1">
-                                      {addon.description}
-                                    </p>
-                                  </div>
                                 </div>
-                                <div className="pt-2 border-t border-[#eedfe0]/60 flex items-center justify-between text-xs">
-                                  <span className="text-[10px] text-[#735c00] font-medium">خدمة مساندة ملكية</span>
-                                  <span className="font-bold text-[#735c00]">
-                                    +{addon.price.toLocaleString("ar-SA")} ر.س
-                                  </span>
-                                </div>
+                                <span className="text-xs font-bold text-[#735c00]">
+                                  {pkg.price.toLocaleString("ar-SA")} ر.س
+                                </span>
                               </label>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-[#eedfe0]">
-                        <div className="text-xs text-[#524345] flex items-center gap-2">
-                          <span>الإجمالي المبدئي: </span>
-                          <strong className="text-base font-bold font-serif text-[#4a1521]">
-                            {wizardTotalAmount.toLocaleString("ar-SA")} ر.س
-                          </strong>
-                          {wizardAddons.length > 0 && (
-                            <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#fed65b]/30 text-[#735c00] font-semibold">
-                              (شامل {wizardAddons.length} خدمات تكميلية)
-                            </span>
-                          )}
-                        </div>
-                        <Button
-                          type="button"
-                          onClick={() => setWizardStep(2)}
-                          className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white px-8 py-2.5 font-bold text-xs flex items-center gap-2 shadow-lg hover-lift"
-                        >
-                          <span>المتابعة لاختيار التاريخ والموعد</span>
-                          <ArrowLeft className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-
-                  {wizardStep === 2 && (
-                    <div className="space-y-4">
-                      <h4 className="text-base font-bold text-[#2f020d]">تاريخ وتوقيت المناسبة:</h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <label className="text-xs font-semibold text-[#524345] block mb-1.5">تاريخ المناسبة</label>
-                          <input
-                            type="date"
-                            value={wizardDate}
-                            onChange={(e) => setWizardDate(e.target.value)}
-                            className="w-full h-11 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-sm focus:outline-none focus:border-[#735c00]"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-xs font-semibold text-[#524345] block mb-1.5">الفترة الزمنية المفضلة</label>
-                          <select
-                            value={wizardTime}
-                            onChange={(e) => setWizardTime(e.target.value)}
-                            className="w-full h-11 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-sm focus:outline-none focus:border-[#735c00]"
-                          >
-                            <option value="صباحاً (11:00 ص)">صباحاً (11:00 ص) — جلسات الأتيليه والتجهيز المبكر</option>
-                            <option value="عصراً (02:00 م)">عصراً (02:00 م) — الموعد المثالي لعرائس الفنادق</option>
-                            <option value="مساءً (06:00 م)">مساءً (06:00 م) — مناسبات السهرة والحفلات</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div className="flex justify-between pt-4">
-                        <Button variant="outline" type="button" onClick={() => setWizardStep(1)} className="rounded-full">
-                          السابق
-                        </Button>
-                        <Button type="button" onClick={() => setWizardStep(3)} className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white px-8">
-                          المتابعة للموقع
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-
-                  {wizardStep === 3 && (
-                    <div className="space-y-4">
-                      <h4 className="text-base font-bold text-[#2f020d]">مقر إقامة الجلسة بالرياض:</h4>
-                      <div className="space-y-3">
-                        <div>
-                          <label className="text-xs font-semibold text-[#524345] block mb-1.5">اسم الفندق / القاعة أو الحي السكني</label>
-                          <input
-                            type="text"
-                            value={wizardVenue}
-                            onChange={(e) => setWizardVenue(e.target.value)}
-                            placeholder="مثال: فندق الريتز-كارلتون، حي حطين، قاعة نيارة..."
-                            className="w-full h-11 px-4 rounded-xl border border-[#eedfe0] bg-white text-sm focus:outline-none focus:border-[#735c00]"
-                          />
+                            ))}
+                          </div>
                         </div>
 
-                        <div>
-                          <label className="text-xs font-semibold text-[#524345] block mb-1.5">النطاق الجغرافي وبدل التنقل</label>
-                          <select
-                            value={wizardArea}
-                            onChange={(e) => setWizardArea(e.target.value)}
-                            className="w-full h-11 px-4 rounded-xl border border-[#eedfe0] bg-white text-sm focus:outline-none focus:border-[#735c00]"
-                          >
-                            <option value="area_hotels_vip">أجنحة الفنادق 5 نجوم بالرياض (مشمول مجاناً)</option>
-                            <option value="area_north">قصور شمال الرياض (حطين، النخيل، الملقا)</option>
-                            <option value="area_diriyah">الدرعية ومطل البجيري (+150 ر.س)</option>
-                            <option value="area_dq">حي السفارات (الأجنحة الدبلوماسية)</option>
-                          </select>
-                        </div>
-                      </div>
+                        {/* Complementary Services / Add-ons section */}
+                        <div className="pt-6 border-t border-[#eedfe0] space-y-3">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h4 className="text-sm font-bold text-[#2f020d] flex items-center gap-2">
+                                <Sparkles className="w-4 h-4 text-[#735c00]" />
+                                <span>٢. الخدمات التكميلية والمرافقة (اختياري):</span>
+                              </h4>
+                              <p className="text-xs text-[#524345] mt-0.5">
+                                أضيفي لمسات استثنائية لراحتكِ وراحة مرافقتكِ بيوم المناسبة
+                              </p>
+                            </div>
+                            {wizardAddons.length > 0 && (
+                              <button
+                                type="button"
+                                onClick={() => setWizardAddons([])}
+                                className="text-xs font-semibold text-[#ba1a1a] hover:underline"
+                              >
+                                إلغاء التحديد ({wizardAddons.length})
+                              </button>
+                            )}
+                          </div>
 
-                      <div className="flex justify-between pt-4">
-                        <Button variant="outline" type="button" onClick={() => setWizardStep(2)} className="rounded-full">
-                          السابق
-                        </Button>
-                        <Button type="button" onClick={() => setWizardStep(4)} className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white px-8">
-                          المتابعة للتأكيد
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-
-                  {wizardStep === 4 && (
-                    <div className="space-y-4">
-                      <h4 className="text-base font-bold text-[#2f020d]">بيانات التواصل وتثبيت الموعد:</h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <label className="text-xs font-semibold text-[#524345] block mb-1.5">اسمكِ الكريم</label>
-                          <input
-                            type="text"
-                            required
-                            value={wizardName}
-                            onChange={(e) => setWizardName(e.target.value)}
-                            placeholder="مثال: سارة بنت فيصل"
-                            className="w-full h-11 px-4 rounded-xl border border-[#eedfe0] bg-white text-sm focus:outline-none focus:border-[#735c00]"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-xs font-semibold text-[#524345] block mb-1.5">رقم الجوال (واتساب)</label>
-                          <input
-                            type="tel"
-                            required
-                            value={wizardPhone}
-                            onChange={(e) => setWizardPhone(e.target.value)}
-                            placeholder="05xxxxxxxx"
-                            className="w-full h-11 px-4 rounded-xl border border-[#eedfe0] bg-white text-sm focus:outline-none focus:border-[#735c00]"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="p-4 rounded-2xl bg-[#fff0f1] border border-[#eedfe0] text-xs text-[#524345] space-y-2">
-                        <div className="flex items-center justify-between pb-2 border-b border-[#eedfe0]">
-                          <p className="font-bold text-[#4a1521]">ملخص الحجز الملكي السريع:</p>
-                          <span className="font-bold text-sm text-[#4a1521]">
-                            {wizardTotalAmount.toLocaleString("ar-SA")} ر.س
-                          </span>
-                        </div>
-                        <p>• الباقة الأساسية: <strong className="text-[#2f020d]">{selectedWizardPackageObj.title}</strong> ({selectedWizardPackageObj.price.toLocaleString("ar-SA")} ر.س)</p>
-                        {wizardAddons.length > 0 && (
-                          <div className="ps-3 py-1.5 border-s-2 border-[#735c00] bg-white/70 rounded-e-lg text-[11px] space-y-1">
-                            <span className="font-bold text-[#735c00] block">الخدمات التكميلية المختارة ({wizardAddons.length}):</span>
-                            {wizardAddons.map((addonId) => {
-                              const ad = addons.find((a) => a.id === addonId);
-                              if (!ad) return null;
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {addons.map((addon) => {
+                              const isChecked = wizardAddons.includes(addon.id);
                               return (
-                                <p key={addonId} className="flex items-center justify-between text-[#524345]">
-                                  <span>+ {ad.title}</span>
-                                  <span className="font-semibold text-[#735c00]">+{ad.price.toLocaleString("ar-SA")} ر.س</span>
-                                </p>
+                                <label
+                                  key={addon.id}
+                                  className={`p-3.5 rounded-2xl border cursor-pointer flex flex-col justify-between gap-2.5 transition-all ${isChecked
+                                      ? "border-[#735c00] bg-[#fff8f7] ring-2 ring-[#735c00] shadow-sm"
+                                      : "border-[#eedfe0] bg-white hover:bg-[#fff8f7]"
+                                    }`}
+                                >
+                                  <div className="flex items-start gap-3">
+                                    <input
+                                      type="checkbox"
+                                      name={addon.id}
+                                      checked={isChecked}
+                                      onChange={() => toggleWizardAddon(addon.id)}
+                                      className="rounded text-[#4a1521] focus:ring-[#735c00] mt-0.5 h-4 w-4 cursor-pointer"
+                                    />
+                                    <div className="flex-1">
+                                      <div className="flex items-center justify-between gap-2">
+                                        <span className="font-bold text-xs text-[#2f020d]">{addon.title}</span>
+                                        {addon.popular && (
+                                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#faeaeb] text-[#735c00] font-bold">
+                                            ★ الأكثر طلباً
+                                          </span>
+                                        )}
+                                      </div>
+                                      <p className="text-[11px] text-[#524345] leading-relaxed mt-1">
+                                        {addon.description}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="pt-2 border-t border-[#eedfe0]/60 flex items-center justify-between text-xs">
+                                    <span className="text-[10px] text-[#735c00] font-medium">خدمة مساندة ملكية</span>
+                                    <span className="font-bold text-[#735c00]">
+                                      +{addon.price.toLocaleString("ar-SA")} ر.س
+                                    </span>
+                                  </div>
+                                </label>
                               );
                             })}
                           </div>
-                        )}
-                        <p>• الموعد المختار: {wizardDate} ({wizardTime})</p>
-                        <p>• مقر الجلسة: {wizardVenue}</p>
-                        <div className="pt-2 border-t border-[#eedfe0] flex items-center justify-between font-bold text-[#735c00]">
-                          <span>• قيمة العربون المطلوب لتثبيت الموعد (30%):</span>
-                          <span className="text-sm">
-                            {wizardDepositAmount.toLocaleString("ar-SA")} ر.س
-                          </span>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-[#eedfe0]">
+                          <div className="text-xs text-[#524345] flex items-center gap-2">
+                            <span>الإجمالي المبدئي: </span>
+                            <strong className="text-base font-bold font-serif text-[#4a1521]">
+                              {wizardTotalAmount.toLocaleString("ar-SA")} ر.س
+                            </strong>
+                            {wizardAddons.length > 0 && (
+                              <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#fed65b]/30 text-[#735c00] font-semibold">
+                                (شامل {wizardAddons.length} خدمات تكميلية)
+                              </span>
+                            )}
+                          </div>
+                          <Button
+                            type="button"
+                            onClick={() => setWizardStep(2)}
+                            className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white px-8 py-2.5 font-bold text-xs flex items-center gap-2 shadow-lg hover-lift"
+                          >
+                            <span>المتابعة لاختيار التاريخ والموعد</span>
+                            <ArrowLeft className="w-4 h-4" />
+                          </Button>
                         </div>
                       </div>
+                    )}
 
-                      <div className="flex justify-between pt-4">
-                        <Button variant="outline" type="button" onClick={() => setWizardStep(3)} className="rounded-full">
-                          السابق
-                        </Button>
-                        <Button type="submit" className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white px-8 font-bold hover-shine">
-                          تأكيد الحجز واستخراج الفاتورة 💍
-                        </Button>
+                    {wizardStep === 2 && (
+                      <div className="space-y-4">
+                        <h4 className="text-base font-bold text-[#2f020d]">تاريخ وتوقيت المناسبة:</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <label className="text-xs font-semibold text-[#524345] block mb-1.5">تاريخ المناسبة</label>
+                            <input
+                              type="date"
+                              value={wizardDate}
+                              onChange={(e) => setWizardDate(e.target.value)}
+                              className="w-full h-11 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-sm focus:outline-none focus:border-[#735c00]"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs font-semibold text-[#524345] block mb-1.5">الفترة الزمنية المفضلة</label>
+                            <select
+                              value={wizardTime}
+                              onChange={(e) => setWizardTime(e.target.value)}
+                              className="w-full h-11 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-sm focus:outline-none focus:border-[#735c00]"
+                            >
+                              <option value="صباحاً (11:00 ص)">صباحاً (11:00 ص) — جلسات الأتيليه والتجهيز المبكر</option>
+                              <option value="عصراً (02:00 م)">عصراً (02:00 م) — الموعد المثالي لعرائس الفنادق</option>
+                              <option value="مساءً (06:00 م)">مساءً (06:00 م) — مناسبات السهرة والحفلات</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div className="flex justify-between pt-4">
+                          <Button variant="outline" type="button" onClick={() => setWizardStep(1)} className="rounded-full">
+                            السابق
+                          </Button>
+                          <Button type="button" onClick={() => setWizardStep(3)} className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white px-8">
+                            المتابعة للموقع
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </form>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </section>
+                    )}
+
+                    {wizardStep === 3 && (
+                      <div className="space-y-4">
+                        <h4 className="text-base font-bold text-[#2f020d]">مقر إقامة الجلسة بالرياض:</h4>
+                        <div className="space-y-3">
+                          <div>
+                            <label className="text-xs font-semibold text-[#524345] block mb-1.5">اسم الفندق / القاعة أو الحي السكني</label>
+                            <input
+                              type="text"
+                              value={wizardVenue}
+                              onChange={(e) => setWizardVenue(e.target.value)}
+                              placeholder="مثال: فندق الريتز-كارلتون، حي حطين، قاعة نيارة..."
+                              className="w-full h-11 px-4 rounded-xl border border-[#eedfe0] bg-white text-sm focus:outline-none focus:border-[#735c00]"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-xs font-semibold text-[#524345] block mb-1.5">النطاق الجغرافي وبدل التنقل</label>
+                            <select
+                              value={wizardArea}
+                              onChange={(e) => setWizardArea(e.target.value)}
+                              className="w-full h-11 px-4 rounded-xl border border-[#eedfe0] bg-white text-sm focus:outline-none focus:border-[#735c00]"
+                            >
+                              <option value="area_hotels_vip">أجنحة الفنادق 5 نجوم بالرياض (مشمول مجاناً)</option>
+                              <option value="area_north">قصور شمال الرياض (حطين، النخيل، الملقا)</option>
+                              <option value="area_diriyah">الدرعية ومطل البجيري (+150 ر.س)</option>
+                              <option value="area_dq">حي السفارات (الأجنحة الدبلوماسية)</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between pt-4">
+                          <Button variant="outline" type="button" onClick={() => setWizardStep(2)} className="rounded-full">
+                            السابق
+                          </Button>
+                          <Button type="button" onClick={() => setWizardStep(4)} className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white px-8">
+                            المتابعة للتأكيد
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {wizardStep === 4 && (
+                      <div className="space-y-4">
+                        <h4 className="text-base font-bold text-[#2f020d]">بيانات التواصل وتثبيت الموعد:</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <label className="text-xs font-semibold text-[#524345] block mb-1.5">اسمكِ الكريم</label>
+                            <input
+                              type="text"
+                              required
+                              value={wizardName}
+                              onChange={(e) => setWizardName(e.target.value)}
+                              placeholder="مثال: سارة بنت فيصل"
+                              className="w-full h-11 px-4 rounded-xl border border-[#eedfe0] bg-white text-sm focus:outline-none focus:border-[#735c00]"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs font-semibold text-[#524345] block mb-1.5">رقم الجوال (واتساب)</label>
+                            <input
+                              type="tel"
+                              required
+                              value={wizardPhone}
+                              onChange={(e) => setWizardPhone(e.target.value)}
+                              placeholder="05xxxxxxxx"
+                              className="w-full h-11 px-4 rounded-xl border border-[#eedfe0] bg-white text-sm focus:outline-none focus:border-[#735c00]"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="p-4 rounded-2xl bg-[#fff0f1] border border-[#eedfe0] text-xs text-[#524345] space-y-2">
+                          <div className="flex items-center justify-between pb-2 border-b border-[#eedfe0]">
+                            <p className="font-bold text-[#4a1521]">ملخص الحجز الملكي السريع:</p>
+                            <span className="font-bold text-sm text-[#4a1521]">
+                              {wizardTotalAmount.toLocaleString("ar-SA")} ر.س
+                            </span>
+                          </div>
+                          <p>• الباقة الأساسية: <strong className="text-[#2f020d]">{selectedWizardPackageObj.title}</strong> ({selectedWizardPackageObj.price.toLocaleString("ar-SA")} ر.س)</p>
+                          {wizardAddons.length > 0 && (
+                            <div className="ps-3 py-1.5 border-s-2 border-[#735c00] bg-white/70 rounded-e-lg text-[11px] space-y-1">
+                              <span className="font-bold text-[#735c00] block">الخدمات التكميلية المختارة ({wizardAddons.length}):</span>
+                              {wizardAddons.map((addonId) => {
+                                const ad = addons.find((a) => a.id === addonId);
+                                if (!ad) return null;
+                                return (
+                                  <p key={addonId} className="flex items-center justify-between text-[#524345]">
+                                    <span>+ {ad.title}</span>
+                                    <span className="font-semibold text-[#735c00]">+{ad.price.toLocaleString("ar-SA")} ر.س</span>
+                                  </p>
+                                );
+                              })}
+                            </div>
+                          )}
+                          <p>• الموعد المختار: {wizardDate} ({wizardTime})</p>
+                          <p>• مقر الجلسة: {wizardVenue}</p>
+                          <div className="pt-2 border-t border-[#eedfe0] flex items-center justify-between font-bold text-[#735c00]">
+                            <span>• قيمة العربون المطلوب لتثبيت الموعد (30%):</span>
+                            <span className="text-sm">
+                              {wizardDepositAmount.toLocaleString("ar-SA")} ر.س
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between pt-4">
+                          <Button variant="outline" type="button" onClick={() => setWizardStep(3)} className="rounded-full">
+                            السابق
+                          </Button>
+                          <Button type="submit" className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white px-8 font-bold hover-shine">
+                            تأكيد الحجز واستخراج الفاتورة 💍
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </form>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </section>
       </ScrollReveal>
 
       {/* 5. EXPANDED LUXURY GALLERY SECTION ON HOME */}
@@ -1430,133 +1424,133 @@ export function HomeClient() {
       {/* 6. EXPANDED CLIENT REVIEWS & SOCIAL PROOF SECTION */}
       <ScrollReveal>
         <section className="py-20 bg-[#fff0f1] border-y border-[#eedfe0]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-            <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-[#735c00] text-xs font-bold mb-2 shadow-sm">
-                <Star className="w-3.5 h-3.5 fill-current text-amber-500" />
-                <span>تقييمات واقعية وموثقة</span>
-              </div>
-              <h2 className="text-2xl sm:text-4xl font-bold font-serif text-[#2f020d]">
-                تجارب وآراء عميلاتنا الوفيات
-              </h2>
-              <p className="text-sm text-[#524345] mt-2">
-                شهادات حقيقية من عرائس وسيدات الرياض اللاتي تألقن في مناسباتهن الخاصة
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <Button
-                onClick={() => setReviewModalOpen(true)}
-                className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white text-xs font-bold h-11 px-6 shadow-sm gap-1.5"
-              >
-                <Plus className="w-4 h-4" />
-                <span>شاركينا تقييمكِ</span>
-              </Button>
-              <Link
-                href="/reviews"
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#4a1521] hover:underline"
-              >
-                <span>جميع التقييمات ({reviews.length})</span>
-                <ArrowLeft className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-
-          {/* Rating Summary Scorecard Banner */}
-          <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#eedfe0] shadow-sm mb-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-            <div className="md:col-span-4 flex flex-col items-center md:items-start text-center md:text-right border-b md:border-b-0 md:border-l md:border-[#eedfe0] pb-6 md:pb-0 md:pe-6">
-              <span className="text-5xl sm:text-6xl font-bold font-serif text-[#2f020d]">٤.٩</span>
-              <div className="flex items-center gap-1 text-amber-500 my-2">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-current" />
-                ))}
-              </div>
-              <p className="text-xs text-[#524345]">
-                متوسط التقييم العام بناءً على <strong className="text-[#2f020d]">+١٬٥٠٠ عروس ومناسبة</strong>
-              </p>
-            </div>
-
-            <div className="md:col-span-5 space-y-2.5">
-              <div className="flex items-center gap-3 text-xs">
-                <span className="w-12 font-semibold text-[#524345]">٥ نجوم</span>
-                <Progress value={96} className="h-2 flex-1" />
-                <span className="w-10 text-left font-bold text-[#2f020d]">٩٦٪</span>
-              </div>
-              <div className="flex items-center gap-3 text-xs">
-                <span className="w-12 font-semibold text-[#524345]">٤ نجوم</span>
-                <Progress value={4} className="h-2 flex-1" />
-                <span className="w-10 text-left font-bold text-[#2f020d]">٤٪</span>
-              </div>
-              <div className="flex items-center gap-3 text-xs text-[#857374]">
-                <span className="w-12">٣ نجوم</span>
-                <Progress value={0} className="h-2 flex-1" />
-                <span className="w-10 text-left font-bold">٠٪</span>
-              </div>
-            </div>
-
-            <div className="md:col-span-3 flex flex-col justify-center items-center md:items-end text-center md:text-left gap-2">
-              <div className="p-3.5 rounded-2xl bg-[#faeaeb] text-center w-full">
-                <ShieldCheck className="w-6 h-6 text-[#735c00] mx-auto mb-1" />
-                <span className="text-xs font-bold text-[#4a1521] block">توثيق العقود بنسبة 100%</span>
-                <span className="text-[10px] text-[#524345]">المركز السعودي للأعمال #FL-9941082</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Interactive Review Category Tabs */}
-          <div className="flex justify-center mb-8">
-            <Tabs value={reviewFilter} onValueChange={setReviewFilter} className="w-full max-w-md">
-              <TabsList className="bg-white p-1 rounded-full border border-[#eedfe0] grid grid-cols-3 w-full">
-                <TabsTrigger value="all" className="rounded-full text-xs font-semibold">
-                  الكل ({reviews.length})
-                </TabsTrigger>
-                <TabsTrigger value="bridal" className="rounded-full text-xs font-semibold">
-                  عرائس VIP
-                </TabsTrigger>
-                <TabsTrigger value="evening" className="rounded-full text-xs font-semibold">
-                  سهرات وملكة
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
-
-          {/* Reviews Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {filteredReviews.slice(0, 6).map((rev) => (
-              <div
-                key={rev.id}
-                className="p-6 rounded-3xl bg-white border border-[#eedfe0] shadow-sm hover:shadow-md transition-all flex flex-col justify-between gap-4"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-1 text-amber-500">
-                      {Array.from({ length: rev.rating }).map((_, i) => (
-                        <Star key={i} className="h-4 w-4 fill-current" />
-                      ))}
-                    </div>
-                    <span className="text-[11px] text-[#857374]">{rev.date}</span>
-                  </div>
-                  <div className="flex items-start gap-2 mb-2">
-                    <Quote className="w-4 h-4 text-[#735c00] shrink-0 rotate-180 mt-0.5 opacity-60" />
-                    <p className="text-xs text-[#211a1b] leading-relaxed italic">{rev.comment}</p>
-                  </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-[#735c00] text-xs font-bold mb-2 shadow-sm">
+                  <Star className="w-3.5 h-3.5 fill-current text-amber-500" />
+                  <span>تقييمات واقعية وموثقة</span>
                 </div>
+                <h2 className="text-2xl sm:text-4xl font-bold font-serif text-[#2f020d]">
+                  تجارب وآراء عميلاتنا الوفيات
+                </h2>
+                <p className="text-sm text-[#524345] mt-2">
+                  شهادات حقيقية من عرائس وسيدات الرياض اللاتي تألقن في مناسباتهن الخاصة
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <Button
+                  onClick={() => setReviewModalOpen(true)}
+                  className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white text-xs font-bold h-11 px-6 shadow-sm gap-1.5"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>شاركينا تقييمكِ</span>
+                </Button>
+                <Link
+                  href="/reviews"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#4a1521] hover:underline"
+                >
+                  <span>جميع التقييمات ({reviews.length})</span>
+                  <ArrowLeft className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
 
-                <div className="pt-4 border-t border-[#eedfe0] flex items-center justify-between">
+            {/* Rating Summary Scorecard Banner */}
+            <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#eedfe0] shadow-sm mb-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+              <div className="md:col-span-4 flex flex-col items-center md:items-start text-center md:text-right border-b md:border-b-0 md:border-l md:border-[#eedfe0] pb-6 md:pb-0 md:pe-6">
+                <span className="text-5xl sm:text-6xl font-bold font-serif text-[#2f020d]">٤.٩</span>
+                <div className="flex items-center gap-1 text-amber-500 my-2">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} className="h-5 w-5 fill-current" />
+                  ))}
+                </div>
+                <p className="text-xs text-[#524345]">
+                  متوسط التقييم العام بناءً على <strong className="text-[#2f020d]">+١٬٥٠٠ عروس ومناسبة</strong>
+                </p>
+              </div>
+
+              <div className="md:col-span-5 space-y-2.5">
+                <div className="flex items-center gap-3 text-xs">
+                  <span className="w-12 font-semibold text-[#524345]">٥ نجوم</span>
+                  <Progress value={96} className="h-2 flex-1" />
+                  <span className="w-10 text-left font-bold text-[#2f020d]">٩٦٪</span>
+                </div>
+                <div className="flex items-center gap-3 text-xs">
+                  <span className="w-12 font-semibold text-[#524345]">٤ نجوم</span>
+                  <Progress value={4} className="h-2 flex-1" />
+                  <span className="w-10 text-left font-bold text-[#2f020d]">٤٪</span>
+                </div>
+                <div className="flex items-center gap-3 text-xs text-[#857374]">
+                  <span className="w-12">٣ نجوم</span>
+                  <Progress value={0} className="h-2 flex-1" />
+                  <span className="w-10 text-left font-bold">٠٪</span>
+                </div>
+              </div>
+
+              <div className="md:col-span-3 flex flex-col justify-center items-center md:items-end text-center md:text-left gap-2">
+                <div className="p-3.5 rounded-2xl bg-[#faeaeb] text-center w-full">
+                  <ShieldCheck className="w-6 h-6 text-[#735c00] mx-auto mb-1" />
+                  <span className="text-xs font-bold text-[#4a1521] block">توثيق العقود بنسبة 100%</span>
+                  <span className="text-[10px] text-[#524345]">المركز السعودي للأعمال #FL-9941082</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Interactive Review Category Tabs */}
+            <div className="flex justify-center mb-8">
+              <Tabs value={reviewFilter} onValueChange={setReviewFilter} className="w-full max-w-md">
+                <TabsList className="bg-white p-1 rounded-full border border-[#eedfe0] grid grid-cols-3 w-full">
+                  <TabsTrigger value="all" className="rounded-full text-xs font-semibold">
+                    الكل ({reviews.length})
+                  </TabsTrigger>
+                  <TabsTrigger value="bridal" className="rounded-full text-xs font-semibold">
+                    عرائس VIP
+                  </TabsTrigger>
+                  <TabsTrigger value="evening" className="rounded-full text-xs font-semibold">
+                    سهرات وملكة
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+
+            {/* Reviews Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {filteredReviews.slice(0, 6).map((rev) => (
+                <div
+                  key={rev.id}
+                  className="p-6 rounded-3xl bg-white border border-[#eedfe0] shadow-sm hover:shadow-md transition-all flex flex-col justify-between gap-4"
+                >
                   <div>
-                    <h4 className="text-xs font-bold text-[#2f020d]">{rev.clientName}</h4>
-                    <p className="text-[10px] text-[#735c00]">{rev.venue}</p>
-                    <span className="text-[9px] text-[#857374] block">{rev.packageTitle}</span>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-1 text-amber-500">
+                        {Array.from({ length: rev.rating }).map((_, i) => (
+                          <Star key={i} className="h-4 w-4 fill-current" />
+                        ))}
+                      </div>
+                      <span className="text-[11px] text-[#857374]">{rev.date}</span>
+                    </div>
+                    <div className="flex items-start gap-2 mb-2">
+                      <Quote className="w-4 h-4 text-[#735c00] shrink-0 rotate-180 mt-0.5 opacity-60" />
+                      <p className="text-xs text-[#211a1b] leading-relaxed italic">{rev.comment}</p>
+                    </div>
                   </div>
-                  <Badge variant="outline" className="text-[10px] bg-[#faeaeb] border-none text-[#4a1521]">
-                    حجز مؤكد ✓
-                  </Badge>
+
+                  <div className="pt-4 border-t border-[#eedfe0] flex items-center justify-between">
+                    <div>
+                      <h4 className="text-xs font-bold text-[#2f020d]">{rev.clientName}</h4>
+                      <p className="text-[10px] text-[#735c00]">{rev.venue}</p>
+                      <span className="text-[9px] text-[#857374] block">{rev.packageTitle}</span>
+                    </div>
+                    <Badge variant="outline" className="text-[10px] bg-[#faeaeb] border-none text-[#4a1521]">
+                      حجز مؤكد ✓
+                    </Badge>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
       </ScrollReveal>
 
       {/* 7. World-Class Cosmetic Brands & Infinite Runway Marquee */}
@@ -1764,9 +1758,8 @@ export function HomeClient() {
                       className="cursor-pointer"
                     >
                       <Star
-                        className={`w-4 h-4 ${
-                          star <= newRating ? "fill-current text-amber-500" : "text-gray-300"
-                        }`}
+                        className={`w-4 h-4 ${star <= newRating ? "fill-current text-amber-500" : "text-gray-300"
+                          }`}
                       />
                     </button>
                   ))}
