@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { BlogClient } from "./_components/blog-client";
 
 export const metadata: Metadata = {
-  title: "المدونة الملكية وأسرار الجمال | أماني خليل - Luxury Beauty Blog",
+  title: "المدونة الملكية وأسرار الجمال | أماني خليل",
   description:
     "مقالات حصرية، نصائح متخصصة لعرائس الرياض، أسرار ثبات المكياج لـ 18 ساعة، وجدول العناية بالبشرة قبل ليلة الزفاف بقلم خبيرة التجميل المعتمدة دولياً أماني خليل.",
   openGraph: {

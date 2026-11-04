@@ -12,7 +12,6 @@ import {
   CheckCircle2,
   ExternalLink,
   Crown,
-  LayoutDashboard,
   Search,
   MessageCircle,
   ArrowLeft,
@@ -46,7 +45,7 @@ interface RouteItem {
   title: string;
   subtitle: string;
   href: string;
-  category: "public" | "booking" | "admin";
+  category: "public" | "booking";
   badge?: string;
 }
 
@@ -62,7 +61,7 @@ interface BookingInspectorData {
 const ALL_ROUTES: RouteItem[] = [
   // Public Pages
   {
-    title: "الرئيسية | Amani Khalil",
+    title: "الصفحة الرئيسية",
     subtitle: "الواجهة الملكية ومعالج الحجز السريع",
     href: "/",
     category: "public",
@@ -70,7 +69,7 @@ const ALL_ROUTES: RouteItem[] = [
   },
   {
     title: "عن خبيرة التجميل أماني خليل",
-    subtitle: "الفلسفة الفنية والاعتمادات الدولية CIDESCO",
+    subtitle: "الفلسفة الفنية والاعتمادات والشهادات الدولية المعتمدة",
     href: "/about",
     category: "public",
   },
@@ -82,39 +81,39 @@ const ALL_ROUTES: RouteItem[] = [
     badge: "تفاعلي",
   },
   {
-    title: "باقة العروس الملكية VIP",
-    subtitle: "تفاصيل الباقة الملكية المتكاملة للعروس",
+    title: "باقة العروس الملكية الفاخرة",
+    subtitle: "تفاصيل الباقة الملكية المتكاملة للعروس والمرافقة",
     href: "/services/vip-bridal",
     category: "public",
-    badge: "VIP",
+    badge: "الأكثر طلباً",
   },
   {
     title: "مكياج العرائس الفاخر بالرياض",
-    subtitle: "صفحة هبوط مخصصة لعرائس الرياض",
+    subtitle: "صفحة هبوط مخصصة لعرائس الرياض وزيارات القصور",
     href: "/bridal-makeup-riyadh",
     category: "public",
   },
   {
     title: "مكياج السهرات والمناسبات بالرياض",
-    subtitle: "إطلالات السهرات والمناسبات الخاصة",
+    subtitle: "إطلالات السهرات والملكة والمناسبات الخاصة",
     href: "/occasion-makeup-riyadh",
     category: "public",
   },
   {
     title: "معرض الأعمال والإطلالات الملكية",
-    subtitle: "ألبوم الصور الموثقة مع عارض Lightbox",
+    subtitle: "ألبوم الصور الموثقة مع عارض الصور التفاعلي",
     href: "/gallery",
     category: "public",
   },
   {
     title: "آراء وتقييمات العميلات",
-    subtitle: "تقييمات موثقة من حجوزات مكتملة",
+    subtitle: "تقييمات موثقة من واقع حجوزات مكتملة",
     href: "/reviews",
     category: "public",
   },
   {
-    title: "الأسئلة الشائعة | FAQ",
-    subtitle: "بحث فوري وتصنيف تفاعلي للأسئلة",
+    title: "الأسئلة الشائعة",
+    subtitle: "بحث فوري وتصنيف تفاعلي لكافة الاستفسارات",
     href: "/faq",
     category: "public",
   },
@@ -134,7 +133,7 @@ const ALL_ROUTES: RouteItem[] = [
 
   // Booking Flow
   {
-    title: "حجز موعد ملكي | Luxury Booking",
+    title: "حجز موعد ملكي فاخر",
     subtitle: "تدفق الحجز من 4 خطوات مع حاسبة العربون 30%",
     href: "/book",
     category: "booking",
@@ -142,80 +141,9 @@ const ALL_ROUTES: RouteItem[] = [
   },
   {
     title: "تأكيد الحجز والفاتورة الرسمية",
-    subtitle: "تفاصيل الموعد المؤكد، رقم المرجع، وتحميل PDF",
+    subtitle: "تفاصيل الموعد المؤكد، رقم المرجع، وتحميل الفاتورة",
     href: "/book/confirmation",
     category: "booking",
-  },
-
-  // Admin Dashboard
-  {
-    title: "لوحة التحكم | النظرة العامة",
-    subtitle: "ملخص النشاط اليومي والمؤشرات المالية",
-    href: "/admin",
-    category: "admin",
-    badge: "الإدارة",
-  },
-  {
-    title: "إدارة الحجوزات والمواعيد",
-    subtitle: "جدول الحجوزات، الفرز، ومعاينة تفاصيل العروس",
-    href: "/admin/bookings",
-    category: "admin",
-  },
-  {
-    title: "تقويم الزفاف وإشغال المواعيد",
-    subtitle: "التقويم التفاعلي الشهري والأسبوعي",
-    href: "/admin/calendar",
-    category: "admin",
-  },
-  {
-    title: "إدارة الخدمات والباقات الرسمية",
-    subtitle: "تعديل الأسعار، الإضافات، وتفعيل الباقات",
-    href: "/admin/services",
-    category: "admin",
-  },
-  {
-    title: "نافذة إضافة باقة جديدة",
-    subtitle: "نموذج إنشاء باقة جديدة وتحديد العربون",
-    href: "/admin/services/new",
-    category: "admin",
-    badge: "Modal",
-  },
-  {
-    title: "سجل الفواتير والمدفوعات الرسمية",
-    subtitle: "متابعة العربون 30%، الدفعات، والتقارير الضريبية",
-    href: "/admin/invoices",
-    category: "admin",
-  },
-  {
-    title: "سجل العميلات وتتبع التفضيلات (CRM)",
-    subtitle: "ملفات العرائس، نوع البشرة، وسجل الجلسات",
-    href: "/admin/customers",
-    category: "admin",
-  },
-  {
-    title: "إدارة المحتوى والتقييمات والمعرض",
-    subtitle: "اعتماد التقييمات، رفع الصور، وتحديث السياسات",
-    href: "/admin/content",
-    category: "admin",
-  },
-  {
-    title: "إدارة المدونة والمقالات الملكية",
-    subtitle: "إضافة وتعديل مقالات الجمال، النشر، والتحكم بالظهور",
-    href: "/admin/blog",
-    category: "admin",
-    badge: "جديد",
-  },
-  {
-    title: "إعدادات النظام والصلاحيات",
-    subtitle: "بيانات العمل، صلاحيات الفريق، وقوالب الواتساب",
-    href: "/admin/settings",
-    category: "admin",
-  },
-  {
-    title: "تسجيل الدخول الإداري",
-    subtitle: "بوابة الدخول الآمن عبر كلمة المرور أو OTP أو Passkey",
-    href: "/admin/login",
-    category: "admin",
   },
 ];
 
@@ -230,7 +158,6 @@ export function InteractiveShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { createBooking, packages, areas, bookings, reviews } = useAppStore();
 
-  const [currentDir, setCurrentDir] = useState<"rtl" | "ltr">("rtl");
   const [navSheetOpen, setNavSheetOpen] = useState(false);
   const [isDockMinimized, setIsDockMinimized] = useState(false);
   const [manualBookingOpen, setManualBookingOpen] = useState(false);
@@ -280,26 +207,6 @@ export function InteractiveShell({ children }: { children: React.ReactNode }) {
   const [bookingDate, setBookingDate] = useState("2025-10-26");
   const [bookingTimeSlot, setBookingTimeSlot] = useState("عصراً (02:00 م)");
   const [district, setDistrict] = useState("حي الملقا - الرياض");
-
-  const handleToggleLanguage = useCallback(() => {
-    setCurrentDir((prev) => {
-      const next = prev === "rtl" ? "ltr" : "rtl";
-      document.documentElement.setAttribute("dir", next);
-      document.documentElement.setAttribute("lang", next === "rtl" ? "ar" : "en");
-      toast.success(
-        next === "ltr"
-          ? "Switched layout direction to English (LTR)"
-          : "تم التبديل إلى الواجهة العربية (RTL)",
-        {
-          description:
-            next === "ltr"
-              ? "Navigation and layout flow adapted to Left-to-Right."
-              : "تم ضبط اتجاه القراءة والتصميم من اليمين إلى اليسار.",
-        }
-      );
-      return next;
-    });
-  }, []);
 
   // Expose global helpers for Stitch HTML inline handlers
   useEffect(() => {
@@ -500,8 +407,6 @@ export function InteractiveShell({ children }: { children: React.ReactNode }) {
         <div data-shell-ui="true">
           <SiteHeader
             onOpenMobileMenu={() => setNavSheetOpen(true)}
-            onToggleLanguage={handleToggleLanguage}
-            currentDir={currentDir}
           />
         </div>
       )}
@@ -555,14 +460,6 @@ export function InteractiveShell({ children }: { children: React.ReactNode }) {
               <span>حجز موعد</span>
             </Link>
 
-            <Link
-              href="/admin"
-              className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/20"
-            >
-              <LayoutDashboard className="h-3.5 w-3.5 text-[#fed65b]" />
-              <span>لوحة التحكم</span>
-            </Link>
-
             <button
               type="button"
               onClick={() => setIsDockMinimized(true)}
@@ -576,7 +473,7 @@ export function InteractiveShell({ children }: { children: React.ReactNode }) {
         )
       )}
 
-      {/* shadcn Sheet: Mobile Navigation & Complete 22-Screen Sitemap */}
+      {/* shadcn Sheet: Mobile Navigation & Sitemap */}
       <Sheet open={navSheetOpen} onOpenChange={setNavSheetOpen}>
         <SheetContent
           data-shell-ui="true"
@@ -588,16 +485,16 @@ export function InteractiveShell({ children }: { children: React.ReactNode }) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/logo.png"
-                alt="Amani Khalil | أماني خليل"
+                alt="أماني خليل"
                 className="h-10 w-auto max-w-[165px] object-contain"
               />
-              <Badge variant="gold">{ALL_ROUTES.length} شاشة متكاملة</Badge>
+              <Badge variant="gold">{ALL_ROUTES.length} صفحة</Badge>
             </div>
             <SheetTitle className="text-xl font-bold text-[#2f020d]">
               التنقل السريع ومستكشف الصفحات
             </SheetTitle>
             <SheetDescription className="text-[#524345]">
-              انتقلي بسهولة بين صفحات الموقع العام، تدفق الحجز الملكي، ولوحة الإدارة.
+              انتقلي بسهولة بين صفحات الموقع العام وتدفق الحجز الملكي.
             </SheetDescription>
 
             <div className="relative mt-3">
@@ -605,7 +502,7 @@ export function InteractiveShell({ children }: { children: React.ReactNode }) {
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="ابحثي عن صفحة أو مسار (مثال: عرائس، حجز، فواتير)..."
+                placeholder="ابحثي عن صفحة أو مسار (مثال: عرائس، حجز، خدمات)..."
                 className="pr-10 bg-white"
               />
             </div>
@@ -629,7 +526,7 @@ export function InteractiveShell({ children }: { children: React.ReactNode }) {
             )}
 
             <Tabs defaultValue="all" dir="rtl" className="w-full">
-              <TabsList className="grid w-full grid-cols-4 h-11 bg-[#faeaeb] p-1">
+              <TabsList className="grid w-full grid-cols-3 h-11 bg-[#faeaeb] p-1">
                 <TabsTrigger value="all" className="text-xs px-2">
                   الكل ({filteredRoutes.length})
                 </TabsTrigger>
@@ -637,14 +534,11 @@ export function InteractiveShell({ children }: { children: React.ReactNode }) {
                   الموقع العام
                 </TabsTrigger>
                 <TabsTrigger value="booking" className="text-xs px-2">
-                  الحجز
-                </TabsTrigger>
-                <TabsTrigger value="admin" className="text-xs px-2">
-                  الإدارة
+                  تدفق الحجز
                 </TabsTrigger>
               </TabsList>
 
-              {(["all", "public", "booking", "admin"] as const).map(
+              {(["all", "public", "booking"] as const).map(
                 (tabKey) => {
                   const items = filteredRoutes.filter((r) =>
                     tabKey === "all" ? true : r.category === tabKey

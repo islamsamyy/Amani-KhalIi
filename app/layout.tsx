@@ -5,7 +5,7 @@ import { InteractiveShell } from "@/components/interactive-shell";
 import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
-  title: "أماني خليل | خبيرة التجميل ومكياج العرائس بالرياض - Amani Khalil",
+  title: "أماني خليل | خبيرة التجميل ومكياج العرائس بالرياض",
   description:
     "الموقع الرسمي لخبيرة التجميل أماني خليل - جلسات مكياج منزلية خاصة وفاخرة بالرياض للعرائس، السهرات، والمناسبات الملكية.",
 };

@@ -7,7 +7,6 @@ import { usePathname } from "next/navigation";
 import {
   Calendar,
   ChevronDown,
-  Globe,
   Menu,
   Sparkles,
   Crown,
@@ -19,8 +18,8 @@ import {
 
 interface SiteHeaderProps {
   onOpenMobileMenu: () => void;
-  onToggleLanguage: () => void;
-  currentDir: "rtl" | "ltr";
+  onToggleLanguage?: () => void;
+  currentDir?: "rtl" | "ltr";
 }
 
 const SERVICE_SUBLINKS = [
@@ -52,19 +51,18 @@ const SERVICE_SUBLINKS = [
 ];
 
 const NAV_LINKS = [
-  { href: "/", labelAr: "الرئيسية", labelEn: "Home" },
+  { href: "/", label: "الرئيسية" },
   {
     href: "/services",
-    labelAr: "الباقات والخدمات",
-    labelEn: "Services",
+    label: "الباقات والخدمات",
     hasDropdown: true,
   },
-  { href: "/gallery", labelAr: "معرض الأعمال", labelEn: "Gallery" },
-  { href: "/reviews", labelAr: "آراء العميلات", labelEn: "Reviews" },
-  { href: "/blog", labelAr: "المدونة", labelEn: "Blog" },
-  { href: "/about", labelAr: "عن أماني", labelEn: "About" },
-  { href: "/faq", labelAr: "الأسئلة الشائعة", labelEn: "FAQ" },
-  { href: "/contact", labelAr: "تواصل والسياسات", labelEn: "Contact" },
+  { href: "/gallery", label: "معرض الأعمال" },
+  { href: "/reviews", label: "آراء العميلات" },
+  { href: "/blog", label: "المدونة" },
+  { href: "/about", label: "عن أماني" },
+  { href: "/faq", label: "الأسئلة الشائعة" },
+  { href: "/contact", label: "تواصل والسياسات" },
 ];
 
 export function SiteHeader({
@@ -201,9 +199,7 @@ export function SiteHeader({
                         : "text-[#eedfe0] hover:text-white hover:bg-white/15"
                     }`}
                   >
-                    <span>
-                      {currentDir === "ltr" ? item.labelEn : item.labelAr}
-                    </span>
+                    <span>{item.label}</span>
                     <ChevronDown
                       className={`h-3.5 w-3.5 transition-transform duration-300 ${
                         servicesOpen ? "rotate-180" : ""
@@ -293,47 +289,21 @@ export function SiteHeader({
                     : "text-[#eedfe0] hover:text-white hover:bg-white/15"
                 }`}
               >
-                {currentDir === "ltr" ? item.labelEn : item.labelAr}
+                {item.label}
               </Link>
             );
           })}
         </nav>
 
-        {/* End Actions: Language Switch + Luxury Booking Button */}
+        {/* End Actions: Luxury Booking Button & Mobile Menu */}
         <div className="flex items-center gap-2.5 shrink-0">
-          <button
-            type="button"
-            onClick={onToggleLanguage}
-            title="تبديل اتجاه ولغة العرض"
-            className="h-10 px-3.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all flex items-center gap-1.5 text-xs font-semibold cursor-pointer border border-white/15 backdrop-blur-md active:scale-95"
-          >
-            <Globe className="h-3.5 w-3.5 text-[#fed65b]" />
-            <span
-              className={
-                currentDir === "ltr" ? "font-extrabold text-[#fed65b]" : "opacity-75"
-              }
-            >
-              EN
-            </span>
-            <span className="text-white/40">|</span>
-            <span
-              className={
-                currentDir === "rtl" ? "font-extrabold text-[#fed65b]" : "opacity-75"
-              }
-            >
-              عربي
-            </span>
-          </button>
-
           <Link
             href="/book"
             className="group relative inline-flex items-center justify-center gap-2 h-11 px-5 rounded-full text-xs font-bold text-[#241a00] bg-gradient-to-r from-[#fed65b] via-[#ffd966] to-[#fed65b] shadow-[0_4px_20px_rgba(254,214,91,0.35)] hover:shadow-[0_8px_30px_rgba(254,214,91,0.55)] active:scale-95 transition-all duration-300 overflow-hidden"
           >
             <span className="absolute inset-0 bg-white/25 translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
             <Crown className="h-3.5 w-3.5 text-[#241a00] relative z-10 transition-transform group-hover:rotate-12 duration-300" />
-            <span className="relative z-10 font-bold">
-              {currentDir === "ltr" ? "Book Luxury Session" : "حجز موعد ملكي"}
-            </span>
+            <span className="relative z-10 font-bold">حجز موعد ملكي</span>
           </Link>
 
           <button

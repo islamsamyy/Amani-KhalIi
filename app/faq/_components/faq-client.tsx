@@ -56,7 +56,7 @@ export function FaqClient() {
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#735c00]/20 rounded-full blur-3xl pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 relative z-10 text-center">
           <Badge variant="gold" className="mb-4">
-            دليلكِ الشامل • Luxury FAQ
+            دليلكِ الشامل والإجابات الرسمية
           </Badge>
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-serif leading-tight">
             الأسئلة الشائعة

@@ -36,3 +36,4 @@ grant delete on public.bookings to anon, authenticated;
 grant delete on public.invoices to anon, authenticated;
 grant delete on public.customers to anon, authenticated;
 grant delete on public.gallery_looks to anon, authenticated;
+

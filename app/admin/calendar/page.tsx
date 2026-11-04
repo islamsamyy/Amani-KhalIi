@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { AdminCalendarClient } from "./_components/admin-calendar-client";
 
 export const metadata: Metadata = {
-  title: "تقويم الزفاف وإشغال المواعيد | أماني خليل - Wedding Calendar",
+  title: "تقويم الزفاف وإشغال المواعيد | أماني خليل",
   description:
     "التقويم التفاعلي لمواعيد وحجوزات العرائس وجدول الإشغال اليومي لخبيرة التجميل أماني خليل بالرياض.",
 };
