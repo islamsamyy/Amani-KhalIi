@@ -32,11 +32,12 @@ import {
   Clock,
   Eye,
   ExternalLink,
+  Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 
 export function AdminInvoicesClient() {
-  const { invoices } = useAppStore();
+  const { invoices, deleteInvoice } = useAppStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedInvoice, setSelectedInvoice] = useState<InvoiceRecord | null>(null);
 
@@ -144,7 +145,7 @@ export function AdminInvoicesClient() {
               <TableHead>المتبقي</TableHead>
               <TableHead>بوابة الدفع</TableHead>
               <TableHead>الحالة</TableHead>
-              <TableHead className="w-16">معاينة</TableHead>
+              <TableHead className="w-24 text-center">الإجراءات</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -184,16 +185,28 @@ export function AdminInvoicesClient() {
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedInvoice(inv);
-                    }}
-                    className="h-8 w-8 rounded-full bg-[#faeaeb] hover:bg-[#eedfe0] flex items-center justify-center text-[#2f020d] transition-colors cursor-pointer"
-                  >
-                    <Eye className="h-4 w-4" />
-                  </button>
+                  <div className="flex items-center justify-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedInvoice(inv)}
+                      title="معاينة تفاصيل الفاتورة"
+                      className="h-8 w-8 rounded-full bg-[#faeaeb] hover:bg-[#eedfe0] flex items-center justify-center text-[#2f020d] transition-colors cursor-pointer"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (confirm(`هل أنتِ متأكدة من حذف الفاتورة "${inv.invoiceNumber}" نهائياً؟`)) {
+                          deleteInvoice(inv.id);
+                        }
+                      }}
+                      title="حذف الفاتورة نهائياً"
+                      className="h-8 w-8 rounded-full bg-white hover:bg-rose-50 text-rose-600 border border-[#eedfe0] flex items-center justify-center transition-colors cursor-pointer"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
@@ -241,17 +254,33 @@ export function AdminInvoicesClient() {
                 </div>
 
                 <div className="flex justify-between items-center pt-2">
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      toast.success("جارٍ طباعة الفاتورة...");
-                      window.print();
-                    }}
-                    className="rounded-full bg-[#4a1521] text-white text-xs font-bold"
-                  >
-                    <Printer className="h-3.5 w-3.5 ms-1" />
-                    <span>طباعة</span>
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        toast.success("جارٍ طباعة الفاتورة...");
+                        window.print();
+                      }}
+                      className="rounded-full bg-[#4a1521] text-white text-xs font-bold"
+                    >
+                      <Printer className="h-3.5 w-3.5 ms-1" />
+                      <span>طباعة</span>
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        if (confirm(`هل أنتِ متأكدة من حذف الفاتورة "${selectedInvoice.invoiceNumber}" نهائياً؟`)) {
+                          deleteInvoice(selectedInvoice.id);
+                          setSelectedInvoice(null);
+                        }
+                      }}
+                      className="rounded-full text-rose-600 border-rose-200 hover:bg-rose-50 text-xs font-bold gap-1"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      <span>حذف الفاتورة</span>
+                    </Button>
+                  </div>
                   <Button
                     size="sm"
                     variant="outline"

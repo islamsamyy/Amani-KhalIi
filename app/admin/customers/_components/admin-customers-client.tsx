@@ -17,11 +17,12 @@ import {
   Crown,
   Sparkles,
   ShieldCheck,
+  Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 
 export function AdminCustomersClient() {
-  const { customers, updateCustomerNotes } = useAppStore();
+  const { customers, updateCustomerNotes, deleteCustomer } = useAppStore();
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>(customers[0]?.id || "c-01");
   const [searchQuery, setSearchQuery] = useState("");
   const [notesDraft, setNotesDraft] = useState("");
@@ -99,9 +100,24 @@ export function AdminCustomersClient() {
                           <span className="text-[10px] text-[#857374]">{c.phone}</span>
                         </div>
                       </div>
-                      <Badge variant="gold" className="text-[10px]">
-                        {c.tier}
-                      </Badge>
+                      <div className="flex items-center gap-1.5">
+                        <Badge variant="gold" className="text-[10px]">
+                          {c.tier}
+                        </Badge>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (confirm(`هل أنتِ متأكدة من حذف ملف العميلة "${c.name}"؟`)) {
+                              deleteCustomer(c.id);
+                            }
+                          }}
+                          title="حذف العميلة"
+                          className="h-6 w-6 rounded-full hover:bg-rose-50 text-rose-600 flex items-center justify-center transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
                     </div>
 
                     <div className="flex items-center justify-between text-[11px] text-[#524345] pt-2 border-t border-[#eedfe0]/60">
@@ -149,6 +165,18 @@ export function AdminCustomersClient() {
                       <Phone className="h-4 w-4" />
                       <span>اتصال</span>
                     </a>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (confirm(`هل أنتِ متأكدة من حذف ملف العميلة "${selectedCustomer.name}" نهائياً من سجل CRM؟`)) {
+                          deleteCustomer(selectedCustomer.id);
+                        }
+                      }}
+                      title="حذف ملف العميلة"
+                      className="h-10 w-10 rounded-full bg-white hover:bg-rose-50 text-rose-600 border border-[#eedfe0] flex items-center justify-center transition-colors cursor-pointer"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                   </div>
                 </div>
 

@@ -32,6 +32,7 @@ import {
   Crown,
   Sparkles,
   Save,
+  Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -42,6 +43,7 @@ export function AdminOverviewClient() {
     customers,
     gallery,
     updateBookingStatus,
+    deleteBooking,
     updateCustomerNotes,
     refreshFromDatabase,
     isSupabaseConnected,
@@ -541,6 +543,19 @@ export function AdminOverviewClient() {
                         >
                           {isCompleted ? "مكتمل ✓" : "تم التوثيق"}
                         </Button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (confirm(`هل أنتِ متأكدة من حذف حجز #${booking.ref.replace(/^#/, "")} نهائياً؟`)) {
+                              deleteBooking(booking.ref);
+                            }
+                          }}
+                          title="حذف الحجز نهائياً"
+                          className="h-9 w-9 rounded-full bg-white hover:bg-rose-50 text-rose-600 border border-[#eedfe0] flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
                       </div>
                     </Card>
 
@@ -664,6 +679,18 @@ export function AdminOverviewClient() {
                       >
                         إفساح
                       </Button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (confirm(`هل أنتِ متأكدة من حذف هذا الطلب المعلق #${hold.ref} نهائياً؟`)) {
+                            deleteBooking(hold.ref);
+                          }
+                        }}
+                        title="حذف الحجز نهائياً"
+                        className="h-8 w-8 rounded-full bg-white hover:bg-rose-50 text-rose-600 border border-[#eedfe0] flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
                     </div>
                   </div>
                 ))

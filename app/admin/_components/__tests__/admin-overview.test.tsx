@@ -145,6 +145,11 @@ describe("AdminOverviewClient - Real Data & Dynamic Actions", () => {
       toggleBlogPublished: vi.fn(),
       toggleBlogFeatured: vi.fn(),
       deleteReview: vi.fn(),
+      deleteBooking: vi.fn(),
+      deleteInvoice: vi.fn(),
+      deleteCustomer: vi.fn(),
+      addGalleryLook: vi.fn(),
+      deleteGalleryLook: vi.fn(),
       reviews: [],
     });
   });
@@ -175,7 +180,7 @@ describe("AdminOverviewClient - Real Data & Dynamic Actions", () => {
 
     // Urgent holds section should display real pending client
     expect(screen.getAllByText("العنود الشمري الحقيقية").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText(/285/)).toBeInTheDocument(); // Deposit amount
+    expect(screen.getAllByText(/285/).length).toBeGreaterThanOrEqual(1); // Deposit amount
 
     // Click "تثبيت يدوي"
     const confirmBtn = screen.getByRole("button", { name: "تثبيت يدوي" });

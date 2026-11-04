@@ -8,6 +8,13 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
   FolderKanban,
   Star,
   CheckCircle2,
@@ -30,7 +37,67 @@ import {
 import { toast } from "sonner";
 
 export function AdminContentClient() {
-  const { reviews, toggleReviewApproval, toggleReviewFeatured, deleteReview, gallery } = useAppStore();
+  const {
+    reviews,
+    toggleReviewApproval,
+    toggleReviewFeatured,
+    deleteReview,
+    gallery,
+    deleteGalleryLook,
+    addGalleryLook,
+  } = useAppStore();
+
+  const [addGalleryOpen, setAddGalleryOpen] = useState(false);
+  const [lookTitle, setLookTitle] = useState("");
+  const [lookCategory, setLookCategory] = useState<
+    "bridal" | "evening" | "soft" | "engagement"
+  >("bridal");
+  const [lookCategoryAr, setLookCategoryAr] = useState("عرائس ملكي");
+  const [lookImage, setLookImage] = useState("/gallery/IMG_5729.webp");
+  const [lookClientType, setLookClientType] = useState(
+    "عروس فندق الريتز-كارلتون"
+  );
+  const [lookTags, setLookTags] = useState("مكياج عروس, فخامة ملكية");
+
+  const handleCreateLook = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!lookTitle.trim()) {
+      toast.error("يرجى إدخال عنوان الإطلالة");
+      return;
+    }
+    const tags = lookTags
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
+    addGalleryLook({
+      title: lookTitle.trim(),
+      category: lookCategory,
+      categoryAr: lookCategoryAr,
+      image: lookImage.trim() || "/gallery/IMG_5729.webp",
+      clientType: lookClientType.trim() || "عميلة ملكية",
+      styleTags: tags.length > 0 ? tags : ["إطلالة ملكية"],
+    });
+    setAddGalleryOpen(false);
+    setLookTitle("");
+  };
+
+  const handleCategoryChange = (val: "bridal" | "evening" | "soft" | "engagement") => {
+    setLookCategory(val);
+    switch (val) {
+      case "bridal":
+        setLookCategoryAr("عرائس ملكي");
+        break;
+      case "evening":
+        setLookCategoryAr("سهرات ومناسبات");
+        break;
+      case "soft":
+        setLookCategoryAr("ناعم وهادئ");
+        break;
+      case "engagement":
+        setLookCategoryAr("خطوبة وملكة");
+        break;
+    }
+  };
   const [contractClauses, setContractClauses] = useState(
     "١. يُعتبر العربون غير مسترد بعد تأكيد الحجز نظراً لتخصيص التاريخ لعروس واحدة.\n٢. يحق للعميلة تأجيل الموعد لمرة واحدة دون رسوم بشرط إشعار مسبق قبل ٢١ يوماً.\n٣. يُمنع تصوير أو نشر أي صورة أو مقطع دون موافقة خطية صريحة من العميلة.\n٤. تلتزم خبيرة التجميل بالحضور في التوقيت المحدد مع فريق العمل وأدوات التعقيم الطبي المعتمدة."
   );
@@ -309,8 +376,8 @@ export function AdminContentClient() {
               </div>
               <Button
                 size="sm"
-                onClick={() => toast.success("تم فتح نافذة إضافة إطلالة جديدة للمعرض")}
-                className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white text-xs font-bold gap-1.5 px-5 shadow-sm"
+                onClick={() => setAddGalleryOpen(true)}
+                className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white text-xs font-bold gap-1.5 px-5 shadow-sm cursor-pointer"
               >
                 <Plus className="h-4 w-4 text-[#fed65b]" />
                 <span>إضافة إطلالة جديدة</span>
@@ -321,7 +388,7 @@ export function AdminContentClient() {
               {gallery.map((g) => (
                 <div
                   key={g.id}
-                  className="rounded-3xl overflow-hidden border border-[#eedfe0] bg-white shadow-sm hover:shadow-md transition-all space-y-2 pb-3 group"
+                  className="rounded-3xl overflow-hidden border border-[#eedfe0] bg-white shadow-sm hover:shadow-md transition-all space-y-2 pb-3 group relative"
                 >
                   <div className="aspect-[4/5] bg-gray-100 overflow-hidden relative">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -333,14 +400,133 @@ export function AdminContentClient() {
                     <Badge variant="gold" className="absolute top-2.5 start-2.5 text-[10px] font-bold shadow-md">
                       {g.categoryAr}
                     </Badge>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (confirm(`هل أنتِ متأكدة من حذف إطلالة "${g.title}" نهائياً من المعرض؟`)) {
+                          deleteGalleryLook(g.id);
+                        }
+                      }}
+                      title="حذف الإطلالة نهائياً"
+                      className="absolute top-2.5 end-2.5 h-8 w-8 rounded-full bg-white/90 hover:bg-rose-50 text-rose-600 border border-[#eedfe0] flex items-center justify-center transition-all cursor-pointer shadow-sm z-10 opacity-90 hover:opacity-100"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                   </div>
-                  <div className="px-3.5 pt-1">
-                    <h4 className="text-xs font-bold text-[#2f020d] truncate">{g.title}</h4>
-                    <p className="text-[10px] text-[#857374] truncate mt-0.5">{g.clientType}</p>
+                  <div className="px-3.5 pt-1 flex items-center justify-between">
+                    <div className="min-w-0 flex-1">
+                      <h4 className="text-xs font-bold text-[#2f020d] truncate">{g.title}</h4>
+                      <p className="text-[10px] text-[#857374] truncate mt-0.5">{g.clientType}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (confirm(`هل أنتِ متأكدة من حذف إطلالة "${g.title}" نهائياً من المعرض؟`)) {
+                          deleteGalleryLook(g.id);
+                        }
+                      }}
+                      title="حذف الإطلالة"
+                      className="h-7 w-7 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-600 flex items-center justify-center transition-colors shrink-0 ms-2 cursor-pointer"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
                   </div>
                 </div>
               ))}
             </div>
+
+            {/* Add Gallery Look Modal Dialog */}
+            <Dialog open={addGalleryOpen} onOpenChange={setAddGalleryOpen}>
+              <DialogContent className="max-w-md bg-[#fff8f7] border border-[#d7c1c3] p-6 text-right rounded-3xl" dir="rtl">
+                <DialogHeader className="text-right">
+                  <DialogTitle className="text-lg font-bold text-[#2f020d]">
+                    إضافة إطلالة ملكية جديدة للمعرض
+                  </DialogTitle>
+                  <DialogDescription className="text-xs text-[#524345]">
+                    أدخلي تفاصيل الإطلالة وصورة العمل ليتم عرضها في ألبوم المعرض وتطبيق الحجز.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <form onSubmit={handleCreateLook} className="space-y-4 my-2">
+                  <div>
+                    <label className="text-xs font-bold text-[#2f020d] block mb-1">عنوان الإطلالة *</label>
+                    <input
+                      type="text"
+                      required
+                      value={lookTitle}
+                      onChange={(e) => setLookTitle(e.target.value)}
+                      placeholder="مثال: مكياج العروس الملكي (Royal Glow)"
+                      className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs font-bold text-[#2f020d] block mb-1">التصنيف</label>
+                      <select
+                        value={lookCategory}
+                        onChange={(e) => handleCategoryChange(e.target.value as typeof lookCategory)}
+                        className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
+                      >
+                        <option value="bridal">عرائس ملكي (bridal)</option>
+                        <option value="evening">سهرات ومناسبات (evening)</option>
+                        <option value="soft">ناعم وهادئ (soft)</option>
+                        <option value="engagement">خطوبة وملكة (engagement)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-[#2f020d] block mb-1">وصف العروس / القاعة</label>
+                      <input
+                        type="text"
+                        value={lookClientType}
+                        onChange={(e) => setLookClientType(e.target.value)}
+                        placeholder="عروس فندق الريتز-كارلتون"
+                        className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-[#2f020d] block mb-1">مسار أو رابط الصورة</label>
+                    <input
+                      type="text"
+                      value={lookImage}
+                      onChange={(e) => setLookImage(e.target.value)}
+                      placeholder="/gallery/IMG_5729.webp"
+                      className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-[#2f020d] block mb-1">وسوم الإطلالة (مفصولة بفاصلة)</label>
+                    <input
+                      type="text"
+                      value={lookTags}
+                      onChange={(e) => setLookTags(e.target.value)}
+                      placeholder="مكياج عروس, فخامة ملكية, رموش 3D"
+                      className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
+                    />
+                  </div>
+
+                  <div className="flex justify-end gap-2 pt-2 border-t border-[#eedfe0]">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setAddGalleryOpen(false)}
+                      className="rounded-full text-xs"
+                    >
+                      إلغاء
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white text-xs font-bold px-6"
+                    >
+                      نشر في المعرض
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
           </TabsContent>
 
           {/* Tab 3: Contract & Policies Editing */}

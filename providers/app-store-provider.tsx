@@ -74,6 +74,13 @@ interface AppStoreContextType {
     }
   ) => BookingRecord;
   updateBookingStatus: (ref: string, status: BookingRecord["status"]) => void;
+  deleteBooking: (refOrId: string) => void;
+
+  deleteInvoice: (idOrInvoiceNumber: string) => void;
+  deleteCustomer: (id: string) => void;
+
+  addGalleryLook: (look: Omit<GalleryLook, "id">) => void;
+  deleteGalleryLook: (id: string) => void;
 
   addReview: (review: Omit<ReviewItem, "id" | "approved" | "featured">) => void;
   toggleReviewApproval: (id: string) => void;
@@ -898,6 +905,119 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const deleteBooking = (refOrId: string) => {
+    const targetBooking = bookings.find(
+      (b) => b.ref === refOrId || b.id === refOrId
+    );
+    const targetRef = targetBooking ? targetBooking.ref : refOrId;
+    const targetId = targetBooking ? targetBooking.id : refOrId;
+
+    setBookings((prev) =>
+      prev.filter((b) => b.ref !== targetRef && b.id !== targetId)
+    );
+    setInvoices((prev) => prev.filter((i) => i.bookingRef !== targetRef));
+    toast.success(`تم حذف الحجز #${targetRef.replace(/^#/, "")} بنجاح`);
+
+    const supabase = createClient();
+    if (supabase) {
+      void (async () => {
+        const rpcRes = await supabase.rpc("admin_delete_booking", {
+          p_ref: targetRef,
+        });
+        if (rpcRes.error) {
+          await supabase.from("invoices").delete().eq("booking_ref", targetRef);
+          await supabase
+            .from("bookings")
+            .delete()
+            .or(`ref.eq.${targetRef},id.eq.${targetId}`);
+        }
+      })();
+    }
+  };
+
+  const deleteInvoice = (idOrNum: string) => {
+    setInvoices((prev) =>
+      prev.filter((i) => i.id !== idOrNum && i.invoiceNumber !== idOrNum)
+    );
+    toast.success("تم حذف الفاتورة بنجاح");
+
+    const supabase = createClient();
+    if (supabase) {
+      void (async () => {
+        const rpcRes = await supabase.rpc("admin_delete_invoice", {
+          p_id: idOrNum,
+        });
+        if (rpcRes.error) {
+          await supabase
+            .from("invoices")
+            .delete()
+            .or(`id.eq.${idOrNum},invoice_number.eq.${idOrNum}`);
+        }
+      })();
+    }
+  };
+
+  const deleteCustomer = (id: string) => {
+    setCustomers((prev) => prev.filter((c) => c.id !== id));
+    toast.success("تم حذف ملف العميلة بنجاح");
+
+    const supabase = createClient();
+    if (supabase) {
+      void (async () => {
+        const rpcRes = await supabase.rpc("admin_delete_customer", {
+          p_id: id,
+        });
+        if (rpcRes.error) {
+          await supabase.from("customers").delete().eq("id", id);
+        }
+      })();
+    }
+  };
+
+  const deleteGalleryLook = (id: string) => {
+    setGallery((prev) => prev.filter((g) => g.id !== id));
+    toast.success("تم حذف الإطلالة من المعرض بنجاح");
+
+    const supabase = createClient();
+    if (supabase) {
+      void (async () => {
+        const rpcRes = await supabase.rpc("admin_delete_gallery_look", {
+          p_id: id,
+        });
+        if (rpcRes.error) {
+          await supabase.from("gallery_looks").delete().eq("id", id);
+        }
+      })();
+    }
+  };
+
+  const addGalleryLook = (lookData: Omit<GalleryLook, "id">) => {
+    const id = "gal-" + Date.now();
+    const newLook: GalleryLook = { ...lookData, id };
+    setGallery((prev) => [newLook, ...prev]);
+    toast.success(`تمت إضافة الإطلالة "${lookData.title}" إلى المعرض بنجاح ✨`);
+
+    const supabase = createClient();
+    if (supabase) {
+      void (async () => {
+        const { error } = await supabase.from("gallery_looks").insert({
+          id: newLook.id,
+          title: newLook.title,
+          category: newLook.category,
+          category_ar: newLook.categoryAr,
+          image: newLook.image,
+          client_type: newLook.clientType,
+          style_tags: newLook.styleTags,
+        });
+        if (error) {
+          toast.error("تعذر حفظ الإطلالة في قاعدة البيانات", {
+            description: error.message,
+          });
+        }
+      })();
+    }
+  };
+
   const addReview = (
     reviewData: Omit<ReviewItem, "id" | "approved" | "featured">
   ) => {
@@ -1270,6 +1390,11 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
         deletePackage,
         createBooking,
         updateBookingStatus,
+        deleteBooking,
+        deleteInvoice,
+        deleteCustomer,
+        addGalleryLook,
+        deleteGalleryLook,
         addReview,
         toggleReviewApproval,
         toggleReviewFeatured,

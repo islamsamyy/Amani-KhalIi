@@ -79,6 +79,11 @@ describe("AdminCalendarClient - Dynamic Calendar & Real Bookings", () => {
       toggleBlogPublished: vi.fn(),
       toggleBlogFeatured: vi.fn(),
       deleteReview: vi.fn(),
+      deleteBooking: vi.fn(),
+      deleteInvoice: vi.fn(),
+      deleteCustomer: vi.fn(),
+      addGalleryLook: vi.fn(),
+      deleteGalleryLook: vi.fn(),
     });
   });
 

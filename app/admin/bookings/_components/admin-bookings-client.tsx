@@ -37,11 +37,12 @@ import {
   Download,
   PlusCircle,
   ExternalLink,
+  Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 
 export function AdminBookingsClient() {
-  const { bookings, updateBookingStatus } = useAppStore();
+  const { bookings, updateBookingStatus, deleteBooking } = useAppStore();
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBooking, setSelectedBooking] = useState<BookingRecord | null>(null);
@@ -160,7 +161,7 @@ export function AdminBookingsClient() {
               <TableHead>المقر / الفندق</TableHead>
               <TableHead>الإجمالي</TableHead>
               <TableHead>الحالة</TableHead>
-              <TableHead className="w-16">معاينة</TableHead>
+              <TableHead className="w-24 text-center">الإجراءات</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -199,16 +200,28 @@ export function AdminBookingsClient() {
                   </TableCell>
                   <TableCell>{getStatusBadge(b.status)}</TableCell>
                   <TableCell>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedBooking(b);
-                      }}
-                      className="h-8 w-8 rounded-full bg-[#faeaeb] hover:bg-[#eedfe0] flex items-center justify-center text-[#2f020d] transition-colors cursor-pointer"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </button>
+                    <div className="flex items-center justify-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedBooking(b)}
+                        title="معاينة تفاصيل الحجز"
+                        className="h-8 w-8 rounded-full bg-[#faeaeb] hover:bg-[#eedfe0] flex items-center justify-center text-[#2f020d] transition-colors cursor-pointer"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (confirm(`هل أنتِ متأكدة من حذف حجز #${b.ref} للعميلة "${b.clientName}" نهائياً؟`)) {
+                            deleteBooking(b.ref);
+                          }
+                        }}
+                        title="حذف الحجز نهائياً"
+                        className="h-8 w-8 rounded-full bg-white hover:bg-rose-50 text-rose-600 border border-[#eedfe0] flex items-center justify-center transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
@@ -300,13 +313,29 @@ export function AdminBookingsClient() {
                     <MessageCircle className="h-4 w-4" />
                     <span>مراسلة واتساب</span>
                   </a>
-                  <Button
-                    variant="outline"
-                    onClick={() => setSelectedBooking(null)}
-                    className="rounded-full text-xs"
-                  >
-                    إغلاق
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        if (confirm(`هل أنتِ متأكدة من حذف حجز #${selectedBooking.ref} نهائياً؟`)) {
+                          deleteBooking(selectedBooking.ref);
+                          setSelectedBooking(null);
+                        }
+                      }}
+                      className="rounded-full text-rose-600 border-rose-200 hover:bg-rose-50 text-xs font-bold gap-1"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      <span>حذف الحجز نهائياً</span>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => setSelectedBooking(null)}
+                      className="rounded-full text-xs"
+                    >
+                      إغلاق
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}
