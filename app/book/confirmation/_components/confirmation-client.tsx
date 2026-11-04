@@ -26,7 +26,7 @@ import {
 import { toast } from "sonner";
 
 export function ConfirmationClient() {
-  const { lastConfirmedBooking } = useAppStore();
+  const { lastConfirmedBooking, bookings } = useAppStore();
   const [data, setData] = useState<{
     ref: string;
     brideName: string;
@@ -37,55 +37,153 @@ export function ConfirmationClient() {
     grandTotal: number;
     deposit: number;
     remaining: number;
-  }>({
-    ref: "#AK-2025-5038",
-    brideName: "العنود بنت خالد",
-    bridePhone: "0559876543",
-    pkgTitle: "باقة العروس الملكية VIP",
-    date: "الخميس، 9 أكتوبر 2025 • عصراً (02:30 م)",
-    venue: "فندق الريتز-كارلتون، الرياض — الجناح الملكي 412",
-    grandTotal: 3550,
-    deposit: 1065,
-    remaining: 2485,
+  }>(() => {
+    let initialRef = "#AK-2025-5038";
+    let initialName = "";
+    let initialPhone = "0559876543";
+
+    if (typeof window !== "undefined") {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const r = params.get("ref");
+        const n = params.get("name");
+        const p = params.get("phone");
+        if (r) initialRef = "#" + r.replace(/^#/, "");
+        if (n) initialName = decodeURIComponent(n);
+        if (p) initialPhone = decodeURIComponent(p);
+
+        if (!initialName) {
+          const raw = sessionStorage.getItem("amani_last_booking");
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed.brideName) initialName = parsed.brideName;
+            if (parsed.bridePhone) initialPhone = parsed.bridePhone;
+            if (parsed.ref && !r) initialRef = "#" + String(parsed.ref).replace(/^#/, "");
+          }
+        }
+      } catch {}
+    }
+
+    return {
+      ref: initialRef,
+      brideName: initialName,
+      bridePhone: initialPhone,
+      pkgTitle: "باقة العروس الملكية VIP",
+      date: "الخميس، 9 أكتوبر 2025 • عصراً (02:30 م)",
+      venue: "فندق الريتز-كارلتون، الرياض — الجناح الملكي 412",
+      grandTotal: 3550,
+      deposit: 1065,
+      remaining: 2485,
+    };
   });
 
   useEffect(() => {
-    // Check sessionStorage first (from book step)
+    if (typeof window === "undefined") return;
+
+    const params = new URLSearchParams(window.location.search);
+    const urlRef = (params.get("ref") || "").replace(/^#/, "").trim();
+    const urlName = (params.get("name") || "").trim();
+    const urlPhone = (params.get("phone") || "").trim();
+
+    // 1. Try matching from Zustand bookings (persistent store)
+    let sessionBooking: any = null;
     try {
       const raw = sessionStorage.getItem("amani_last_booking");
-      if (raw) {
-        const parsed = JSON.parse(raw);
+      if (raw) sessionBooking = JSON.parse(raw);
+    } catch {}
+
+    let localLookup: any = null;
+    try {
+      const rawLookup = localStorage.getItem("amani_booking_lookup");
+      if (rawLookup) localLookup = JSON.parse(rawLookup);
+    } catch {}
+
+    const targetRef =
+      urlRef ||
+      (sessionBooking?.ref ? String(sessionBooking.ref).replace(/^#/, "") : "") ||
+      (localLookup?.ref ? String(localLookup.ref).replace(/^#/, "") : "");
+
+    if (targetRef && bookings && bookings.length > 0) {
+      const match = bookings.find(
+        (b) => b.ref.replace(/^#/, "").toLowerCase() === targetRef.toLowerCase()
+      );
+      if (match) {
+        setData({
+          ref: "#" + match.ref.replace(/^#/, ""),
+          brideName: urlName ? decodeURIComponent(urlName) : match.clientName,
+          bridePhone: urlPhone ? decodeURIComponent(urlPhone) : match.phone,
+          pkgTitle: match.packageName,
+          date: `${match.date} • ${match.timeSlot}`,
+          venue: match.venue,
+          grandTotal: match.totalAmount,
+          deposit: match.depositAmount,
+          remaining: match.remainingAmount,
+        });
+        return;
+      }
+    }
+
+    // 2. Check sessionStorage
+    if (sessionBooking) {
+      const sRef = String(sessionBooking.ref || "").replace(/^#/, "");
+      if (!urlRef || sRef.toLowerCase() === urlRef.toLowerCase()) {
         setData((prev) => ({
           ...prev,
-          ref: "#" + String(parsed.ref).replace(/^#/, ""),
-          brideName: parsed.brideName || prev.brideName,
-          bridePhone: parsed.bridePhone || prev.bridePhone,
-          pkgTitle: parsed.pkgTitle || prev.pkgTitle,
-          date: parsed.date || prev.date,
-          venue: parsed.venue || prev.venue,
-          grandTotal: parsed.grandTotal || prev.grandTotal,
-          deposit: parsed.deposit || prev.deposit,
-          remaining: parsed.remaining || prev.remaining,
+          ref: "#" + (sRef || prev.ref.replace(/^#/, "")),
+          brideName: urlName
+            ? decodeURIComponent(urlName)
+            : (sessionBooking.brideName || prev.brideName),
+          bridePhone: urlPhone
+            ? decodeURIComponent(urlPhone)
+            : (sessionBooking.bridePhone || prev.bridePhone),
+          pkgTitle: sessionBooking.pkgTitle || prev.pkgTitle,
+          date: sessionBooking.date || prev.date,
+          venue: sessionBooking.venue || prev.venue,
+          grandTotal: sessionBooking.grandTotal || prev.grandTotal,
+          deposit: sessionBooking.deposit || prev.deposit,
+          remaining: sessionBooking.remaining || prev.remaining,
         }));
         return;
       }
-    } catch {}
-
-    // Fallback to store
-    if (lastConfirmedBooking) {
-      setData({
-        ref: "#" + lastConfirmedBooking.ref.replace(/^#/, ""),
-        brideName: lastConfirmedBooking.clientName,
-        bridePhone: lastConfirmedBooking.phone,
-        pkgTitle: lastConfirmedBooking.packageName,
-        date: `${lastConfirmedBooking.date} • ${lastConfirmedBooking.timeSlot}`,
-        venue: lastConfirmedBooking.venue,
-        grandTotal: lastConfirmedBooking.totalAmount,
-        deposit: lastConfirmedBooking.depositAmount,
-        remaining: lastConfirmedBooking.remainingAmount,
-      });
     }
-  }, [lastConfirmedBooking]);
+
+    // 3. Fallback to lastConfirmedBooking
+    if (lastConfirmedBooking) {
+      const lRef = lastConfirmedBooking.ref.replace(/^#/, "");
+      if (!urlRef || lRef.toLowerCase() === urlRef.toLowerCase()) {
+        setData({
+          ref: "#" + lRef,
+          brideName: urlName
+            ? decodeURIComponent(urlName)
+            : lastConfirmedBooking.clientName,
+          bridePhone: urlPhone
+            ? decodeURIComponent(urlPhone)
+            : lastConfirmedBooking.phone,
+          pkgTitle: lastConfirmedBooking.packageName,
+          date: `${lastConfirmedBooking.date} • ${lastConfirmedBooking.timeSlot}`,
+          venue: lastConfirmedBooking.venue,
+          grandTotal: lastConfirmedBooking.totalAmount,
+          deposit: lastConfirmedBooking.depositAmount,
+          remaining: lastConfirmedBooking.remainingAmount,
+        });
+        return;
+      }
+    }
+
+    // 4. If URL params gave ref or name directly
+    if (urlRef || urlName || urlPhone) {
+      setData((prev) => ({
+        ...prev,
+        ref: urlRef ? "#" + urlRef : prev.ref,
+        brideName: urlName
+          ? decodeURIComponent(urlName)
+          : (localLookup?.name || prev.brideName),
+        bridePhone: urlPhone
+          ? decodeURIComponent(urlPhone)
+          : (localLookup?.phone || prev.bridePhone),
+      }));
+    }
+  }, [bookings, lastConfirmedBooking]);
 
   // Authoritative reload from the database (survives refresh / new tab).
   useEffect(() => {
@@ -93,14 +191,17 @@ export function ConfirmationClient() {
     const run = async (attempt: number) => {
       try {
         const lookup = JSON.parse(localStorage.getItem("amani_booking_lookup") || "null");
-        const urlRef = new URLSearchParams(window.location.search).get("ref");
+        const params = new URLSearchParams(window.location.search);
+        const urlRef = params.get("ref");
+        const urlPhone = params.get("phone");
         const ref = urlRef || lookup?.ref;
-        if (!ref || !lookup?.phone) return;
+        const phone = urlPhone || lookup?.phone;
+        if (!ref || !phone) return;
         const supabase = createClient();
         if (!supabase) return;
         const { data: rows } = await supabase.rpc("get_booking_confirmation", {
           p_ref: String(ref).replace(/^#/, ""),
-          p_phone: lookup.phone,
+          p_phone: phone,
         });
         const b = Array.isArray(rows) ? rows[0] : null;
         if (!b) {
@@ -128,7 +229,12 @@ export function ConfirmationClient() {
     };
   }, []);
 
-  const firstName = data.brideName.trim().split(/\s+/)[0] || "عروسنا";
+  const brideDisplayName = data.brideName.trim() || "عروسنا الكريمة";
+  const firstName =
+    brideDisplayName
+      .replace(/^(د\.|أميرة|أ\.|سمو)\s+/i, "")
+      .trim()
+      .split(/\s+/)[0] || brideDisplayName;
 
   const copyRef = () => {
     navigator.clipboard?.writeText(data.ref);
@@ -260,7 +366,7 @@ export function ConfirmationClient() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-4 rounded-2xl bg-[#fff0f1] text-xs">
             <div className="space-y-1.5">
               <span className="text-[#735c00] font-bold block">بيانات العروس:</span>
-              <p><strong className="text-[#2f020d]">الاسم:</strong> <span className="font-semibold text-primary">{data.brideName}</span></p>
+              <p><strong className="text-[#2f020d]">الاسم:</strong> <span className="font-semibold text-primary">{brideDisplayName}</span></p>
               <p><strong className="text-[#2f020d]">رقم الجوال:</strong> {data.bridePhone}</p>
               <p><strong className="text-[#2f020d]">حالة الحجز:</strong> <span className="text-emerald-700 font-bold">مؤكد بالعربون (30%)</span></p>
             </div>

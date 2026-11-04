@@ -175,9 +175,11 @@ export function HomeClient() {
   const handleWizardSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const pkgObj = packages.find((p) => p.id === wizardPkg) || packages[0];
+    const clientName = wizardName.trim() || "عميلة ملكية";
+    const clientPhone = wizardPhone.trim() || "0550000000";
     const booking = createBooking({
-      clientName: wizardName.trim() || "عميلة ملكية",
-      phone: wizardPhone.trim() || "0550000000",
+      clientName,
+      phone: clientPhone,
       packageId: pkgObj.id,
       packageName: pkgObj.title,
       date: wizardDate,
@@ -193,6 +195,28 @@ export function HomeClient() {
     });
     setWizardBookingRef(booking.ref);
     setWizardConfirmed(true);
+
+    try {
+      sessionStorage.setItem(
+        "amani_last_booking",
+        JSON.stringify({
+          ref: booking.ref,
+          brideName: clientName,
+          bridePhone: clientPhone,
+          pkgTitle: pkgObj.title,
+          date: `${wizardDate} • ${wizardTime}`,
+          venue: wizardVenue,
+          grandTotal: wizardTotalAmount,
+          deposit: wizardDepositAmount,
+          remaining: wizardTotalAmount - wizardDepositAmount,
+        })
+      );
+      localStorage.setItem(
+        "amani_booking_lookup",
+        JSON.stringify({ ref: booking.ref, phone: clientPhone, name: clientName })
+      );
+    } catch {}
+
     toast.success("تم تأكيد موعدكِ بنجاح وتوليد الفاتورة الرسمية ✨");
   };
 
@@ -954,7 +978,7 @@ export function HomeClient() {
                   </p>
                   <div className="pt-4 flex flex-wrap justify-center gap-3">
                     <Link
-                      href="/book/confirmation"
+                      href={`/book/confirmation?ref=${encodeURIComponent(wizardBookingRef)}&name=${encodeURIComponent(wizardName.trim() || "عميلة ملكية")}&phone=${encodeURIComponent(wizardPhone.trim() || "0550000000")}`}
                       className="h-11 px-6 rounded-full bg-[#4a1521] text-white font-bold text-xs flex items-center gap-2 hover:bg-[#2f020d]"
                     >
                       <span>معاينة الفاتورة الرسمية</span>

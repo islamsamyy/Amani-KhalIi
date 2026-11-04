@@ -142,10 +142,10 @@ export function BookingFlowClient() {
       );
     } catch {}
     try {
-      // Persist ref + phone so the confirmation page can reload the booking from the database.
+      // Persist ref + phone + name so the confirmation page can reload the booking.
       localStorage.setItem(
         "amani_booking_lookup",
-        JSON.stringify({ ref: booking.ref, phone: finalPhone })
+        JSON.stringify({ ref: booking.ref, phone: finalPhone, name: finalName })
       );
     } catch {}
 
@@ -154,7 +154,9 @@ export function BookingFlowClient() {
     });
 
     setTimeout(() => {
-      router.push(`/book/confirmation?ref=${encodeURIComponent(booking.ref)}`);
+      router.push(
+        `/book/confirmation?ref=${encodeURIComponent(booking.ref)}&name=${encodeURIComponent(finalName)}&phone=${encodeURIComponent(finalPhone)}`
+      );
     }, 800);
   };
 

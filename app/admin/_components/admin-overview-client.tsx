@@ -384,93 +384,138 @@ export function AdminOverviewClient() {
                 const isConfirmed = booking.status === "CONFIRMED";
                 const cleanPhone = booking.phone.replace(/[^0-9]/g, "");
 
+                // Parse time and period cleanly (e.g. "عصراً (02:30 م)" -> time="02:30 م", period="عصراً")
+                const timeMatch = booking.timeSlot.match(/\(([^)]+)\)/);
+                const cleanTime = timeMatch ? timeMatch[1].trim() : booking.timeSlot.trim();
+                const periodName = booking.timeSlot.replace(/\s*\([^)]*\)/, "").trim();
+
                 return (
                   <React.Fragment key={booking.id}>
                     <Card
-                      className={`rounded-3xl p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all ${isCompleted
+                      className={`rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col xl:flex-row xl:items-center justify-between gap-4 transition-all hover:shadow-md ${
+                        isCompleted
                           ? "bg-white border border-[#eedfe0]"
                           : isConfirmed
-                            ? "bg-[#fff8f7] border-2 border-[#735c00] shadow-md"
+                            ? "bg-[#fffbf7] border-2 border-[#735c00] shadow-md"
                             : "bg-white border border-[#eedfe0]"
-                        }`}
+                      }`}
                     >
-                      <div className="flex items-start gap-4">
+                      <div className="flex items-start sm:items-center gap-4 flex-1 min-w-0">
+                        {/* Elegant, readable date & time badge */}
                         <div
-                          className={`h-16 w-16 rounded-2xl flex flex-col items-center justify-center font-bold shrink-0 ${isConfirmed
-                              ? "bg-[#4a1521] text-white"
-                              : "bg-[#faeaeb] text-[#2f020d]"
-                            }`}
+                          className={`w-20 sm:w-24 py-3 px-2 rounded-2xl flex flex-col items-center justify-center text-center font-bold shrink-0 shadow-2xs border transition-all ${
+                            isConfirmed
+                              ? "bg-[#4a1521] text-white border-[#3d0e19]"
+                              : isCompleted
+                                ? "bg-emerald-50 text-emerald-950 border-emerald-200"
+                                : "bg-[#faeaeb] text-[#2f020d] border-[#eedfe0]"
+                          }`}
                         >
                           <span
-                            className={`text-[10px] ${isConfirmed ? "text-[#fed65b]" : "text-[#857374]"
-                              }`}
+                            className={`text-[11px] font-bold font-mono tracking-wider ${
+                              isConfirmed
+                                ? "text-[#fed65b]"
+                                : isCompleted
+                                  ? "text-emerald-700"
+                                  : "text-[#735c00]"
+                            }`}
                           >
                             {booking.date.split("-").slice(1).join("/")}
                           </span>
-                          <span className="text-sm font-serif">
-                            {booking.timeSlot}
+                          <span
+                            className="text-xs sm:text-sm font-bold font-mono tracking-tight my-0.5 whitespace-nowrap"
+                            dir="ltr"
+                          >
+                            {cleanTime}
                           </span>
                           <span
-                            className={`text-[9px] ${isConfirmed ? "text-[#ffd9dd]" : "text-[#735c00]"
-                              }`}
+                            className={`text-[10px] font-semibold truncate max-w-full ${
+                              isConfirmed
+                                ? "text-[#ffd9dd]"
+                                : isCompleted
+                                  ? "text-emerald-800"
+                                  : "text-[#857374]"
+                            }`}
                           >
-                            {booking.locationType === "STUDIO"
-                              ? "أتيليه"
-                              : booking.locationType === "CLIENT_HOME"
-                                ? "منزلي"
-                                : "فندقي"}
+                            {periodName ||
+                              (booking.locationType === "STUDIO"
+                                ? "أتيليه"
+                                : booking.locationType === "CLIENT_HOME"
+                                  ? "منزلي"
+                                  : "فندقي")}
                           </span>
                         </div>
-                        <div>
-                          <div className="flex items-center gap-2 mb-1 flex-wrap">
-                            <h3 className="text-base font-bold text-[#2f020d]">
+
+                        {/* Booking & Client Info */}
+                        <div className="flex-1 min-w-0 space-y-1.5">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="text-base font-bold text-[#2f020d] tracking-tight truncate">
                               {booking.clientName}
                             </h3>
-                            <span className="font-mono text-[11px] text-[#735c00]">
-                              #{booking.ref}
+                            <span
+                              dir="ltr"
+                              className="font-mono text-[11px] font-bold px-2 py-0.5 rounded-lg bg-[#faeaeb] text-[#735c00] border border-[#eedfe0] select-all shrink-0"
+                            >
+                              #{booking.ref.replace(/^#/, "")}
                             </span>
                             {isCompleted ? (
                               <Badge
                                 variant="outline"
-                                className="text-[10px] bg-emerald-50 text-emerald-700 border-emerald-200"
+                                className="text-[10px] bg-emerald-50 text-emerald-700 border-emerald-300 font-bold px-2.5 py-0.5 flex items-center gap-1 shrink-0"
                               >
-                                مكتملة الآن ✓
+                                <CheckCircle2 className="h-3 w-3 text-emerald-600" />
+                                <span>مكتملة الآن</span>
                               </Badge>
                             ) : isConfirmed ? (
-                              <Badge variant="gold" className="text-[10px]">
+                              <Badge
+                                variant="gold"
+                                className="text-[10px] font-bold px-2.5 py-0.5 shadow-2xs shrink-0"
+                              >
                                 مؤكد بالعربون
                               </Badge>
                             ) : (
                               <Badge
                                 variant="outline"
-                                className="text-[10px] bg-amber-50 text-amber-800 border-amber-200"
+                                className="text-[10px] bg-amber-50 text-amber-800 border-amber-300 font-bold px-2.5 py-0.5 shrink-0"
                               >
                                 بانتظار السداد
                               </Badge>
                             )}
                           </div>
-                          <p className="text-xs text-[#524345] flex items-center gap-1">
+
+                          <p className="text-xs text-[#524345] flex items-center gap-1.5 truncate">
                             {booking.locationType === "CLIENT_HOME" ? (
-                              <MapPin className="h-3.5 w-3.5 text-[#735c00]" />
+                              <MapPin className="h-3.5 w-3.5 text-[#735c00] shrink-0" />
                             ) : (
-                              <Hotel className="h-3.5 w-3.5 text-[#735c00]" />
+                              <Hotel className="h-3.5 w-3.5 text-[#735c00] shrink-0" />
                             )}
-                            <span>{booking.venue}</span>
+                            <span className="truncate">{booking.venue}</span>
                           </p>
-                          <p className="text-[11px] text-[#735c00] mt-1 font-semibold">
-                            {booking.packageName} • {booking.totalAmount.toLocaleString("en-US")} ر.س
-                          </p>
+
+                          <div className="flex items-center gap-2 text-[11px] text-[#735c00] font-semibold flex-wrap">
+                            <span>{booking.packageName}</span>
+                            <span className="text-[#d7c1c3]">•</span>
+                            <span className="text-[#2f020d] font-bold font-mono">
+                              {booking.totalAmount.toLocaleString("en-US")} ر.س
+                            </span>
+                            {booking.depositAmount > 0 && (
+                              <span className="text-[10px] text-[#857374] font-normal">
+                                (عربون: {booking.depositAmount.toLocaleString("en-US")} ر.س)
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 self-end sm:self-center flex-wrap">
+                      {/* Action buttons (single line, no wrapping/dropping) */}
+                      <div className="flex items-center gap-2 self-start xl:self-center shrink-0 flex-nowrap pt-2 xl:pt-0 border-t xl:border-0 border-[#eedfe0]">
                         <a
                           href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(
                             `مرحباً بكِ عروستنا ${booking.clientName} 🌸 نؤكد موعدكِ الملكي (${booking.packageName}) بتاريخ ${booking.date} في ${booking.venue}. رقم الحجز #${booking.ref}.`
                           )}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="h-9 px-3.5 rounded-full bg-[#25D366]/15 hover:bg-[#25D366] text-[#25D366] hover:text-white text-xs font-bold flex items-center gap-1.5 transition-colors"
+                          className="h-9 px-3.5 rounded-full bg-[#25D366]/15 hover:bg-[#25D366] text-[#128C7E] hover:text-white text-xs font-bold flex items-center gap-1.5 transition-all whitespace-nowrap shadow-2xs"
                         >
                           <MessageCircle className="h-3.5 w-3.5" />
                           <span>تواصل مباشر</span>
@@ -480,7 +525,7 @@ export function AdminOverviewClient() {
                           size="sm"
                           variant="outline"
                           onClick={() => handleOpenNotes(booking)}
-                          className="rounded-full text-xs h-9 bg-white"
+                          className="rounded-full text-xs h-9 px-3.5 bg-white border-[#eedfe0] text-[#2f020d] hover:bg-[#fff0f1] font-semibold whitespace-nowrap"
                         >
                           الملاحظات
                         </Button>
@@ -488,7 +533,11 @@ export function AdminOverviewClient() {
                         <Button
                           size="sm"
                           onClick={() => markSessionVerified(booking.ref)}
-                          className="rounded-full bg-[#faeaeb] text-[#2f020d] hover:bg-[#eedfe0] text-xs font-bold h-9"
+                          className={`rounded-full text-xs font-bold h-9 px-3.5 transition-all whitespace-nowrap ${
+                            isCompleted
+                              ? "bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border border-emerald-300"
+                              : "bg-[#faeaeb] text-[#2f020d] hover:bg-[#4a1521] hover:text-white border border-[#eedfe0]"
+                          }`}
                         >
                           {isCompleted ? "مكتمل ✓" : "تم التوثيق"}
                         </Button>
@@ -497,13 +546,37 @@ export function AdminOverviewClient() {
 
                     {/* Travel Buffer Notice if back-to-back on same date */}
                     {isSameDate && nextBooking && (
-                      <div className="px-5 py-2.5 rounded-2xl bg-[#fff0f1] border border-[#eedfe0] text-xs text-[#524345] flex items-center justify-between">
-                        <span className="font-semibold text-[#735c00]">
-                          🚗 فاصل التنقل وتجهيز الحقيبة الملكية: 45 دقيقة (بين {booking.venue} و {nextBooking.venue})
-                        </span>
-                        <span className="text-[11px] text-[#857374]">
-                          حركة المرور: سلسة
-                        </span>
+                      <div className="px-4 py-3 rounded-2xl bg-[#fff0f1] border border-[#eedfe0] text-xs text-[#524345] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="h-8 w-8 rounded-xl bg-white border border-[#eedfe0] text-[#735c00] flex items-center justify-center shrink-0">
+                            <Navigation className="h-4 w-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-xs text-[#4a1521]">
+                                فاصل التنقل وتجهيز الحقيبة الملكية:
+                              </span>
+                              <Badge
+                                variant="outline"
+                                className="text-[10px] font-bold bg-white text-[#735c00] border-[#eedfe0] px-2"
+                              >
+                                45 دقيقة
+                              </Badge>
+                            </div>
+                            <p
+                              className="text-[11px] text-[#524345] truncate mt-0.5"
+                              title={`من: ${booking.venue} ← إلى: ${nextBooking.venue}`}
+                            >
+                              المسار: من {booking.venue.split("—")[0].trim()} ← إلى {nextBooking.venue.split("—")[0].trim()}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+                          <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                          <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                            حركة المرور: سلسة
+                          </span>
+                        </div>
                       </div>
                     )}
                   </React.Fragment>

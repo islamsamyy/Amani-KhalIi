@@ -161,16 +161,12 @@ export function SiteHeader({
             aria-label="أماني خليل - الصفحة الرئيسية"
             className="flex items-center py-1 group focus:outline-none transition-transform duration-300 hover:scale-[1.05]"
           >
-            <div className="h-10 sm:h-12 w-auto relative flex items-center">
-              <Image
+            <div className="h-11 sm:h-12 w-11 sm:w-12 relative flex items-center justify-center shrink-0 rounded-xl overflow-hidden bg-[#2f020d] border border-white/20 shadow-md">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src="/ak-monogram-hd.png"
                 alt="أماني خليل - AK Haute Beauté"
-                width={44}
-                height={48}
-                priority
-                unoptimized={true}
-                style={{ width: "auto" }}
-                className="h-10 sm:h-12 w-auto object-contain rounded-lg shadow-md group-hover:brightness-110 transition-all drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
+                className="h-full w-full object-contain p-1.5 rounded-lg group-hover:brightness-110 transition-all drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
               />
             </div>
           </Link>
