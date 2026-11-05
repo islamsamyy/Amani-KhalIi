@@ -152,19 +152,21 @@ export function SiteHeader({
       />
 
       <div className="h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-between gap-4">
-        {/* Brand Identity / Official Visual Logo (AK Monogram) */}
+        {/* Brand Identity / Official Visual Logo */}
         <div className="flex items-center gap-3 shrink-0">
           <Link
             href="/"
             aria-label="أماني خليل - الصفحة الرئيسية"
-            className="flex items-center py-1 group focus:outline-none transition-transform duration-300 hover:scale-[1.05]"
+            className="flex items-center py-1 group focus:outline-none transition-transform duration-300 hover:scale-[1.03]"
           >
-            <div className="h-11 sm:h-12 w-11 sm:w-12 relative flex items-center justify-center shrink-0 rounded-xl overflow-hidden bg-[#2f020d] border border-white/20 shadow-md">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/ak-monogram-hd.png"
-                alt="أماني خليل - AK Haute Beauté"
-                className="h-full w-full object-contain p-1.5 rounded-lg group-hover:brightness-110 transition-all drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
+            <div className="h-10 sm:h-12 w-auto max-w-[170px] sm:max-w-[210px] relative flex items-center">
+              <Image
+                src="/ak-logo-full.png"
+                alt="أماني خليل - Amani Khalil Haute Beauté Artistry"
+                width={210}
+                height={77}
+                priority
+                className="h-10 sm:h-12 w-auto object-contain group-hover:brightness-110 transition-all drop-shadow-[0_2px_10px_rgba(0,0,0,0.4)]"
               />
             </div>
           </Link>
