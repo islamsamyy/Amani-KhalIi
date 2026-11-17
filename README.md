@@ -1,39 +1,62 @@
-# Amani-KhalIi
+# Amani Khalili — Luxury Bridal & Occasion Makeup Platform (Riyadh)
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+A full-stack Next.js 16 and Supabase web application for a luxury bridal and occasion makeup artist in Riyadh, featuring localized service landing pages, online booking, portfolio gallery, blog, client reviews, and a comprehensive admin suite.
+
+## Executive Summary & Purpose
+`Amani-KhalIi` delivers a high-converting digital presence and booking engine for bridal and occasion makeup services in Riyadh. Clients can explore services, view the gallery, read policies/FAQs, and book appointments online, while the business owner manages bookings, calendar availability, customers, invoices, blog posts, and site content from `/admin`.
+
+## Core Functionality & Features
+- **Service & Marketing Pages**:
+  - Dedicated SEO landing pages: `/bridal-makeup-riyadh`, `/occasion-makeup-riyadh`, `/services`, `/gallery`, `/about`, `/reviews`, `/blog`, `/faq`, `/policies`, `/contact`.
+- **Online Booking (`/book`) & Auth (`/auth`)**:
+  - End-to-end appointment booking flow with toast notifications (`sonner`) and Supabase authentication.
+- **Admin Operations Suite (`/admin`)**:
+  - **Bookings (`/admin/bookings`)** & **Calendar (`/admin/calendar`)**: Schedule and appointment management.
+  - **Customers (`/admin/customers`)** & **Invoices (`/admin/invoices`)**: Client CRM and billing records.
+  - **Blog (`/admin/blog`)** & **Content (`/admin/content`)**: CMS for articles and page copy.
+
+## Architecture & Tech Stack
+- **Framework**: Next.js 16 (`16.4.4`) App Router & React 19 (`19.3.0`)
+- **Language**: TypeScript 5
+- **UI**: Radix UI (`accordion`, `dialog`, `popover`, `select`, `slot`, `switch`, `tabs`), Tailwind CSS 4, `lucide-react`, `sonner`
+- **Backend & Auth**: Supabase (`@supabase/supabase-js`, `@supabase/ssr`)
+- **Testing**: Vitest + Testing Library (`@testing-library/react`, `happy-dom`, `jsdom`)
+
+## Project Structure
+```text
+├── app/
+│   ├── (marketing)/      # Marketing home & landing sections
+│   ├── admin/            # Admin suite (blog, bookings, calendar, content, customers, invoices)
+│   ├── api/              # Backend API routes
+│   ├── auth/             # Authentication
+│   ├── blog/             # Blog articles
+│   ├── book/             # Appointment booking
+│   ├── bridal-makeup-riyadh/
+│   ├── occasion-makeup-riyadh/
+│   ├── gallery/          # Portfolio gallery
+│   ├── services/         # Service catalog
+│   └── reviews/          # Client testimonials
+├── components/           # Shared UI components
+├── features/             # Feature-sliced modules
+├── lib/                  # Supabase clients & helpers
+├── providers/            # React context providers
+├── supabase/             # Database schema & migrations
+└── test/                 # Vitest test suite
+```
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/islamsamyy/Amani-KhalIi.git
+cd Amani-KhalIi
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
+### Available Scripts
+| Command | Description |
+| :--- | :--- |
+| `npm run dev` | Start development server |
+| `npm run build` | Build production bundle |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm test` | Run Vitest unit/component tests |
