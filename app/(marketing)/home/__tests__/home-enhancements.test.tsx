@@ -108,8 +108,8 @@ describe("Home Page Senior UI/UX Enhancements", () => {
       screen.queryByText("نُخبة قصور وفنادق الرياض التي نتشرف بخدمة عرائسها:")
     ).not.toBeInTheDocument();
     expect(
-      screen.getByText("اختبري ثبات الإطلالة تحت إضاءة مناسبتكِ")
-    ).toBeInTheDocument();
+      screen.queryByText("اختبري ثبات الإطلالة تحت إضاءة مناسبتكِ")
+    ).not.toBeInTheDocument();
     expect(screen.getByText("اختاري توقيع إطلالتكِ قبل الحجز")).toBeInTheDocument();
     expect(
       screen.getByText("رحلة تجهيزكِ خطوة بخطوة حتى لحظة الزفة")
@@ -121,21 +121,13 @@ describe("Home Page Senior UI/UX Enhancements", () => {
     expect(screen.getByText("أسرار العروس من دفتر أماني خليل")).toBeInTheDocument();
   });
 
-  it("renders LuxuryCountersAndInteractive counters and switches lighting presets & intensity slider", async () => {
-    const user = userEvent.setup();
-    const onBookNow = vi.fn();
-    render(<LuxuryCountersAndInteractive onBookNow={onBookNow} />);
+  it("renders LuxuryCountersAndInteractive animated counters", () => {
+    render(<LuxuryCountersAndInteractive />);
 
+    expect(screen.getByText("+1,500")).toBeInTheDocument();
     expect(screen.getByText("18 ساعة")).toBeInTheDocument();
+    expect(screen.getByText("4.9 ★")).toBeInTheDocument();
     expect(screen.getByText("100%")).toBeInTheDocument();
-
-    await user.click(screen.getByRole("button", { name: /فلاش التصوير 4K/ }));
-    expect(
-      screen.getByText(/تثبيت هيدروليكي مطفي في المناطق الحساسة/)
-    ).toBeInTheDocument();
-
-    await user.click(screen.getByRole("button", { name: /تثبيت الموعد الآن/ }));
-    expect(onBookNow).toHaveBeenCalledTimes(1);
   });
 
   it("switches signature styles interactively and pre-selects matching package", async () => {
