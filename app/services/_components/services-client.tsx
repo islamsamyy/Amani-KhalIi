@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@/providers/app-store-provider";
+import { useLanguage } from "@/providers/language-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -31,6 +32,7 @@ import {
 
 export function ServicesClient() {
   const router = useRouter();
+  const { t, dir } = useLanguage();
   const { packages, addons, setSelectedPackageId } = useAppStore();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
@@ -71,20 +73,22 @@ export function ServicesClient() {
   const calcRemaining = calcGrandTotal - calcDeposit;
 
   return (
-    <div dir="rtl" className="w-full min-h-screen bg-[#fff8f7] text-[#211a1b] pt-20">
+    <div dir={dir} className="w-full min-h-screen bg-[#fff8f7] text-[#211a1b] pt-20">
       {/* 1. Header Banner */}
       <section className="relative overflow-hidden bg-gradient-to-b from-[#2f020d] to-[#4a1521] text-white py-16 lg:py-24">
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#735c00]/15 rounded-full blur-3xl pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 relative z-10 text-center">
           <Badge variant="gold" className="mb-4">
-            الأسعار الرسمية المعتمدة لعام 2025
+            {t("الأسعار الرسمية المعتمدة لعام 2025", "Official 2025 Atelier Rates")}
           </Badge>
           <h1 className="text-3xl sm:text-5xl font-bold font-serif leading-tight">
-            باقات الخدمات والأسعار الرسمية
+            {t("باقات الخدمات والأسعار الرسمية", "Official Services & Packages")}
           </h1>
           <p className="text-sm sm:text-base text-[#eedfe0] max-w-2xl mx-auto mt-4 leading-relaxed">
-            خيارات متنوعة مصممة لتلبية تطلعاتكِ، من جلسات العرائس الملكية الكبرى وحتى إطلالات السهرات والملكة،
-            مع شفافية تامة في الأسعار وحاسبة الإضافات التفاعلية.
+            {t(
+              "خيارات متنوعة مصممة لتلبية تطلعاتكِ، من جلسات العرائس الملكية الكبرى وحتى إطلالات السهرات والملكة، مع شفافية تامة في الأسعار وحاسبة الإضافات التفاعلية.",
+              "Bespoke options tailored to your vision—from Royal Bridal VIP suites to evening soirées, with transparent pricing and an interactive add-on calculator."
+            )}
           </p>
         </div>
       </section>

@@ -15,6 +15,9 @@ import {
   ArrowLeft,
   CheckCircle2,
 } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageToggle } from "@/components/language-toggle";
+import { useLanguage } from "@/providers/language-provider";
 
 interface SiteHeaderProps {
   onOpenMobileMenu: () => void;
@@ -25,52 +28,61 @@ interface SiteHeaderProps {
 const SERVICE_SUBLINKS = [
   {
     href: "/services",
-    title: "كافة الباقات والأسعار الرسمية",
-    subtitle: "مقارنة شاملة وحاسبة الإضافات التفاعلية",
+    titleAr: "كافة الباقات والأسعار الرسمية",
+    titleEn: "All Packages & Official Rates",
+    subtitleAr: "مقارنة شاملة وحاسبة الإضافات التفاعلية",
+    subtitleEn: "Full comparison & interactive add-ons calculator",
     icon: Sparkles,
   },
   {
     href: "/services/vip-bridal",
-    title: "باقة العروس الملكية VIP",
-    subtitle: "تجهيز متكامل ومرافقة خاصة للعروس",
+    titleAr: "باقة العروس الملكية VIP",
+    titleEn: "Royal Bridal VIP Package",
+    subtitleAr: "تجهيز متكامل ومرافقة خاصة للعروس",
+    subtitleEn: "Full bridal prep & exclusive touch-up kit",
     icon: Crown,
-    badge: "الأكثر طلباً",
+    badgeAr: "الأكثر طلباً",
+    badgeEn: "Most Requested",
   },
   {
     href: "/bridal-makeup-riyadh",
-    title: "مكياج العرائس الفاخر بالرياض",
-    subtitle: "زيارات القصور والفنادق والأجنحة الملكية",
+    titleAr: "مكياج العرائس الفاخر بالرياض",
+    titleEn: "Luxury Bridal Makeup Riyadh",
+    subtitleAr: "زيارات القصور والفنادق والأجنحة الملكية",
+    subtitleEn: "Palace, 5-star hotel & royal suite visits",
     icon: Gem,
   },
   {
     href: "/occasion-makeup-riyadh",
-    title: "مكياج السهرات والمناسبات",
-    subtitle: "إطلالات السهرات والملكة والتخرج",
+    titleAr: "مكياج السهرات والمناسبات",
+    titleEn: "Evening & Occasion Makeup",
+    subtitleAr: "إطلالات السهرات والملكة والتخرج",
+    subtitleEn: "Soirée, engagement & special event glam",
     icon: Star,
   },
 ];
 
 const NAV_LINKS = [
-  { href: "/", label: "الرئيسية" },
+  { href: "/", labelAr: "الرئيسية", labelEn: "Home" },
   {
     href: "/services",
-    label: "الباقات والخدمات",
+    labelAr: "الباقات والخدمات",
+    labelEn: "Services",
     hasDropdown: true,
   },
-  { href: "/gallery", label: "معرض الأعمال" },
-  { href: "/reviews", label: "آراء العميلات" },
-  { href: "/blog", label: "المدونة" },
-  { href: "/about", label: "عن أماني" },
-  { href: "/faq", label: "الأسئلة الشائعة" },
-  { href: "/contact", label: "تواصل والسياسات" },
+  { href: "/gallery", labelAr: "معرض الأعمال", labelEn: "Gallery" },
+  { href: "/reviews", labelAr: "آراء العميلات", labelEn: "Reviews" },
+  { href: "/blog", labelAr: "المدونة", labelEn: "Journal" },
+  { href: "/about", labelAr: "عن أماني", labelEn: "About" },
+  { href: "/faq", labelAr: "الأسئلة الشائعة", labelEn: "FAQ" },
+  { href: "/contact", labelAr: "تواصل والسياسات", labelEn: "Contact" },
 ];
 
 export function SiteHeader({
   onOpenMobileMenu,
-  onToggleLanguage,
-  currentDir,
 }: SiteHeaderProps) {
   const pathname = usePathname();
+  const { dir, t } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [servicesOpen, setServicesOpen] = useState(false);
@@ -139,6 +151,7 @@ export function SiteHeader({
 
   return (
     <header
+      dir={dir}
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
         scrolled
           ? "h-20 bg-[#2f020d]/95 backdrop-blur-2xl shadow-[0_12px_40px_rgba(47,2,13,0.35)] border-b border-[#fed65b]/20"
@@ -201,7 +214,7 @@ export function SiteHeader({
                         : "text-[#eedfe0] hover:text-white hover:bg-white/15"
                     }`}
                   >
-                    <span>{item.label}</span>
+                    <span>{t(item.labelAr, item.labelEn)}</span>
                     <ChevronDown
                       className={`h-3.5 w-3.5 transition-transform duration-300 ${
                         servicesOpen ? "rotate-180" : ""
@@ -215,7 +228,7 @@ export function SiteHeader({
                       <div className="rounded-3xl border border-[#fed65b]/30 bg-[#2f020d]/98 backdrop-blur-2xl p-3 shadow-[0_24px_50px_rgba(0,0,0,0.6)] space-y-1">
                         <div className="px-3 py-1.5 border-b border-white/10 mb-1 flex items-center justify-between">
                           <span className="text-[10px] font-bold text-[#fed65b] uppercase tracking-wider">
-                            باقات المناسبات والعرائس
+                            {t("باقات المناسبات والعرائس", "Bridal & Occasion Packages")}
                           </span>
                           <Crown className="h-3 w-3 text-[#fed65b]" />
                         </div>
@@ -246,9 +259,9 @@ export function SiteHeader({
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-1.5">
                                   <span className="text-xs font-bold truncate">
-                                    {sub.title}
+                                    {t(sub.titleAr, sub.titleEn)}
                                   </span>
-                                  {sub.badge && (
+                                  {sub.badgeAr && sub.badgeEn && (
                                     <span
                                       className={`rounded-full px-2 py-0.2 text-[9px] font-bold ${
                                         subActive
@@ -256,7 +269,7 @@ export function SiteHeader({
                                           : "bg-[#fed65b] text-[#241a00]"
                                       }`}
                                     >
-                                      {sub.badge}
+                                      {t(sub.badgeAr, sub.badgeEn)}
                                     </span>
                                   )}
                                 </div>
@@ -267,7 +280,7 @@ export function SiteHeader({
                                       : "text-[#eedfe0]/70 group-hover:text-[#eedfe0]"
                                   }`}
                                 >
-                                  {sub.subtitle}
+                                  {t(sub.subtitleAr, sub.subtitleEn)}
                                 </p>
                               </div>
                             </Link>
@@ -291,21 +304,29 @@ export function SiteHeader({
                     : "text-[#eedfe0] hover:text-white hover:bg-white/15"
                 }`}
               >
-                {item.label}
+                {t(item.labelAr, item.labelEn)}
               </Link>
             );
           })}
         </nav>
 
-        {/* End Actions: Luxury Booking Button & Mobile Menu */}
-        <div className="flex items-center gap-2.5 shrink-0">
+        {/* End Actions: Language Switcher, Theme Toggle, Luxury Booking Button & Mobile Menu */}
+        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+          <LanguageToggle />
+          <ThemeToggle variant="header" />
+
           <Link
             href="/book"
-            className="group relative inline-flex items-center justify-center gap-2 h-11 px-5 rounded-full text-xs font-bold text-[#241a00] bg-gradient-to-r from-[#fed65b] via-[#ffd966] to-[#fed65b] shadow-[0_4px_20px_rgba(254,214,91,0.35)] hover:shadow-[0_8px_30px_rgba(254,214,91,0.55)] active:scale-95 transition-all duration-300 overflow-hidden"
+            className="group relative inline-flex items-center justify-center gap-2 h-11 px-4 sm:px-5 rounded-full text-xs font-bold text-[#241a00] bg-gradient-to-r from-[#fed65b] via-[#ffd966] to-[#fed65b] shadow-[0_4px_20px_rgba(254,214,91,0.35)] hover:shadow-[0_8px_30px_rgba(254,214,91,0.55)] active:scale-95 transition-all duration-300 overflow-hidden"
           >
             <span className="absolute inset-0 bg-white/25 translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
             <Crown className="h-3.5 w-3.5 text-[#241a00] relative z-10 transition-transform group-hover:rotate-12 duration-300" />
-            <span className="relative z-10 font-bold">حجز موعد ملكي</span>
+            <span className="relative z-10 font-bold hidden sm:inline">
+              {t("حجز موعد ملكي", "Book Royal Session")}
+            </span>
+            <span className="relative z-10 font-bold sm:hidden">
+              {t("حجز", "Book")}
+            </span>
           </Link>
 
           <button

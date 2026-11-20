@@ -13,6 +13,7 @@ import {
   Heart,
   ArrowUpLeft,
 } from "lucide-react";
+import { useLanguage } from "@/providers/language-provider";
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
@@ -33,9 +34,10 @@ function InstagramIcon({ className }: { className?: string }) {
 }
 
 export function SiteFooter() {
+  const { dir, t } = useLanguage();
   return (
     <footer
-      dir="rtl"
+      dir={dir}
       className="bg-[#2f020d] text-white pt-16 pb-12 border-t border-[#4a1521] relative overflow-hidden"
     >
       {/* Ambient background glows */}
@@ -60,13 +62,20 @@ export function SiteFooter() {
             </Link>
 
             <p className="text-sm text-[#eedfe0] leading-relaxed max-w-sm">
-              الموقع الرسمي لخبيرة التجميل المعتمدة دولياً <span className="text-[#fed65b] font-semibold">أماني خليل</span>.
-              جلسات مكياج منزلية وفندقية خاصة بالرياض للعرائس، السهرات، والمناسبات الملكية.
+              {t(
+                "الموقع الرسمي لخبيرة التجميل المعتمدة دولياً أماني خليل. جلسات مكياج منزلية وفندقية خاصة بالرياض للعرائس، السهرات، والمناسبات الملكية.",
+                "Official atelier of internationally certified makeup artist Amani Khalil. Private luxury bridal & soirée makeup sessions across Riyadh hotels, palaces, and residences."
+              )}
             </p>
 
             <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-[#fed65b]">
               <ShieldCheck className="h-4 w-4" />
-              <span>معتمدة دولياً دبلوم CIDESCO للتجميل والمكياج السينمائي</span>
+              <span>
+                {t(
+                  "معتمدة دولياً دبلوم CIDESCO للتجميل والمكياج السينمائي",
+                  "Internationally Certified — CIDESCO Bridal & Editorial Diploma"
+                )}
+              </span>
             </div>
 
             <div className="flex items-center gap-3 pt-2">
@@ -102,32 +111,32 @@ export function SiteFooter() {
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#fed65b] mb-4 flex items-center gap-1.5">
               <Crown className="h-4 w-4" />
-              <span>الباقات والخدمات</span>
+              <span>{t("الباقات والخدمات", "Packages & Services")}</span>
             </h4>
             <ul className="space-y-2.5 text-xs text-[#eedfe0]">
               <li>
                 <Link href="/services/vip-bridal" className="hover:text-white transition-colors flex items-center gap-1">
-                  <span>باقة العروس الملكية VIP</span>
+                  <span>{t("باقة العروس الملكية VIP", "Royal Bridal VIP Package")}</span>
                 </Link>
               </li>
               <li>
                 <Link href="/bridal-makeup-riyadh" className="hover:text-white transition-colors">
-                  مكياج العرائس الفاخر بالرياض
+                  {t("مكياج العرائس الفاخر بالرياض", "Luxury Bridal Makeup Riyadh")}
                 </Link>
               </li>
               <li>
                 <Link href="/occasion-makeup-riyadh" className="hover:text-white transition-colors">
-                  مكياج السهرات والملكة
+                  {t("مكياج السهرات والملكة", "Evening & Engagement Glam")}
                 </Link>
               </li>
               <li>
                 <Link href="/services" className="hover:text-white transition-colors">
-                  كافة الباقات والأسعار الرسمية
+                  {t("كافة الباقات والأسعار الرسمية", "All Packages & Official Rates")}
                 </Link>
               </li>
               <li>
                 <Link href="/book" className="hover:text-[#fed65b] font-bold transition-colors">
-                  حجز موعد ملكي فوري
+                  {t("حجز موعد ملكي فوري", "Instant Royal Booking")}
                 </Link>
               </li>
             </ul>
@@ -137,37 +146,37 @@ export function SiteFooter() {
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#fed65b] mb-4 flex items-center gap-1.5">
               <Sparkles className="h-4 w-4" />
-              <span>الاستكشاف والتوثيق</span>
+              <span>{t("الاستكشاف والتوثيق", "Explore & Credentials")}</span>
             </h4>
             <ul className="space-y-2.5 text-xs text-[#eedfe0]">
               <li>
                 <Link href="/gallery" className="hover:text-white transition-colors">
-                  معرض الأعمال والإطلالات
+                  {t("معرض الأعمال والإطلالات", "Portfolio & Looks Gallery")}
                 </Link>
               </li>
               <li>
                 <Link href="/reviews" className="hover:text-white transition-colors">
-                  آراء وتقييمات العميلات
+                  {t("آراء وتقييمات العميلات", "Client Reviews")}
                 </Link>
               </li>
               <li>
                 <Link href="/about" className="hover:text-white transition-colors">
-                  عن أماني خليل والاعتمادات
+                  {t("عن أماني خليل والاعتمادات", "About Amani Khalil")}
                 </Link>
               </li>
               <li>
                 <Link href="/blog" className="hover:text-[#fed65b] font-semibold transition-colors">
-                  المدونة الملكية وأسرار الجمال
+                  {t("المدونة الملكية وأسرار الجمال", "Royal Beauty Journal")}
                 </Link>
               </li>
               <li>
                 <Link href="/faq" className="hover:text-white transition-colors">
-                  الأسئلة الشائعة
+                  {t("الأسئلة الشائعة", "FAQ")}
                 </Link>
               </li>
               <li>
                 <Link href="/contact" className="hover:text-white transition-colors">
-                  تواصل والسياسات وشروط الحجز
+                  {t("تواصل والسياسات وشروط الحجز", "Contact & Policies")}
                 </Link>
               </li>
             </ul>
@@ -177,11 +186,14 @@ export function SiteFooter() {
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#fed65b] mb-4 flex items-center gap-1.5">
               <MapPin className="h-4 w-4" />
-              <span>التغطية والتواصل</span>
+              <span>{t("التغطية والتواصل", "Coverage & Concierge")}</span>
             </h4>
             <div className="space-y-3 text-xs text-[#eedfe0]">
               <p className="leading-relaxed">
-                مدينة الرياض، المملكة العربية السعودية. خدمة فندقية في أجنحة القصور وفنادق 5 نجوم ومنازل العرائس.
+                {t(
+                  "مدينة الرياض، المملكة العربية السعودية. خدمة فندقية في أجنحة القصور وفنادق 5 نجوم ومنازل العرائس.",
+                  "Riyadh, Saudi Arabia. Concierge mobile service across 5-star hotel suites, palaces, and private residences."
+                )}
               </p>
               <div className="pt-2 flex flex-col gap-1.5">
                 <a
@@ -191,13 +203,13 @@ export function SiteFooter() {
                   className="inline-flex items-center gap-2 text-[#fed65b] hover:underline font-bold"
                 >
                   <MessageCircle className="h-4 w-4" />
-                  <span>+966 50 128 4492 (واتساب)</span>
+                  <span dir="ltr">+966 50 128 4492 ({t("واتساب", "WhatsApp")})</span>
                 </a>
                 <Link
                   href="/admin/login"
                   className="text-white/60 hover:text-white text-[11px] pt-2 inline-flex items-center gap-1"
                 >
-                  <span>بوابة الدخول الإداري</span>
+                  <span>{t("بوابة الدخول الإداري", "Admin Portal")}</span>
                   <ArrowUpLeft className="h-3 w-3" />
                 </Link>
               </div>
@@ -207,18 +219,20 @@ export function SiteFooter() {
 
         {/* Bottom copyright */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/50">
-          <p>© {new Date().getFullYear()} أماني خليل — Haute Beauté Artistry. كافة الحقوق محفوظة.</p>
+          <p>
+            © {new Date().getFullYear()} {t("أماني خليل — Haute Beauté Artistry. كافة الحقوق محفوظة.", "Amani Khalil — Haute Beauté Artistry. All rights reserved.")}
+          </p>
           <div className="flex items-center gap-4">
             <Link href="/contact" className="hover:text-white transition-colors">
-              سياسة الخصوصية
+              {t("سياسة الخصوصية", "Privacy Policy")}
             </Link>
             <span>•</span>
             <Link href="/contact" className="hover:text-white transition-colors">
-              شروط الحجز والعربون
+              {t("شروط الحجز والعربون", "Booking & Deposit Terms")}
             </Link>
             <span>•</span>
             <span className="flex items-center gap-1 text-[#fed65b]">
-              <span>صُمم بفخامة في الرياض</span>
+              <span>{t("صُمم بفخامة في الرياض", "Crafted with luxury in Riyadh")}</span>
               <Heart className="h-3 w-3 fill-current" />
             </span>
           </div>

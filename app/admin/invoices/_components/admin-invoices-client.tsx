@@ -35,6 +35,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
+import { downloadCsvFile } from "@/lib/image-upload";
 
 export function AdminInvoicesClient() {
   const { invoices, deleteInvoice } = useAppStore();
@@ -57,7 +58,24 @@ export function AdminInvoicesClient() {
   const totalOutstanding = invoices.reduce((s, i) => s + i.remainingBalance, 0);
 
   const handleExport = () => {
-    toast.success("جارٍ تنزيل التقرير المالي والضريبي الرسمي (PDF)...");
+    const today = new Date().toISOString().split("T")[0];
+    downloadCsvFile(
+      `amani-invoices-${today}.csv`,
+      ["رقم الفاتورة", "مرجع الحجز", "اسم العميلة", "الباقة", "تاريخ الإصدار", "الإجمالي (ر.س)", "العربون المحصل (ر.س)", "المتبقي (ر.س)", "بوابة الدفع", "الحالة"],
+      filteredInvoices.map((inv) => [
+        inv.invoiceNumber,
+        inv.bookingRef,
+        inv.clientName,
+        inv.packageName,
+        inv.issueDate,
+        inv.totalAmount,
+        inv.depositPaid,
+        inv.remainingBalance,
+        inv.paymentMethod,
+        inv.status,
+      ])
+    );
+    toast.success(`تم تصدير التقرير المالي (${filteredInvoices.length} فاتورة) بنجاح ✨`);
   };
 
   return (

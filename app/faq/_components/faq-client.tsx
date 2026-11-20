@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useAppStore } from "@/providers/app-store-provider";
+import { useLanguage } from "@/providers/language-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +28,7 @@ import {
 } from "lucide-react";
 
 export function FaqClient() {
+  const { t, dir } = useLanguage();
   const { faqs } = useAppStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string>("all");
@@ -50,20 +52,22 @@ export function FaqClient() {
   });
 
   return (
-    <div dir="rtl" className="w-full min-h-screen bg-[#fff8f7] text-[#211a1b] pt-20">
+    <div dir={dir} className="w-full min-h-screen bg-[#fff8f7] text-[#211a1b] pt-20">
       {/* 1. Hero */}
       <section className="relative overflow-hidden bg-gradient-to-b from-[#2f020d] to-[#4a1521] text-white py-16 lg:py-24">
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#735c00]/20 rounded-full blur-3xl pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 relative z-10 text-center">
           <Badge variant="gold" className="mb-4">
-            دليلكِ الشامل والإجابات الرسمية
+            {t("دليلكِ الشامل والإجابات الرسمية", "Complete Guide & Official Answers")}
           </Badge>
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-serif leading-tight">
-            الأسئلة الشائعة
+            {t("الأسئلة الشائعة", "Frequently Asked Questions")}
           </h1>
           <p className="text-sm sm:text-base text-[#eedfe0] max-w-2xl mx-auto mt-4 leading-relaxed">
-            كل ما تودين معرفته لضمان إطلالة استثنائية: إجابات واضحة وشفافة حول باقات العرائس الملكية،
-            سياسات تثبيت المواعيد، التغطية الفندقية بالرياض، ونوعية المستحضرات العالمية.
+            {t(
+              "كل ما تودين معرفته لضمان إطلالة استثنائية: إجابات واضحة وشفافة حول باقات العرائس الملكية، سياسات تثبيت المواعيد، التغطية الفندقية بالرياض، ونوعية المستحضرات العالمية.",
+              "Clear, transparent answers about our royal bridal packages, deposit policies, Riyadh hotel coverage, and luxury cosmetics."
+            )}
           </p>
 
           {/* Live Search Input */}

@@ -34,6 +34,7 @@ import {
   INITIAL_AREAS,
 } from "@/features/data/initial-data";
 import { toast } from "sonner";
+import { FALLBACK_GALLERY_IMAGE, normalizeImageSrc } from "@/lib/image-upload";
 
 interface AppStoreContextType {
   packages: ServicePackage[];
@@ -80,6 +81,7 @@ interface AppStoreContextType {
   deleteCustomer: (id: string) => void;
 
   addGalleryLook: (look: Omit<GalleryLook, "id">) => void;
+  updateGalleryLook: (id: string, updates: Partial<Omit<GalleryLook, "id">>) => void;
   deleteGalleryLook: (id: string) => void;
 
   addReview: (review: Omit<ReviewItem, "id" | "approved" | "featured">) => void;
@@ -993,7 +995,8 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
 
   const addGalleryLook = (lookData: Omit<GalleryLook, "id">) => {
     const id = "gal-" + Date.now();
-    const newLook: GalleryLook = { ...lookData, id };
+    const safeImage = normalizeImageSrc(lookData.image) || FALLBACK_GALLERY_IMAGE;
+    const newLook: GalleryLook = { ...lookData, image: safeImage, id };
     setGallery((prev) => [newLook, ...prev]);
     toast.success(`تمت إضافة الإطلالة "${lookData.title}" إلى المعرض بنجاح ✨`);
 
@@ -1011,6 +1014,49 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
         });
         if (error) {
           toast.error("تعذر حفظ الإطلالة في قاعدة البيانات", {
+            description: error.message,
+          });
+        }
+      })();
+    }
+  };
+
+  const updateGalleryLook = (
+    id: string,
+    updates: Partial<Omit<GalleryLook, "id">>
+  ) => {
+    const normalizedUpdates: Partial<Omit<GalleryLook, "id">> = {
+      ...updates,
+      ...(updates.image !== undefined
+        ? {
+            image:
+              normalizeImageSrc(updates.image) || FALLBACK_GALLERY_IMAGE,
+          }
+        : {}),
+    };
+
+    setGallery((prev) =>
+      prev.map((g) => (g.id === id ? { ...g, ...normalizedUpdates } : g))
+    );
+    toast.success("تم تحديث بيانات وصورة الإطلالة بنجاح ✨");
+
+    const supabase = createClient();
+    if (supabase) {
+      void (async () => {
+        const dbUpdates: Record<string, unknown> = {};
+        if (normalizedUpdates.title !== undefined) dbUpdates.title = normalizedUpdates.title;
+        if (normalizedUpdates.category !== undefined) dbUpdates.category = normalizedUpdates.category;
+        if (normalizedUpdates.categoryAr !== undefined) dbUpdates.category_ar = normalizedUpdates.categoryAr;
+        if (normalizedUpdates.image !== undefined) dbUpdates.image = normalizedUpdates.image;
+        if (normalizedUpdates.clientType !== undefined) dbUpdates.client_type = normalizedUpdates.clientType;
+        if (normalizedUpdates.styleTags !== undefined) dbUpdates.style_tags = normalizedUpdates.styleTags;
+
+        const { error } = await supabase
+          .from("gallery_looks")
+          .update(dbUpdates)
+          .eq("id", id);
+        if (error) {
+          toast.error("تعذر تحديث الإطلالة في قاعدة البيانات", {
             description: error.message,
           });
         }
@@ -1394,6 +1440,7 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
         deleteInvoice,
         deleteCustomer,
         addGalleryLook,
+        updateGalleryLook,
         deleteGalleryLook,
         addReview,
         toggleReviewApproval,

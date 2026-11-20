@@ -32,6 +32,7 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 interface AdminChromeProps {
   onOpenManualBooking: () => void;
@@ -360,6 +361,8 @@ export function AdminChrome({
             <span className="hidden md:inline">إضافة حجز يدوي</span>
             <span className="md:hidden">حجز</span>
           </button>
+
+          <ThemeToggle variant="admin" />
 
           <button
             type="button"

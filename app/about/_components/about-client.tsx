@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { SiteFooter } from "@/components/site-footer";
+import { useLanguage } from "@/providers/language-provider";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -81,24 +82,27 @@ const AMANI_ABOUT_PHOTOS = [
 ];
 
 export function AboutClient() {
+  const { t, dir } = useLanguage();
   const [certModalOpen, setCertModalOpen] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(AMANI_ABOUT_PHOTOS[0].src);
 
   return (
-    <div dir="rtl" className="w-full min-h-screen bg-[#fff8f7] text-[#211a1b] pt-20">
+    <div dir={dir} className="w-full min-h-screen bg-[#fff8f7] text-[#211a1b] pt-20">
       {/* 1. Header Banner */}
       <section className="relative overflow-hidden bg-gradient-to-b from-[#2f020d] to-[#4a1521] text-white py-16 lg:py-24">
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#735c00]/15 rounded-full blur-3xl pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 relative z-10 text-center">
           <Badge variant="gold" className="mb-4">
-            الفلسفة الجمالية والاعتمادات الرسمية
+            {t("الفلسفة الجمالية والاعتمادات الرسمية", "Artistic Philosophy & Official Credentials")}
           </Badge>
           <h1 className="text-3xl sm:text-5xl font-bold font-serif leading-tight">
-            عن خبيرة التجميل أماني خليل
+            {t("عن خبيرة التجميل أماني خليل", "About Makeup Artist Amani Khalil")}
           </h1>
           <p className="text-sm sm:text-base text-[#eedfe0] max-w-2xl mx-auto mt-4 leading-relaxed">
-            رحلة شغف واحتراف دامت لأكثر من ١٠ سنوات في إبراز سحر الملامح الطبيعية وصناعة إطلالات ليلة العمر
-            لعرائس وسيدات النخبة في الرياض.
+            {t(
+              "رحلة شغف واحتراف دامت لأكثر من 10 سنوات في إبراز سحر الملامح الطبيعية وصناعة إطلالات ليلة العمر لعرائس وسيدات النخبة في الرياض.",
+              "Over 10 years of passion and Swiss-certified mastery crafting timeless bridal and VIP soirée looks across Riyadh."
+            )}
           </p>
         </div>
       </section>

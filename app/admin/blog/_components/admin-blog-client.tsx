@@ -32,6 +32,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
+import { AdminImageUploader } from "@/components/admin-image-uploader";
+import { FALLBACK_GALLERY_IMAGE, normalizeImageSrc } from "@/lib/image-upload";
 
 export function AdminBlogClient() {
   const {
@@ -60,7 +62,8 @@ export function AdminBlogClient() {
     "خبيرة تجميل معتمدة دولياً دبلوم CIDESCO"
   );
   const [formReadTime, setFormReadTime] = useState("4 دقائق");
-  const [formCoverImage, setFormCoverImage] = useState("/gallery/IMG_5729.webp");
+  const [formCoverImage, setFormCoverImage] = useState(FALLBACK_GALLERY_IMAGE);
+  const [isCoverValid, setIsCoverValid] = useState(true);
   const [formTags, setFormTags] = useState("عروس الرياض, تجهيز العروس, مكياج زفاف");
   const [formFeatured, setFormFeatured] = useState(false);
   const [formPublished, setFormPublished] = useState(true);
@@ -146,6 +149,12 @@ export function AdminBlogClient() {
       return;
     }
 
+    const normalizedCover = normalizeImageSrc(formCoverImage);
+    if (!normalizedCover || !isCoverValid) {
+      toast.error("يرجى رفع صورة غلاف صالحة أو اختيار صورة من ألبوم الأتيليه");
+      return;
+    }
+
     const tagsArray = formTags
       .split(",")
       .map((t) => t.trim())
@@ -162,7 +171,7 @@ export function AdminBlogClient() {
       authorRole: formAuthorRole.trim(),
       readTime: formReadTime.trim(),
       publishedAt: new Date().toISOString().split("T")[0],
-      coverImage: formCoverImage.trim() || "/gallery/IMG_5729.webp",
+      coverImage: normalizedCover || FALLBACK_GALLERY_IMAGE,
       featured: formFeatured,
       published: formPublished,
       tags: tagsArray.length > 0 ? tagsArray : ["مكياج"],
@@ -282,8 +291,12 @@ export function AdminBlogClient() {
                 <div className="relative aspect-[16/9] bg-[#2f020d] overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={post.coverImage}
+                    src={normalizeImageSrc(post.coverImage) || FALLBACK_GALLERY_IMAGE}
                     alt={post.title}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = FALLBACK_GALLERY_IMAGE;
+                    }}
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute top-3 right-3 flex items-center gap-1.5">
@@ -485,23 +498,21 @@ export function AdminBlogClient() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <AdminImageUploader
+                value={formCoverImage}
+                onChange={setFormCoverImage}
+                onValidityChange={setIsCoverValid}
+                label="صورة غلاف المقال *"
+                aspectClassName="aspect-[16/9]"
+              />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-[#2f020d]">وقت القراءة</label>
                   <Input
                     value={formReadTime}
                     onChange={(e) => setFormReadTime(e.target.value)}
                     placeholder="4 دقائق"
-                    className="text-xs"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2f020d]">رابط صورة الغلاف</label>
-                  <Input
-                    value={formCoverImage}
-                    onChange={(e) => setFormCoverImage(e.target.value)}
-                    placeholder="/gallery/IMG_5729.webp"
                     className="text-xs"
                   />
                 </div>

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useAppStore } from "@/providers/app-store-provider";
+import { useLanguage } from "@/providers/language-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ const CATEGORIES = [
 ];
 
 export function BlogClient() {
+  const { t, dir } = useLanguage();
   const { blogPosts } = useAppStore();
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -74,7 +76,7 @@ export function BlogClient() {
   };
 
   return (
-    <div dir="rtl" className="w-full min-h-screen bg-[#fff8f7] text-[#211a1b] pt-20">
+    <div dir={dir} className="w-full min-h-screen bg-[#fff8f7] text-[#211a1b] pt-20">
       {/* 1. Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-b from-[#2f020d] via-[#430816] to-[#4a1521] text-white py-16 lg:py-24">
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#735c00]/20 rounded-full blur-3xl pointer-events-none" />
@@ -85,17 +87,22 @@ export function BlogClient() {
             variant="gold"
             className="mb-4 bg-[#735c00]/40 text-[#fed65b] border border-[#fed65b]/30 px-3.5 py-1 text-xs"
           >
-            <Sparkles className="h-3.5 w-3.5 ml-1.5" />
-            المدونة الملكية • Luxury Beauty Blog
+            <Sparkles className="h-3.5 w-3.5 me-1.5" />
+            {t("المدونة الملكية • Luxury Beauty Blog", "Royal Beauty Journal • Luxury Blog")}
           </Badge>
 
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold tracking-tight text-white max-w-3xl mx-auto leading-tight">
-            أسرار الجمال، نصائح العرائس، وفنون الإطلالة الملكية
+            {t(
+              "أسرار الجمال، نصائح العرائس، وفنون الإطلالة الملكية",
+              "Beauty Secrets, Bridal Guides & Royal Artistry"
+            )}
           </h1>
 
           <p className="mt-4 text-sm sm:text-base text-[#eedfe0] max-w-2xl mx-auto leading-relaxed">
-            مقالات حصرية مستوحاة من خبرة دبلوم CIDESCO الدولي وسنوات من إعداد
-            أجمل عرائس الرياض. دليلكِ الشامل لبشرة مشرقة ومكياج زفاف متألق يدوم.
+            {t(
+              "مقالات حصرية مستوحاة من خبرة دبلوم CIDESCO الدولي وسنوات من إعداد أجمل عرائس الرياض. دليلكِ الشامل لبشرة مشرقة ومكياج زفاف متألق يدوم.",
+              "Exclusive articles inspired by international CIDESCO expertise and years of styling Riyadh's most luminous brides."
+            )}
           </p>
 
           {/* Quick Search */}

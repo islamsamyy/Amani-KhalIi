@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useAppStore } from "@/providers/app-store-provider";
+import { useLanguage } from "@/providers/language-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +23,7 @@ import {
 import { toast } from "sonner";
 
 export function ContactClient() {
+  const { t, dir } = useLanguage();
   const { areas } = useAppStore();
 
   // Consultation form state
@@ -46,19 +48,22 @@ export function ContactClient() {
   const selectedArea = areas.find((a) => a.id === selectedAreaId) || areas[0];
 
   return (
-    <div dir="rtl" className="w-full min-h-screen bg-[#fff8f7] text-[#211a1b] pt-20">
+    <div dir={dir} className="w-full min-h-screen bg-[#fff8f7] text-[#211a1b] pt-20">
       {/* 1. Header Banner */}
       <section className="relative overflow-hidden bg-gradient-to-b from-[#2f020d] to-[#4a1521] text-white py-16 lg:py-24">
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#735c00]/20 rounded-full blur-3xl pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 relative z-10 text-center">
           <Badge variant="gold" className="mb-4">
-            تواصل مباشر • شفافية كاملة
+            {t("تواصل مباشر • شفافية كاملة", "Direct Concierge • Full Transparency")}
           </Badge>
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-serif leading-tight">
-            تواصل والسياسات وشروط الحجز
+            {t("تواصل والسياسات وشروط الحجز", "Contact, Policies & Booking Terms")}
           </h1>
           <p className="text-sm sm:text-base text-[#eedfe0] max-w-2xl mx-auto mt-4 leading-relaxed">
-            نسعد بالتواصل معكِ للإجابة عن كافة التساؤلات، وتوضيح سياسات تثبيت المواعيد والعربون لضمان حقوقكِ كاملة.
+            {t(
+              "نسعد بالتواصل معكِ للإجابة عن كافة التساؤلات، وتوضيح سياسات تثبيت المواعيد والعربون لضمان حقوقكِ كاملة.",
+              "Reach out for private consultations and review our transparent deposit and rescheduling policies."
+            )}
           </p>
         </div>
       </section>

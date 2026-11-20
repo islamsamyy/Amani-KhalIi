@@ -220,3 +220,127 @@
   left: 140%;
 }
 
+/* =========================================================================
+   ROYAL OBSIDIAN & VELVET WINE DARK MODE SYSTEM
+   ========================================================================= */
+
+html.dark,
+html.dark body {
+  background-color: #120609;
+  color: #f2e4e6;
+}
+
+/* Primary Page & Section Surfaces */
+html.dark .bg-\[\#fff8f7\],
+html.dark .bg-\[\#fff8f7\]\/95 {
+  background-color: #120609 !important;
+}
+
+html.dark .bg-\[\#fff0f1\],
+html.dark .bg-\[\#fff0f1\]\/70 {
+  background-color: #1a0a0f !important;
+}
+
+html.dark .bg-\[\#faeaeb\],
+html.dark .bg-\[\#faeaeb\]\/60 {
+  background-color: #281118 !important;
+}
+
+html.dark .bg-white,
+html.dark .bg-white\/95,
+html.dark .bg-white\/90,
+html.dark .bg-white\/70 {
+  background-color: #1e0d12 !important;
+}
+
+/* Luxury Gradient Sections on Light Canvas */
+html.dark .from-\[\#fff8f7\],
+html.dark .via-\[\#fff0f1\],
+html.dark .to-\[\#fff8f7\] {
+  --tw-gradient-from: #120609 !important;
+  --tw-gradient-via: #1a0a0f !important;
+  --tw-gradient-to: #120609 !important;
+}
+
+/* Typography Hierarchy in Dark Mode */
+html.dark .text-\[\#2f020d\] {
+  color: #fdf2f3 !important;
+}
+
+html.dark .text-\[\#211a1b\] {
+  color: #f2e4e6 !important;
+}
+
+html.dark .text-\[\#524345\] {
+  color: #cbb6ba !important;
+}
+
+html.dark .text-\[\#857374\] {
+  color: #a68f93 !important;
+}
+
+html.dark .text-\[\#735c00\] {
+  color: #fed65b !important;
+}
+
+html.dark .text-\[\#4a1521\] {
+  color: #ffb2bd !important;
+}
+
+/* Hairline Borders in Dark Mode */
+html.dark .border-\[\#eedfe0\],
+html.dark .border-\[\#eedfe0\]\/70,
+html.dark .border-\[\#eedfe0\]\/60 {
+  border-color: #3d1e27 !important;
+}
+
+html.dark .border-\[\#d7c1c3\] {
+  border-color: #522835 !important;
+}
+
+/* Form Controls & Inputs */
+html.dark input,
+html.dark select,
+html.dark textarea {
+  color: #fdf2f3;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #9e868a;
+}
+
+/* Preserve High-Contrast Dark Text on Bright Gold Pills & Badges */
+html.dark .bg-\[\#fed65b\],
+html.dark .bg-\[\#fed65b\] * {
+  color: #241a00 !important;
+}
+
+/* Subtle Hover Surface States in Dark Mode */
+html.dark .hover\:bg-\[\#faeaeb\]:hover,
+html.dark .hover\:bg-\[\#fff0f1\]:hover,
+html.dark .hover\:bg-\[\#fff8f7\]:hover,
+html.dark .hover\:bg-\[\#eedfe0\]:hover {
+  background-color: #32161f !important;
+}
+
+/* Scrollbar Polish in Dark Mode */
+html.dark ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+html.dark ::-webkit-scrollbar-track {
+  background: #120609;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #4a1521;
+  border-radius: 9999px;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #735c00;
+}
+
+

@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AppStoreProvider } from "@/providers/app-store-provider";
+import { ThemeProvider } from "@/providers/theme-provider";
+import { LanguageProvider } from "@/providers/language-provider";
 import { InteractiveShell } from "@/components/interactive-shell";
 import { Toaster } from "@/components/ui/sonner";
+
+const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem("amani_theme_v1");if(t==="dark"||(!t&&window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark");document.documentElement.setAttribute("data-theme","dark");document.documentElement.style.colorScheme="dark";}else{document.documentElement.classList.remove("dark");document.documentElement.setAttribute("data-theme","light");document.documentElement.style.colorScheme="light";}var l=localStorage.getItem("amani_lang_v1");if(l==="en"){document.documentElement.lang="en";document.documentElement.dir="ltr";}}catch(e){}})();`;
 
 export const metadata: Metadata = {
   title: "أماني خليل | خبيرة التجميل ومكياج العرائس بالرياض",
@@ -18,6 +22,7 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
@@ -35,12 +40,16 @@ export default function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className="bg-[#fff8f7] text-[#211a1b] font-body-md antialiased min-h-screen"
+        className="bg-[#fff8f7] text-[#211a1b] font-body-md antialiased min-h-screen transition-colors duration-300"
       >
-        <AppStoreProvider>
-          <InteractiveShell>{children}</InteractiveShell>
-          <Toaster />
-        </AppStoreProvider>
+        <LanguageProvider>
+          <ThemeProvider>
+            <AppStoreProvider>
+              <InteractiveShell>{children}</InteractiveShell>
+              <Toaster />
+            </AppStoreProvider>
+          </ThemeProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

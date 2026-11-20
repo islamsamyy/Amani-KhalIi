@@ -18,14 +18,19 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/providers/language-provider";
 
 export interface BannerSlide {
   id: string;
   src: string;
   badge: string;
+  badgeEn: string;
   title: string;
+  titleEn: string;
   subtitle: string;
+  subtitleEn: string;
   highlight: string;
+  highlightEn: string;
 }
 
 const BANNER_SLIDES: BannerSlide[] = [
@@ -33,41 +38,62 @@ const BANNER_SLIDES: BannerSlide[] = [
     id: "slide-monogram",
     src: "/amani-monogram-banner.jpg",
     badge: "البانر الملكي المعتمد • 2025",
+    badgeEn: "Official Royal Atelier • 2025",
     title: "أتيليه أماني خليل — الهوية الملكية الرسمية",
+    titleEn: "Amani Khalil Atelier — Haute Beauté Signature",
     subtitle:
       "تفرغ تام لعروس واحدة يومياً بأفخم مستحضرات الهوت كوتور العالمية وأحدث تقنيات الإضاءة السينمائية 4K في الرياض.",
+    subtitleEn:
+      "Dedicated exclusively to one bride per day using haute-couture cosmetics and 4K editorial studio lighting in Riyadh.",
     highlight: "عروس واحدة يومياً • تفرغ ملكي",
+    highlightEn: "One Bride Per Day • Exclusive Focus",
   },
   {
     id: "slide-vanity-brush",
     src: "/amani-vanity-brush.jpg",
     badge: "كواليس الاستوديو السينمائي",
+    badgeEn: "Behind the 4K Vanity",
     title: "فن نحت الملامح وانتقاء الفراشي الاحترافية",
+    titleEn: "The Art of Sculpting & Pro Brush Selection",
     subtitle:
       "مرايا هوليوود وإضاءة سينمائية متطورة تحاكي إضاءة القاعات الملكية، لضمان ثبات الإطلالة وتألقها حتى نهاية الحفل.",
-    highlight: "تثبيت هيدروليكي 4K يدوم ١٨ ساعة",
+    subtitleEn:
+      "Hollywood mirrors calibrated to ballroom lighting so every contour stays radiant until the final moment.",
+    highlight: "تثبيت هيدروليكي 4K يدوم 18 ساعة",
+    highlightEn: "18-Hour 4K Hydraulic Hold",
   },
   {
     id: "slide-client-bridal",
     src: "/amani-client-bridal.jpg",
     badge: "جلسة عروس حصرية",
+    badgeEn: "Exclusive Bridal Session",
     title: "تجهيز العروس الملكية بدقة الأكاديمية السويسرية",
+    titleEn: "Swiss-Certified Bridal Preparation",
     subtitle:
       "تطبيق مباشر لأعلى معايير دبلوم CIDESCO الدولي لتهيئة البشرة والكونتور الطبيعي المتناغم مع فستان وطرحة الزفاف.",
+    subtitleEn:
+      "Clinical skin prep and seamless bridal sculpting certified by CIDESCO Switzerland.",
     highlight: "اعتماد CIDESCO الدولي السويسري",
+    highlightEn: "CIDESCO Swiss Certified",
   },
   {
     id: "slide-mirror-glam",
     src: "/amani-mirror-glam.jpg",
     badge: "سحر البشرة الزجاجية",
+    badgeEn: "Glass Skin Radiance",
     title: "إشراقة الملامح وسحر الـ Glass Skin الأصيل",
+    titleEn: "Luminous Features & Authentic Glass Skin",
     subtitle:
       "الكشف عن أبهى تفاصيل جمالكِ الطبيعي بنعومة فائقة دون تكلف، لإطلالة ملكية خالدة في ذاكرة ضيوفكِ وألبوم زفافكِ.",
+    subtitleEn:
+      "Revealing your natural radiance with weightless elegance that looks timeless in person and on camera.",
     highlight: "بشرة مخملية نضرة ومقاومة للتأكسد",
+    highlightEn: "Velvet Non-Oxidizing Finish",
   },
 ];
 
 export function AnimatedStudioBanner() {
+  const { t, dir } = useLanguage();
   const [currentIdx, setCurrentIdx] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -198,10 +224,10 @@ export function AnimatedStudioBanner() {
           <div className="relative z-20 p-6 sm:p-10 lg:p-12 space-y-6">
             <div className="max-w-3xl space-y-3">
               <h3 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-serif text-white leading-tight tracking-tight drop-shadow-md">
-                {currentSlide.title}
+                {t(currentSlide.title, currentSlide.titleEn)}
               </h3>
               <p className="text-xs sm:text-base text-[#eedfe0] max-w-2xl leading-relaxed drop-shadow">
-                {currentSlide.subtitle}
+                {t(currentSlide.subtitle, currentSlide.subtitleEn)}
               </p>
             </div>
 
@@ -212,7 +238,7 @@ export function AnimatedStudioBanner() {
                 className="h-12 px-7 rounded-full bg-[#fed65b] hover:bg-[#ffe088] text-[#241a00] font-bold text-xs sm:text-sm flex items-center gap-2 shadow-2xl transition-all hover:scale-105 active:scale-95 cursor-pointer"
               >
                 <Calendar className="w-4 h-4 text-[#735c00]" />
-                <span>احجزي موعدكِ الملكي الآن</span>
+                <span>{t("احجزي موعدكِ الملكي الآن", "Book Your Royal Session")}</span>
               </Link>
 
               <button
@@ -223,7 +249,7 @@ export function AnimatedStudioBanner() {
                 }}
                 className="h-12 px-6 rounded-full bg-white/15 backdrop-blur-md hover:bg-white/25 text-white font-semibold text-xs sm:text-sm flex items-center gap-2 border border-white/25 transition-all cursor-pointer"
               >
-                <span>معاينة باقات العرائس</span>
+                <span>{t("معاينة باقات العرائس", "Explore Bridal Packages")}</span>
                 <ArrowLeft className="w-4 h-4 text-[#fed65b]" />
               </button>
             </div>

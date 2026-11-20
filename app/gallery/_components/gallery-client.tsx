@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@/providers/app-store-provider";
+import { useLanguage } from "@/providers/language-provider";
+import { FALLBACK_GALLERY_IMAGE, normalizeImageSrc } from "@/lib/image-upload";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +31,7 @@ import {
 
 export function GalleryClient() {
   const router = useRouter();
+  const { t, dir } = useLanguage();
   const { gallery, setSelectedPackageId } = useAppStore();
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -58,20 +61,22 @@ export function GalleryClient() {
   };
 
   return (
-    <div dir="rtl" className="w-full min-h-screen bg-[#fff8f7] text-[#211a1b] pt-20">
+    <div dir={dir} className="w-full min-h-screen bg-[#fff8f7] text-[#211a1b] pt-20">
       {/* 1. Header Banner */}
       <section className="relative overflow-hidden bg-gradient-to-b from-[#2f020d] to-[#4a1521] text-white py-16 lg:py-24">
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#735c00]/20 rounded-full blur-3xl pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 relative z-10 text-center">
           <Badge variant="gold" className="mb-4">
-            ألبوم الصور الموثقة • Haute Beauté
+            {t("ألبوم الصور الموثقة • Haute Beauté", "Verified Lookbook • Haute Beauté")}
           </Badge>
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-serif leading-tight">
-            معرض الأعمال والإطلالات الملكية
+            {t("معرض الأعمال والإطلالات الملكية", "Royal Portfolio & Looks Gallery")}
           </h1>
           <p className="text-sm sm:text-base text-[#eedfe0] max-w-2xl mx-auto mt-4 leading-relaxed">
-            مجموعة مختارة من إطلالات العرائس والسهرات الموثقة بعدسة احترافية وتحت إضاءة القاعات،
-            تجسد دقة الدمج، نضارة البشرة، وفخامة اللمسات الملكية.
+            {t(
+              "مجموعة مختارة من إطلالات العرائس والسهرات الموثقة بعدسة احترافية وتحت إضاءة القاعات، تجسد دقة الدمج، نضارة البشرة، وفخامة اللمسات الملكية.",
+              "A curated selection of authentic bridal and soirée looks captured under real venue lighting—showcasing luminous skin and royal precision."
+            )}
           </p>
         </div>
       </section>
@@ -114,8 +119,12 @@ export function GalleryClient() {
               <div className="relative aspect-[4/5] overflow-hidden bg-[#faeaeb]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={look.image}
+                  src={normalizeImageSrc(look.image) || FALLBACK_GALLERY_IMAGE}
                   alt={look.title}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = FALLBACK_GALLERY_IMAGE;
+                  }}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#2f020d]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">

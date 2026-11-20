@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useAppStore } from "@/providers/app-store-provider";
+import { useLanguage } from "@/providers/language-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +28,7 @@ import {
 } from "lucide-react";
 
 export function ReviewsClient() {
+  const { t, dir } = useLanguage();
   const { reviews, addReview } = useAppStore();
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -57,27 +59,30 @@ export function ReviewsClient() {
   };
 
   return (
-    <div dir="rtl" className="w-full min-h-screen bg-[#fff8f7] text-[#211a1b] pt-20">
+    <div dir={dir} className="w-full min-h-screen bg-[#fff8f7] text-[#211a1b] pt-20">
       {/* 1. Hero */}
       <section className="relative overflow-hidden bg-gradient-to-b from-[#2f020d] to-[#4a1521] text-white py-16 lg:py-24">
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#735c00]/20 rounded-full blur-3xl pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 relative z-10 text-center">
           <Badge variant="gold" className="mb-4">
-            شهادات موثقة من واقع حجوزات حقيقية
+            {t("شهادات موثقة من واقع حجوزات حقيقية", "Verified Testimonials from Real Bookings")}
           </Badge>
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-serif leading-tight">
-            آراء وتقييمات العميلات
+            {t("آراء وتقييمات العميلات", "Client Reviews & Testimonials")}
           </h1>
           <p className="text-sm sm:text-base text-[#eedfe0] max-w-2xl mx-auto mt-4 leading-relaxed">
-            كلمات من القلب تعكس تجارب عرائسنا وسيدات الرياض، وما لمسنه من رقي في التعامل وثبات أسطوري في المكياج.
+            {t(
+              "كلمات من القلب تعكس تجارب عرائسنا وسيدات الرياض، وما لمسنه من رقي في التعامل وثبات أسطوري في المكياج.",
+              "Heartfelt words from our Riyadh brides reflecting refined hospitality and 18-hour makeup longevity."
+            )}
           </p>
           <div className="pt-8">
             <Button
               onClick={() => setModalOpen(true)}
               className="h-12 px-8 rounded-full bg-white text-[#2f020d] hover:bg-[#fed65b] font-bold text-sm shadow-xl cursor-pointer"
             >
-              <Plus className="h-4 w-4 ms-2 text-[#735c00]" />
-              <span>شاركينا تجربتكِ وتقييمكِ</span>
+              <Plus className="h-4 w-4 me-2 text-[#735c00]" />
+              <span>{t("شاركينا تجربتكِ وتقييمكِ", "Share Your Review")}</span>
             </Button>
           </div>
         </div>

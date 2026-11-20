@@ -1,8 +1,11 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useAppStore } from "@/providers/app-store-provider";
+import type { GalleryLook } from "@/features/data/initial-data";
+import { AdminImageUploader } from "@/components/admin-image-uploader";
+import { FALLBACK_GALLERY_IMAGE, normalizeImageSrc } from "@/lib/image-upload";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -33,6 +36,8 @@ import {
   Crown,
   Clock,
   ExternalLink,
+  Pencil,
+  ImageOff,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -45,40 +50,90 @@ export function AdminContentClient() {
     gallery,
     deleteGalleryLook,
     addGalleryLook,
+    updateGalleryLook,
   } = useAppStore();
 
-  const [addGalleryOpen, setAddGalleryOpen] = useState(false);
+  const [galleryModalOpen, setGalleryModalOpen] = useState(false);
+  const [editingLookId, setEditingLookId] = useState<string | null>(null);
   const [lookTitle, setLookTitle] = useState("");
   const [lookCategory, setLookCategory] = useState<
     "bridal" | "evening" | "soft" | "engagement"
   >("bridal");
   const [lookCategoryAr, setLookCategoryAr] = useState("عرائس ملكي");
-  const [lookImage, setLookImage] = useState("/gallery/IMG_5729.webp");
+  const [lookImage, setLookImage] = useState(FALLBACK_GALLERY_IMAGE);
+  const [isLookImageValid, setIsLookImageValid] = useState(true);
   const [lookClientType, setLookClientType] = useState(
     "عروس فندق الريتز-كارلتون"
   );
   const [lookTags, setLookTags] = useState("مكياج عروس, فخامة ملكية");
+  const [brokenImageIds, setBrokenImageIds] = useState<Record<string, boolean>>({});
 
-  const handleCreateLook = (e: React.FormEvent) => {
+  const resetLookForm = () => {
+    setEditingLookId(null);
+    setLookTitle("");
+    setLookCategory("bridal");
+    setLookCategoryAr("عرائس ملكي");
+    setLookImage(FALLBACK_GALLERY_IMAGE);
+    setIsLookImageValid(true);
+    setLookClientType("عروس فندق الريتز-كارلتون");
+    setLookTags("مكياج عروس, فخامة ملكية");
+  };
+
+  const handleOpenAddLook = () => {
+    resetLookForm();
+    setGalleryModalOpen(true);
+  };
+
+  const handleOpenEditLook = (look: GalleryLook) => {
+    setEditingLookId(look.id);
+    setLookTitle(look.title);
+    setLookCategory(look.category);
+    setLookCategoryAr(look.categoryAr);
+    setLookImage(look.image);
+    setIsLookImageValid(true);
+    setLookClientType(look.clientType);
+    setLookTags((look.styleTags || []).join(", "));
+    setGalleryModalOpen(true);
+  };
+
+  const handleSaveLook = (e: React.FormEvent) => {
     e.preventDefault();
     if (!lookTitle.trim()) {
       toast.error("يرجى إدخال عنوان الإطلالة");
+      return;
+    }
+    const normalizedImg = normalizeImageSrc(lookImage);
+    if (!normalizedImg || !isLookImageValid) {
+      toast.error("يرجى رفع صورة صالحة أو اختيار صورة من ألبوم الأتيليه قبل الحفظ");
       return;
     }
     const tags = lookTags
       .split(",")
       .map((t) => t.trim())
       .filter(Boolean);
-    addGalleryLook({
+
+    const payload = {
       title: lookTitle.trim(),
       category: lookCategory,
       categoryAr: lookCategoryAr,
-      image: lookImage.trim() || "/gallery/IMG_5729.webp",
+      image: normalizedImg,
       clientType: lookClientType.trim() || "عميلة ملكية",
       styleTags: tags.length > 0 ? tags : ["إطلالة ملكية"],
-    });
-    setAddGalleryOpen(false);
-    setLookTitle("");
+    };
+
+    if (editingLookId) {
+      updateGalleryLook(editingLookId, payload);
+      setBrokenImageIds((prev) => {
+        const next = { ...prev };
+        delete next[editingLookId];
+        return next;
+      });
+    } else {
+      addGalleryLook(payload);
+    }
+
+    setGalleryModalOpen(false);
+    resetLookForm();
   };
 
   const handleCategoryChange = (val: "bridal" | "evening" | "soft" | "engagement") => {
@@ -102,6 +157,15 @@ export function AdminContentClient() {
     "١. يُعتبر العربون غير مسترد بعد تأكيد الحجز نظراً لتخصيص التاريخ لعروس واحدة.\n٢. يحق للعميلة تأجيل الموعد لمرة واحدة دون رسوم بشرط إشعار مسبق قبل ٢١ يوماً.\n٣. يُمنع تصوير أو نشر أي صورة أو مقطع دون موافقة خطية صريحة من العميلة.\n٤. تلتزم خبيرة التجميل بالحضور في التوقيت المحدد مع فريق العمل وأدوات التعقيم الطبي المعتمدة."
   );
 
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("amani_contract_clauses_v1");
+      if (saved && saved.trim()) {
+        setContractClauses(saved);
+      }
+    } catch {}
+  }, []);
+
   const [reviewSearch, setReviewSearch] = useState("");
   const [reviewFilter, setReviewFilter] = useState<"all" | "approved" | "pending">("all");
 
@@ -121,6 +185,9 @@ export function AdminContentClient() {
   }, [reviews, reviewSearch, reviewFilter]);
 
   const handleSaveContract = () => {
+    try {
+      localStorage.setItem("amani_contract_clauses_v1", contractClauses);
+    } catch {}
     toast.success("تم تحديث وحفظ صياغة بنود العقد والسياسات الرسمية بنجاح ✨");
   };
 
@@ -376,7 +443,7 @@ export function AdminContentClient() {
               </div>
               <Button
                 size="sm"
-                onClick={() => setAddGalleryOpen(true)}
+                onClick={handleOpenAddLook}
                 className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white text-xs font-bold gap-1.5 px-5 shadow-sm cursor-pointer"
               >
                 <Plus className="h-4 w-4 text-[#fed65b]" />
@@ -385,69 +452,116 @@ export function AdminContentClient() {
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-              {gallery.map((g) => (
-                <div
-                  key={g.id}
-                  className="rounded-3xl overflow-hidden border border-[#eedfe0] bg-white shadow-sm hover:shadow-md transition-all space-y-2 pb-3 group relative"
-                >
-                  <div className="aspect-[4/5] bg-gray-100 overflow-hidden relative">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={g.image}
-                      alt={g.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <Badge variant="gold" className="absolute top-2.5 start-2.5 text-[10px] font-bold shadow-md">
-                      {g.categoryAr}
-                    </Badge>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (confirm(`هل أنتِ متأكدة من حذف إطلالة "${g.title}" نهائياً من المعرض؟`)) {
-                          deleteGalleryLook(g.id);
-                        }
-                      }}
-                      title="حذف الإطلالة نهائياً"
-                      className="absolute top-2.5 end-2.5 h-8 w-8 rounded-full bg-white/90 hover:bg-rose-50 text-rose-600 border border-[#eedfe0] flex items-center justify-center transition-all cursor-pointer shadow-sm z-10 opacity-90 hover:opacity-100"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                  <div className="px-3.5 pt-1 flex items-center justify-between">
-                    <div className="min-w-0 flex-1">
-                      <h4 className="text-xs font-bold text-[#2f020d] truncate">{g.title}</h4>
-                      <p className="text-[10px] text-[#857374] truncate mt-0.5">{g.clientType}</p>
+              {gallery.map((g) => {
+                const isBroken = Boolean(brokenImageIds[g.id]) || !normalizeImageSrc(g.image);
+                return (
+                  <div
+                    key={g.id}
+                    className="rounded-3xl overflow-hidden border border-[#eedfe0] bg-white shadow-sm hover:shadow-md transition-all space-y-2 pb-3 group relative"
+                  >
+                    <div className="aspect-[4/5] bg-[#faeaeb] overflow-hidden relative">
+                      {isBroken ? (
+                        <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center gap-2 bg-[#fff0f1]">
+                          <ImageOff className="h-8 w-8 text-[#857374]" />
+                          <p className="text-[11px] font-bold text-[#2f020d]">
+                            الصورة غير متوفرة
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => handleOpenEditLook(g)}
+                            className="px-3 py-1 rounded-full bg-[#4a1521] text-white text-[10px] font-bold hover:bg-[#2f020d] transition-colors cursor-pointer"
+                          >
+                            رفع صورة بديلة
+                          </button>
+                        </div>
+                      ) : (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img
+                          src={normalizeImageSrc(g.image)}
+                          alt={g.title}
+                          onError={() =>
+                            setBrokenImageIds((prev) => ({ ...prev, [g.id]: true }))
+                          }
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      )}
+                      <Badge variant="gold" className="absolute top-2.5 start-2.5 text-[10px] font-bold shadow-md">
+                        {g.categoryAr}
+                      </Badge>
+                      <div className="absolute top-2.5 end-2.5 flex items-center gap-1.5 z-10">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenEditLook(g)}
+                          aria-label={`تعديل إطلالة ${g.title}`}
+                          title="تعديل الإطلالة والصورة"
+                          className="h-8 w-8 rounded-full bg-white/95 hover:bg-[#faeaeb] text-[#4a1521] border border-[#eedfe0] flex items-center justify-center transition-all cursor-pointer shadow-sm"
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (confirm(`هل أنتِ متأكدة من حذف إطلالة "${g.title}" نهائياً من المعرض؟`)) {
+                              deleteGalleryLook(g.id);
+                            }
+                          }}
+                          aria-label={`حذف إطلالة ${g.title}`}
+                          title="حذف الإطلالة نهائياً"
+                          className="h-8 w-8 rounded-full bg-white/95 hover:bg-rose-50 text-rose-600 border border-[#eedfe0] flex items-center justify-center transition-all cursor-pointer shadow-sm"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (confirm(`هل أنتِ متأكدة من حذف إطلالة "${g.title}" نهائياً من المعرض؟`)) {
-                          deleteGalleryLook(g.id);
-                        }
-                      }}
-                      title="حذف الإطلالة"
-                      className="h-7 w-7 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-600 flex items-center justify-center transition-colors shrink-0 ms-2 cursor-pointer"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
+                    <div className="px-3.5 pt-1 flex items-center justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <h4 className="text-xs font-bold text-[#2f020d] truncate">{g.title}</h4>
+                        <p className="text-[10px] text-[#857374] truncate mt-0.5">{g.clientType}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenEditLook(g)}
+                        title="تعديل الإطلالة"
+                        className="h-7 px-2.5 rounded-full bg-[#faeaeb] hover:bg-[#eedfe0] text-[#4a1521] text-[10px] font-bold flex items-center gap-1 transition-colors shrink-0 cursor-pointer"
+                      >
+                        <Pencil className="h-3 w-3" />
+                        <span>تعديل</span>
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
-            {/* Add Gallery Look Modal Dialog */}
-            <Dialog open={addGalleryOpen} onOpenChange={setAddGalleryOpen}>
-              <DialogContent className="max-w-md bg-[#fff8f7] border border-[#d7c1c3] p-6 text-right rounded-3xl" dir="rtl">
+            {/* Add / Edit Gallery Look Modal Dialog */}
+            <Dialog
+              open={galleryModalOpen}
+              onOpenChange={(open) => {
+                setGalleryModalOpen(open);
+                if (!open) resetLookForm();
+              }}
+            >
+              <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto bg-[#fff8f7] border border-[#d7c1c3] p-6 text-right rounded-3xl" dir="rtl">
                 <DialogHeader className="text-right">
                   <DialogTitle className="text-lg font-bold text-[#2f020d]">
-                    إضافة إطلالة ملكية جديدة للمعرض
+                    {editingLookId
+                      ? "تعديل الإطلالة وتحديث الصورة"
+                      : "إضافة إطلالة ملكية جديدة للمعرض"}
                   </DialogTitle>
                   <DialogDescription className="text-xs text-[#524345]">
-                    أدخلي تفاصيل الإطلالة وصورة العمل ليتم عرضها في ألبوم المعرض وتطبيق الحجز.
+                    ارفعي صورة العمل مباشرة من جهازكِ أو اختاري من ألبوم الأتيليه ليتم عرضها بوضوح تام في المعرض وتطبيق الحجز.
                   </DialogDescription>
                 </DialogHeader>
 
-                <form onSubmit={handleCreateLook} className="space-y-4 my-2">
+                <form onSubmit={handleSaveLook} className="space-y-4 my-2">
+                  <AdminImageUploader
+                    value={lookImage}
+                    onChange={setLookImage}
+                    onValidityChange={setIsLookImageValid}
+                    label="صورة الإطلالة *"
+                    aspectClassName="aspect-[4/3]"
+                  />
+
                   <div>
                     <label className="text-xs font-bold text-[#2f020d] block mb-1">عنوان الإطلالة *</label>
                     <input
@@ -487,17 +601,6 @@ export function AdminContentClient() {
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-[#2f020d] block mb-1">مسار أو رابط الصورة</label>
-                    <input
-                      type="text"
-                      value={lookImage}
-                      onChange={(e) => setLookImage(e.target.value)}
-                      placeholder="/gallery/IMG_5729.webp"
-                      className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
-                    />
-                  </div>
-
-                  <div>
                     <label className="text-xs font-bold text-[#2f020d] block mb-1">وسوم الإطلالة (مفصولة بفاصلة)</label>
                     <input
                       type="text"
@@ -512,7 +615,10 @@ export function AdminContentClient() {
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={() => setAddGalleryOpen(false)}
+                      onClick={() => {
+                        setGalleryModalOpen(false);
+                        resetLookForm();
+                      }}
                       className="rounded-full text-xs"
                     >
                       إلغاء
@@ -521,7 +627,7 @@ export function AdminContentClient() {
                       type="submit"
                       className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white text-xs font-bold px-6"
                     >
-                      نشر في المعرض
+                      {editingLookId ? "حفظ التعديلات" : "نشر في المعرض"}
                     </Button>
                   </div>
                 </form>

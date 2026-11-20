@@ -5,9 +5,17 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@/providers/app-store-provider";
+import { useLanguage } from "@/providers/language-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { AnimatedStudioBanner } from "@/components/animated-studio-banner";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { AnimatedCounter } from "@/components/animated-counter";
+import { FALLBACK_GALLERY_IMAGE, normalizeImageSrc } from "@/lib/image-upload";
+import { LuxuryCountersAndInteractive } from "./_components/luxury-counters-interactive";
+import { SignatureStyleFinder } from "./_components/signature-style-finder";
+import { BridalTimelineHygiene } from "./_components/bridal-timeline-hygiene";
+import { RiyadhCoverageSection } from "./_components/riyadh-coverage-section";
+import { HomeBlogFaqCta } from "./_components/home-blog-faq-cta";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -85,6 +93,7 @@ const AMANI_STUDIO_LOOKS = [
 
 export function HomeClient() {
   const router = useRouter();
+  const { t, dir } = useLanguage();
   const { packages, addons, reviews, gallery, setSelectedPackageId, createBooking, addReview } =
     useAppStore();
 
@@ -150,6 +159,27 @@ export function HomeClient() {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
       toast.success("تم اختيار الباقة بنجاح! حددي الموعد الآن ✨");
     }
+  };
+
+  const handleSelectStyle = (pkgId: string, styleName: string) => {
+    setWizardPkg(pkgId);
+    setWizardStep(2);
+    const el = document.getElementById("quick-wizard");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    toast.success(`تم اعتماد ستايل "${styleName}" وتحديد الباقة المناسبة ✨`);
+  };
+
+  const handleSelectArea = (areaId: string, areaName: string) => {
+    setWizardArea(areaId);
+    setWizardVenue(areaName);
+    setWizardStep(3);
+    const el = document.getElementById("quick-wizard");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    toast.success(`تم تحديد النطاق: ${areaName} ✨`);
   };
 
   const toggleWizardAddon = (addonId: string) => {
@@ -311,7 +341,7 @@ export function HomeClient() {
   });
 
   return (
-    <div dir="rtl" className="w-full min-h-screen bg-[#fff8f7] text-[#211a1b] pt-20">
+    <div dir={dir} className="w-full min-h-screen bg-[#fff8f7] text-[#211a1b] pt-20">
       {/* 1. Hero Section with Massive High-Resolution Studio Image */}
       <section className="relative overflow-hidden bg-gradient-to-b from-[#2f020d] via-[#3a0d17] to-[#4a1521] text-white py-16 lg:py-28">
         {/* Ambient Warm Golden Glows */}
@@ -322,21 +352,30 @@ export function HomeClient() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-center">
             {/* Right: Text & Value Propositions (6 cols) */}
             <div className="lg:col-span-6 flex flex-col items-start gap-6 animate-fade-in-up">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs text-[#fed65b] font-semibold shadow-sm animate-float">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs text-[#fed65b] font-semibold shadow-sm">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 <Crown className="h-3.5 w-3.5 text-[#fed65b]" />
-                <span>Certified Luxury Bridal MUA • الرياض • خدمة فندقية وقصور</span>
+                <span>
+                  {t(
+                    "Certified Luxury Bridal MUA • الرياض • خدمة فندقية وقصور",
+                    "Certified Luxury Bridal MUA • Riyadh • Hotels & Palaces"
+                  )}
+                </span>
               </div>
 
               <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-serif leading-[1.25] tracking-tight">
-                جلسة ميكب في الرياض{" "}
-                <span className="text-[#fed65b] block sm:inline">بلمسة احترافية</span>{" "}
-                وتألق يدوم طوال ليلتكِ
+                {t("جلسة ميكب في الرياض", "Luxury Makeup in Riyadh")}{" "}
+                <span className="text-[#fed65b] block sm:inline">
+                  {t("بلمسة احترافية", "with Editorial Artistry")}
+                </span>{" "}
+                {t("وتألق يدوم طوال ليلتكِ", "That Lasts All Night")}
               </h1>
 
               <p className="text-sm sm:text-lg text-[#eedfe0] max-w-xl leading-relaxed">
-                إبراز جمالكِ الطبيعي بدقة عالية وعناية شخصية متكاملة مصممة خصيصاً لمناسبتكِ وليلة عمركِ،
-                باستخدام أفخم مستحضرات التجميل العالمية الأصلية وتقنيات الإضاءة السينمائية 4K مع تفرغ تام لعروس واحدة يومياً.
+                {t(
+                  "إبراز جمالكِ الطبيعي بدقة عالية وعناية شخصية متكاملة مصممة خصيصاً لمناسبتكِ وليلة عمركِ، باستخدام أفخم مستحضرات التجميل العالمية الأصلية وتقنيات الإضاءة السينمائية 4K مع تفرغ تام لعروس واحدة يومياً.",
+                  "Enhancing your natural beauty with bespoke personal care tailored for your wedding night or special occasion, using authentic haute-couture cosmetics and 4K lighting techniques—exclusively one bride per day."
+                )}
               </p>
 
               {/* Accreditation Badge */}
@@ -346,8 +385,12 @@ export function HomeClient() {
                     <Award className="h-6 w-6" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-white">دبلوم التجميل والمكياج السينمائي والعرائسي</h3>
-                    <p className="text-xs text-[#eedfe0]">الأكاديمية الدولية للتجميل • الرياض (CIDESCO 2021)</p>
+                    <h3 className="text-sm font-bold text-white">
+                      {t("دبلوم التجميل والمكياج السينمائي والعرائسي", "CIDESCO Bridal & Editorial Makeup Diploma")}
+                    </h3>
+                    <p className="text-xs text-[#eedfe0]">
+                      {t("الأكاديمية الدولية للتجميل • الرياض (CIDESCO 2021)", "International Beauty Academy • Switzerland / Riyadh (2021)")}
+                    </p>
                   </div>
                 </div>
                 <Button
@@ -356,8 +399,8 @@ export function HomeClient() {
                   onClick={() => setCertModalOpen(true)}
                   className="rounded-full bg-white text-[#2f020d] hover:bg-[#fed65b] text-xs font-bold shrink-0 cursor-pointer hover-shine"
                 >
-                  <Eye className="h-3.5 w-3.5 ms-1" />
-                  <span>معاينة الاعتماد</span>
+                  <Eye className="h-3.5 w-3.5 me-1" />
+                  <span>{t("معاينة الاعتماد", "View Certificate")}</span>
                 </Button>
               </div>
 
@@ -368,7 +411,7 @@ export function HomeClient() {
                   className="h-13 px-8 rounded-full bg-white text-[#2f020d] hover:bg-[#fed65b] text-sm font-bold flex items-center gap-2 shadow-2xl hover:scale-105 active:scale-95 transition-all cursor-pointer hover-shine"
                 >
                   <Calendar className="h-4 w-4 text-[#735c00]" />
-                  <span>احجزي موعدكِ الآن</span>
+                  <span>{t("احجزي موعدكِ الآن", "Book Your Session Now")}</span>
                 </Link>
                 <button
                   type="button"
@@ -378,7 +421,7 @@ export function HomeClient() {
                   }}
                   className="h-13 px-7 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm font-semibold flex items-center gap-2 border border-white/20 transition-all cursor-pointer hover-lift"
                 >
-                  <span>معالج الحجز السريع</span>
+                  <span>{t("معالج الحجز السريع", "Quick Booking Wizard")}</span>
                   <ArrowDown className="h-4 w-4 text-[#fed65b]" />
                 </button>
               </div>
@@ -386,20 +429,28 @@ export function HomeClient() {
               {/* Stats Counters */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full pt-6 border-t border-white/15">
                 <div className="hover-lift">
-                  <span className="text-2xl font-bold font-serif text-[#fed65b]">+١٠ سنوات</span>
-                  <p className="text-xs text-[#eedfe0]">خبرة واحتراف</p>
+                  <span className="text-2xl font-bold font-serif text-[#fed65b]">
+                    <AnimatedCounter target={10} prefix="+" suffix={t(" سنوات", " yrs")} />
+                  </span>
+                  <p className="text-xs text-[#eedfe0]">{t("خبرة واحتراف", "Experience")}</p>
                 </div>
                 <div className="hover-lift">
-                  <span className="text-2xl font-bold font-serif text-[#fed65b]">+١٬٥٠٠</span>
-                  <p className="text-xs text-[#eedfe0]">عروس ومناسبة</p>
+                  <span className="text-2xl font-bold font-serif text-[#fed65b]">
+                    <AnimatedCounter target={1500} prefix="+" />
+                  </span>
+                  <p className="text-xs text-[#eedfe0]">{t("عروس ومناسبة", "Brides & Events")}</p>
                 </div>
                 <div className="hover-lift">
-                  <span className="text-2xl font-bold font-serif text-[#fed65b]">٤.٩ ★</span>
-                  <p className="text-xs text-[#eedfe0]">تقييم العميلات الموثق</p>
+                  <span className="text-2xl font-bold font-serif text-[#fed65b]">
+                    <AnimatedCounter target={4.9} decimals={1} suffix=" ★" />
+                  </span>
+                  <p className="text-xs text-[#eedfe0]">{t("تقييم العميلات الموثق", "Verified Rating")}</p>
                 </div>
                 <div className="hover-lift">
-                  <span className="text-2xl font-bold font-serif text-[#fed65b]">الرياض</span>
-                  <p className="text-xs text-[#eedfe0]">فندقي ومنزلي</p>
+                  <span className="text-2xl font-bold font-serif text-[#fed65b]">
+                    {t("الرياض", "Riyadh")}
+                  </span>
+                  <p className="text-xs text-[#eedfe0]">{t("فندقي ومنزلي", "Hotels & Home")}</p>
                 </div>
               </div>
             </div>
@@ -411,8 +462,8 @@ export function HomeClient() {
                 onMouseEnter={() => setIsHeroHovered(true)}
                 onMouseLeave={() => setIsHeroHovered(false)}
               >
-                {/* Ambient Golden Shimmer Frame with Breathing Glow */}
-                <div className="absolute -inset-3 bg-gradient-to-r from-[#fed65b]/40 via-[#735c00]/30 to-[#fed65b]/40 rounded-[40px] blur-2xl opacity-80 group-hover:opacity-100 transition-opacity pointer-events-none animate-pulse-glow" />
+                {/* Ambient Golden Shimmer Frame */}
+                <div className="absolute -inset-3 bg-gradient-to-r from-[#fed65b]/35 via-[#735c00]/25 to-[#fed65b]/35 rounded-[40px] blur-2xl opacity-75 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
                 {/* Main Image Container (Full 16:9 ratio, maximum size and quality) */}
                 <div className="relative w-full aspect-[16/9] rounded-[34px] overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.6)] border-2 border-[#fed65b]/60 bg-[#2f020d]">
@@ -428,49 +479,7 @@ export function HomeClient() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#2f020d]/85 via-transparent to-black/25 pointer-events-none" />
 
-                  {/* Top Floating Badge */}
-                  <div className="absolute top-4 start-4 z-10 flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md text-xs font-bold text-[#fed65b] border border-white/20 shadow-md">
-                      <Sparkles className="w-3.5 h-3.5 text-[#fed65b]" />
-                      <span>{AMANI_STUDIO_LOOKS[heroLookIdx].tag}</span>
-                    </span>
-                  </div>
-
-                  {/* Zoom Preview Trigger */}
-                  <button
-                    type="button"
-                    onClick={() => setHeroImageModalOpen(true)}
-                    className="absolute top-4 end-4 z-10 w-10 h-10 rounded-full bg-black/60 backdrop-blur-md hover:bg-[#fed65b] text-white hover:text-[#2f020d] flex items-center justify-center transition-all cursor-pointer shadow-md"
-                    aria-label="تكبير صورة الاستوديو بالحجم الكامل"
-                  >
-                    <ZoomIn className="w-4 h-4" />
-                  </button>
-
-                  {/* Previous & Next Arrow Navigators */}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setHeroLookIdx(
-                        (prev) => (prev - 1 + AMANI_STUDIO_LOOKS.length) % AMANI_STUDIO_LOOKS.length
-                      )
-                    }
-                    className="absolute top-1/2 start-3 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/50 hover:bg-[#fed65b] text-white hover:text-[#2f020d] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 cursor-pointer shadow-lg"
-                    aria-label="الصورة السابقة"
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setHeroLookIdx((prev) => (prev + 1) % AMANI_STUDIO_LOOKS.length)
-                    }
-                    className="absolute top-1/2 end-3 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/50 hover:bg-[#fed65b] text-white hover:text-[#2f020d] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 cursor-pointer shadow-lg"
-                    aria-label="الصورة التالية"
-                  >
-                    <ChevronLeft className="w-5 h-5" />
-                  </button>
-
-                  {/* Subtle luxury vignette at the very bottom edge only - non-intrusive */}
+                  {/* Subtle luxury vignette at the very bottom edge */}
                   <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
 
                   {/* Top Floating Badge */}
@@ -528,7 +537,7 @@ export function HomeClient() {
                 </div>
 
                 {/* Floating Certificate Seal */}
-                <div className="absolute -top-3 -start-3 bg-white text-[#2f020d] px-3.5 py-2 rounded-2xl shadow-xl border border-[#eedfe0] flex items-center gap-2 z-20 animate-float">
+                <div className="hidden sm:flex absolute -top-3 -start-3 bg-white text-[#2f020d] px-3.5 py-2 rounded-2xl shadow-xl border border-[#eedfe0] items-center gap-2 z-20">
                   <div className="h-8 w-8 rounded-full bg-[#fed65b] text-[#241a00] flex items-center justify-center font-bold">
                     <ShieldCheck className="h-4.5 w-4.5" />
                   </div>
@@ -539,7 +548,7 @@ export function HomeClient() {
                 </div>
 
                 {/* Floating Exclusivity Tag */}
-                <div className="absolute -bottom-3 -end-3 bg-[#4a1521] text-white px-3.5 py-2 rounded-2xl shadow-xl border border-[#fed65b]/40 flex items-center gap-2 z-20 animate-float">
+                <div className="hidden sm:flex absolute -bottom-3 -end-3 bg-[#4a1521] text-white px-3.5 py-2 rounded-2xl shadow-xl border border-[#fed65b]/40 items-center gap-2 z-20">
                   <div className="h-8 w-8 rounded-full bg-[#fed65b]/20 text-[#fed65b] flex items-center justify-center">
                     <Crown className="h-4.5 w-4.5 text-[#fed65b]" />
                   </div>
@@ -581,44 +590,125 @@ export function HomeClient() {
         </div>
       </section>
 
+      {/* 2. World-Class Cosmetic Brands & Infinite Runway Slideshow */}
+      <ScrollReveal>
+        <section
+          aria-label="الماركات العالمية الفاخرة المعتمدة"
+          className="py-14 bg-[#fff8f7] border-b border-[#eedfe0] overflow-hidden"
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 mb-8 text-center">
+            <span className="text-xs font-bold text-[#735c00] uppercase tracking-wider">
+              {t("أصالة وجودة لا تهاون فيها", "Uncompromising Luxury & Authenticity")}
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#2f020d] mt-2">
+              {t("الماركات العالمية الفاخرة المعتمدة", "Curated Global Luxury Brands")}
+            </h2>
+            <p className="text-xs text-[#524345] mt-1 max-w-lg mx-auto">
+              {t(
+                "نقتني مستحضراتنا الأصلية مباشرة من دور الأزياء الفرنسية والبريطانية مع بروتوكول تعقيم طبي قبل كل جلسة",
+                "Sourced directly from Parisian & London luxury houses with strict medical-grade sanitization before every session."
+              )}
+            </p>
+          </div>
+
+          {/* Continuous Infinite Runway Glide */}
+          <div dir="ltr" className="relative overflow-hidden w-full py-4">
+            <div className="animate-marquee flex items-center gap-6">
+              {[
+                { brand: "DIOR", note: "Backstage & Capture Totale" },
+                { brand: "CHARLOTTE TILBURY", note: "Hollywood Flawless Filter" },
+                { brand: "TOM FORD", note: "Shade & Illuminate" },
+                { brand: "CHANEL", note: "Les Beiges Water-Fresh" },
+                { brand: "NARS", note: "Radiant Creamy Concealer" },
+                { brand: "HOURGLASS", note: "Ambient Lighting Powder" },
+                { brand: "YVES SAINT LAURENT", note: "Touche Éclat Le Teint" },
+                { brand: "HUDA BEAUTY", note: "Easy Bake Loose Powder" },
+                // Duplicate items for continuous infinite scroll loop
+                { brand: "DIOR", note: "Backstage & Capture Totale" },
+                { brand: "CHARLOTTE TILBURY", note: "Hollywood Flawless Filter" },
+                { brand: "TOM FORD", note: "Shade & Illuminate" },
+                { brand: "CHANEL", note: "Les Beiges Water-Fresh" },
+                { brand: "NARS", note: "Radiant Creamy Concealer" },
+                { brand: "HOURGLASS", note: "Ambient Lighting Powder" },
+                { brand: "YVES SAINT LAURENT", note: "Touche Éclat Le Teint" },
+                { brand: "HUDA BEAUTY", note: "Easy Bake Loose Powder" },
+              ].map((b, bIdx) => (
+                <div
+                  key={bIdx}
+                  className="w-52 p-4 rounded-2xl bg-white border border-[#eedfe0] shadow-sm flex flex-col items-center justify-center gap-1 hover:border-[#735c00]/60 transition-all flex-shrink-0 hover-lift cursor-default"
+                >
+                  <span className="font-serif font-bold text-sm text-[#2f020d] tracking-widest">{b.brand}</span>
+                  <span className="text-[10px] text-[#735c00] font-medium">{b.note}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </ScrollReveal>
+
+      {/* 2.2 Interactive Luxury Counters & Lighting Simulator */}
+      <ScrollReveal>
+        <LuxuryCountersAndInteractive
+          onBookNow={() => handleScrollToWizard("vip-bridal")}
+        />
+      </ScrollReveal>
+
+      {/* 1.8 NEW: Interactive Signature Look Style Finder */}
+      <ScrollReveal>
+        <SignatureStyleFinder onSelectStyle={handleSelectStyle} />
+      </ScrollReveal>
+
       {/* 2. Process Section */}
       <ScrollReveal>
         <section className="py-20 bg-[#fff8f7]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <span className="text-xs font-bold text-[#735c00] uppercase tracking-wider">خطوات سهلة ومرنة</span>
+              <span className="text-xs font-bold text-[#735c00] uppercase tracking-wider">
+                {t("خطوات سهلة ومرنة", "Effortless Luxury Booking")}
+              </span>
               <h2 className="text-2xl sm:text-4xl font-bold font-serif text-[#2f020d] mt-2">
-                كيف تحجزين جلستكِ الملكية معنا؟
+                {t("كيف تحجزين جلستكِ الملكية معنا؟", "How to Book Your Royal Session")}
               </h2>
               <p className="text-sm text-[#524345] mt-3">
-                أربع خطوات ميسرة تضمن لكِ تثبيت موعدكِ بدقة وسرية تامة دون الحاجة لإنشاء حساب
+                {t(
+                  "أربع خطوات ميسرة تضمن لكِ تثبيت موعدكِ بدقة وسرية تامة دون الحاجة لإنشاء حساب",
+                  "Four seamless steps to lock in your date with complete privacy—no account required."
+                )}
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
                 {
-                  num: "١",
-                  title: "اختاري الباقة المناسبة",
-                  desc: "تصفحي باقات العرائس الملكية، السهرات، أو الخطوبة مع الإضافات التكميلية.",
+                  num: "1",
+                  titleAr: "اختاري الباقة المناسبة",
+                  titleEn: "Choose Your Package",
+                  descAr: "تصفحي باقات العرائس الملكية، السهرات، أو الخطوبة مع الإضافات التكميلية.",
+                  descEn: "Browse Royal Bridal, Soirée, or Engagement packages with optional add-ons.",
                   icon: Crown,
                 },
                 {
-                  num: "٢",
-                  title: "حددي الموعد والمكان",
-                  desc: "اختاري تاريخ مناسبتكِ ومقر الجلسة (فندق، قصر، أو منزلكِ بالرياض).",
+                  num: "2",
+                  titleAr: "حددي الموعد والمكان",
+                  titleEn: "Select Date & Venue",
+                  descAr: "اختاري تاريخ مناسبتكِ ومقر الجلسة (فندق، قصر، أو منزلكِ بالرياض).",
+                  descEn: "Pick your wedding date and location (5-star hotel, palace, or home in Riyadh).",
                   icon: Calendar,
                 },
                 {
-                  num: "٣",
-                  title: "تأكيد الموعد بالعربون",
-                  desc: "سددي عربون ٣٠٪ بأمان عبر مدى أو Apple Pay لاستلام العقد الموثق.",
+                  num: "3",
+                  titleAr: "تأكيد الموعد بالعربون",
+                  titleEn: "Confirm with 30% Deposit",
+                  descAr: "سددي عربون 30% بأمان عبر مدى أو Apple Pay لاستلام العقد الموثق.",
+                  descEn: "Secure your date via mada or Apple Pay to receive your verified digital contract.",
                   icon: ShieldCheck,
                 },
                 {
-                  num: "٤",
-                  title: "استمتعي بإطلالة خيالية",
-                  desc: "حضور أماني خليل في الموعد المخصص مع كامل الحقيبة ومستحضرات Dior الفاخرة.",
+                  num: "4",
+                  titleAr: "استمتعي بإطلالة خيالية",
+                  titleEn: "Enjoy a Timeless Look",
+                  descAr: "حضور أماني خليل في الموعد المخصص مع كامل الحقيبة ومستحضرات Dior الفاخرة.",
+                  descEn: "Amani Khalil arrives on time with her full Dior & luxury atelier kit.",
                   icon: Sparkles,
                 },
               ].map((step, idx) => {
@@ -634,8 +724,12 @@ export function HomeClient() {
                       </div>
                       <span className="text-3xl font-serif font-bold text-[#fed65b]">{step.num}</span>
                     </div>
-                    <h3 className="text-base font-bold text-[#2f020d]">{step.title}</h3>
-                    <p className="text-xs text-[#524345] leading-relaxed">{step.desc}</p>
+                    <h3 className="text-base font-bold text-[#2f020d]">
+                      {t(step.titleAr, step.titleEn)}
+                    </h3>
+                    <p className="text-xs text-[#524345] leading-relaxed">
+                      {t(step.descAr, step.descEn)}
+                    </p>
                   </div>
                 );
               })}
@@ -656,26 +750,32 @@ export function HomeClient() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
               {/* Right: Editorial Story & Credentials (7 cols) */}
               <div className="lg:col-span-7 space-y-6">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white text-[#735c00] text-xs font-bold border border-[#eedfe0] shadow-sm animate-float">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white text-[#735c00] text-xs font-bold border border-[#eedfe0] shadow-sm">
                   <Crown className="w-4 h-4 text-[#735c00]" />
-                  <span>الخبيرة المعتمدة لعرائس النخبة بالرياض</span>
+                  <span>{t("الخبيرة المعتمدة لعرائس النخبة بالرياض", "Certified Bridal Artist for Riyadh's Elite")}</span>
                 </div>
 
                 <h2 className="text-3xl sm:text-5xl font-bold font-serif text-[#2f020d] leading-tight">
-                  أماني خليل
+                  {t("أماني خليل", "Amani Khalil")}
                   <span className="block text-xl sm:text-2xl font-sans font-normal text-[#735c00] mt-2">
-                    شغف الجمال الملكي ودقة الإتقان السويسري
+                    {t("شغف الجمال الملكي ودقة الإتقان السويسري", "Passion for Royal Beauty & Swiss Precision")}
                   </span>
                 </h2>
 
                 <p className="text-sm sm:text-base text-[#524345] leading-relaxed">
-                  تخرجت أماني خليل من أعرق أكاديميات التجميل الأوروبية وحصلت على اعتماد <strong className="text-[#2f020d]">CIDESCO الدولي السويسري</strong>، وكرّست أكثر من <strong className="text-[#2f020d]">١٠ سنوات</strong> لصناعة إطلالات لا تُنسى لعرائس العائلات الكريمة ونخبة سيدات المجتمع الراقي في الرياض.
+                  {t(
+                    "تخرجت أماني خليل من أعرق أكاديميات التجميل الأوروبية وحصلت على اعتماد CIDESCO الدولي السويسري، وكرّست أكثر من 10 سنوات لصناعة إطلالات لا تُنسى لعرائس العائلات الكريمة ونخبة سيدات المجتمع الراقي في الرياض.",
+                    "Graduated from prestigious European beauty academies with international CIDESCO Swiss certification, Amani Khalil has dedicated over 10 years to crafting unforgettable looks for Riyadh's most discerning brides."
+                  )}
                 </p>
 
-                <blockquote className="p-4 rounded-2xl bg-white border-r-4 border-[#735c00] shadow-sm text-xs sm:text-sm text-[#2f020d] font-serif italic leading-relaxed">
-                  &ldquo;المكياج الملكي الحقيقي لا يُغيّر ملامحكِ، بل يكشف بتناغم استثنائي عن أبهى تفاصيل جمالكِ الطبيعي — إطلالة فخمة وأصيلة تبقى خالدة في ألبوم ذكرياتكِ.&rdquo;
+                <blockquote className="p-4 rounded-2xl bg-white border-s-4 border-[#735c00] shadow-sm text-xs sm:text-sm text-[#2f020d] font-serif italic leading-relaxed">
+                  &ldquo;{t(
+                    "المكياج الملكي الحقيقي لا يُغيّر ملامحكِ، بل يكشف بتناغم استثنائي عن أبهى تفاصيل جمالكِ الطبيعي — إطلالة فخمة وأصيلة تبقى خالدة في ألبوم ذكرياتكِ.",
+                    "True royal makeup never masks who you are—it harmoniously reveals your finest natural features for a timeless look in every wedding memory."
+                  )}&rdquo;
                   <footer className="mt-2 text-xs font-sans not-italic text-[#735c00] font-bold">
-                    — أماني خليل، مؤسسة الأتيليه الملكي
+                    {t("— أماني خليل، مؤسسة الأتيليه الملكي", "— Amani Khalil, Atelier Founder")}
                   </footer>
                 </blockquote>
 
@@ -788,25 +888,35 @@ export function HomeClient() {
         </section>
       </ScrollReveal>
 
+      {/* 2.8 NEW: Bridal Day Timeline & Medical Hygiene Guarantee */}
+      <ScrollReveal>
+        <BridalTimelineHygiene />
+      </ScrollReveal>
+
       {/* 3. Featured Packages Grid (with Interactive Category Filter) */}
       <ScrollReveal>
         <section id="packages-section" className="py-20 bg-[#fff0f1] border-y border-[#eedfe0]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
               <div>
-                <span className="text-xs font-bold text-[#735c00] uppercase tracking-wider">باقات مميزة</span>
+                <span className="text-xs font-bold text-[#735c00] uppercase tracking-wider">
+                  {t("باقات مميزة", "Curated Packages")}
+                </span>
                 <h2 className="text-2xl sm:text-4xl font-bold font-serif text-[#2f020d] mt-2">
-                  باقات الخدمات والأسعار الرسمية
+                  {t("باقات الخدمات والأسعار الرسمية", "Official Services & Packages")}
                 </h2>
                 <p className="text-sm text-[#524345] mt-2">
-                  أسعار شفافة ومحددة تشمل التجهيز المتكامل مع حقيبة رتوش هدية للعروس
+                  {t(
+                    "أسعار شفافة ومحددة تشمل التجهيز المتكامل مع حقيبة رتوش هدية للعروس",
+                    "Transparent official rates including full prep and a complimentary bridal touch-up kit."
+                  )}
                 </p>
               </div>
               <Link
                 href="/services"
                 className="inline-flex items-center gap-2 text-sm font-bold text-[#4a1521] hover:text-[#2f020d] hover:underline hover-lift"
               >
-                <span>مقارنة كافة الباقات والأسعار</span>
+                <span>{t("مقارنة كافة الباقات والأسعار", "Compare All Packages & Rates")}</span>
                 <ArrowLeft className="h-4 w-4" />
               </Link>
             </div>
@@ -816,13 +926,13 @@ export function HomeClient() {
               <Tabs value={packageCategory} onValueChange={setPackageCategory} className="w-full max-w-md">
                 <TabsList className="bg-white p-1 rounded-full border border-[#eedfe0] grid grid-cols-3 w-full shadow-sm">
                   <TabsTrigger value="all" className="rounded-full text-xs font-semibold cursor-pointer">
-                    جميع الباقات
+                    {t("جميع الباقات", "All Packages")}
                   </TabsTrigger>
                   <TabsTrigger value="bridal" className="rounded-full text-xs font-semibold cursor-pointer">
-                    باقات العرائس
+                    {t("باقات العرائس", "Bridal")}
                   </TabsTrigger>
                   <TabsTrigger value="evening" className="rounded-full text-xs font-semibold cursor-pointer">
-                    السهرات والملكة
+                    {t("السهرات والملكة", "Soirée")}
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
@@ -856,7 +966,7 @@ export function HomeClient() {
 
                     <div className="flex items-baseline gap-2 pb-6 border-b border-[#eedfe0]">
                       <span className="text-3xl sm:text-4xl font-bold font-serif text-[#2f020d]">
-                        {pkg.price.toLocaleString("ar-SA")}
+                        {pkg.price.toLocaleString("en-US")}
                       </span>
                       <span className="text-sm font-bold text-[#735c00]">ر.س</span>
                     </div>
@@ -896,13 +1006,16 @@ export function HomeClient() {
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-10">
             <div className="text-center mb-10">
               <span className="text-xs font-bold text-[#735c00] uppercase tracking-wider">
-                معالج الحجز الفوري
+                {t("معالج الحجز الفوري", "Instant Booking Wizard")}
               </span>
               <h2 className="text-2xl sm:text-4xl font-bold font-serif text-[#2f020d] mt-2">
-                احجزي موعدكِ الملكي خلال دقيقتين
+                {t("احجزي موعدكِ الملكي خلال دقيقتين", "Reserve Your Royal Session in 2 Minutes")}
               </h2>
               <p className="text-sm text-[#524345] mt-2">
-                حددي تفاصيل إطلالتكِ وسيتولى النظام حجز الموعد وعرض الفاتورة الرسمية فوراً
+                {t(
+                  "حددي تفاصيل إطلالتكِ وسيتولى النظام حجز الموعد وعرض الفاتورة الرسمية فوراً",
+                  "Customize your look and our system will lock your slot and generate your official invoice instantly."
+                )}
               </p>
             </div>
 
@@ -924,14 +1037,14 @@ export function HomeClient() {
                   <span>
                     الإجمالي:{" "}
                     <strong className="text-sm font-bold font-serif text-[#fed65b]">
-                      {wizardTotalAmount.toLocaleString("ar-SA")} ر.س
+                      {wizardTotalAmount.toLocaleString("en-US")} ر.س
                     </strong>
                   </span>
                   <span>•</span>
                   <span>
                     العربون (30%):{" "}
                     <strong>
-                      {wizardDepositAmount.toLocaleString("ar-SA")} ر.س
+                      {wizardDepositAmount.toLocaleString("en-US")} ر.س
                     </strong>
                   </span>
                 </div>
@@ -1021,7 +1134,7 @@ export function HomeClient() {
                                   />
                                 </div>
                                 <span className="text-xs font-bold text-[#735c00]">
-                                  {pkg.price.toLocaleString("ar-SA")} ر.س
+                                  {pkg.price.toLocaleString("en-US")} ر.س
                                 </span>
                               </label>
                             ))}
@@ -1087,7 +1200,7 @@ export function HomeClient() {
                                   <div className="pt-2 border-t border-[#eedfe0]/60 flex items-center justify-between text-xs">
                                     <span className="text-[10px] text-[#735c00] font-medium">خدمة مساندة ملكية</span>
                                     <span className="font-bold text-[#735c00]">
-                                      +{addon.price.toLocaleString("ar-SA")} ر.س
+                                      +{addon.price.toLocaleString("en-US")} ر.س
                                     </span>
                                   </div>
                                 </label>
@@ -1100,7 +1213,7 @@ export function HomeClient() {
                           <div className="text-xs text-[#524345] flex items-center gap-2">
                             <span>الإجمالي المبدئي: </span>
                             <strong className="text-base font-bold font-serif text-[#4a1521]">
-                              {wizardTotalAmount.toLocaleString("ar-SA")} ر.س
+                              {wizardTotalAmount.toLocaleString("en-US")} ر.س
                             </strong>
                             {wizardAddons.length > 0 && (
                               <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#fed65b]/30 text-[#735c00] font-semibold">
@@ -1230,10 +1343,10 @@ export function HomeClient() {
                           <div className="flex items-center justify-between pb-2 border-b border-[#eedfe0]">
                             <p className="font-bold text-[#4a1521]">ملخص الحجز الملكي السريع:</p>
                             <span className="font-bold text-sm text-[#4a1521]">
-                              {wizardTotalAmount.toLocaleString("ar-SA")} ر.س
+                              {wizardTotalAmount.toLocaleString("en-US")} ر.س
                             </span>
                           </div>
-                          <p>• الباقة الأساسية: <strong className="text-[#2f020d]">{selectedWizardPackageObj.title}</strong> ({selectedWizardPackageObj.price.toLocaleString("ar-SA")} ر.س)</p>
+                          <p>• الباقة الأساسية: <strong className="text-[#2f020d]">{selectedWizardPackageObj.title}</strong> ({selectedWizardPackageObj.price.toLocaleString("en-US")} ر.س)</p>
                           {wizardAddons.length > 0 && (
                             <div className="ps-3 py-1.5 border-s-2 border-[#735c00] bg-white/70 rounded-e-lg text-[11px] space-y-1">
                               <span className="font-bold text-[#735c00] block">الخدمات التكميلية المختارة ({wizardAddons.length}):</span>
@@ -1243,7 +1356,7 @@ export function HomeClient() {
                                 return (
                                   <p key={addonId} className="flex items-center justify-between text-[#524345]">
                                     <span>+ {ad.title}</span>
-                                    <span className="font-semibold text-[#735c00]">+{ad.price.toLocaleString("ar-SA")} ر.س</span>
+                                    <span className="font-semibold text-[#735c00]">+{ad.price.toLocaleString("en-US")} ر.س</span>
                                   </p>
                                 );
                               })}
@@ -1254,7 +1367,7 @@ export function HomeClient() {
                           <div className="pt-2 border-t border-[#eedfe0] flex items-center justify-between font-bold text-[#735c00]">
                             <span>• قيمة العربون المطلوب لتثبيت الموعد (30%):</span>
                             <span className="text-sm">
-                              {wizardDepositAmount.toLocaleString("ar-SA")} ر.س
+                              {wizardDepositAmount.toLocaleString("en-US")} ر.س
                             </span>
                           </div>
                         </div>
@@ -1283,22 +1396,30 @@ export function HomeClient() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
               <div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#faeaeb] text-[#735c00] text-xs font-bold mb-2 animate-float">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#faeaeb] text-[#735c00] text-xs font-bold mb-2">
                   <Camera className="w-3.5 h-3.5" />
-                  <span>ألبوم الإطلالات الحصرية 2025</span>
+                  <span>{t("ألبوم الإطلالات الحصرية 2025", "Exclusive Looks Portfolio 2025")}</span>
                 </div>
                 <h2 className="text-2xl sm:text-4xl font-bold font-serif text-[#2f020d]">
-                  معرض الإطلالات الملكية الموثقة
+                  {t("معرض الإطلالات الملكية الموثقة", "Verified Royal Portfolio Gallery")}
                 </h2>
                 <p className="text-sm text-[#524345] mt-2">
-                  استعرضي نماذج حقيقية لمكياج العرائس والسهرات وجلسات الاستوديو بعدسة تصوير احترافية
+                  {t(
+                    "استعرضي نماذج حقيقية لمكياج العرائس والسهرات وجلسات الاستوديو بعدسة تصوير احترافية",
+                    "Browse authentic bridal, soirée, and 4K editorial studio looks."
+                  )}
                 </p>
               </div>
               <Link
                 href="/gallery"
                 className="inline-flex items-center gap-2 text-sm font-bold text-[#4a1521] hover:text-[#2f020d] hover:underline hover-lift"
               >
-                <span>مشاهدة المعرض الكامل ({extendedGallery.length} إطلالة)</span>
+                <span>
+                  {t(
+                    `مشاهدة المعرض الكامل (${extendedGallery.length} إطلالة)`,
+                    `View Full Gallery (${extendedGallery.length} Looks)`
+                  )}
+                </span>
                 <ArrowLeft className="h-4 w-4" />
               </Link>
             </div>
@@ -1308,19 +1429,19 @@ export function HomeClient() {
               <Tabs value={galleryCategory} onValueChange={setGalleryCategory} className="w-full max-w-2xl">
                 <TabsList className="bg-[#faeaeb] p-1.5 rounded-full flex flex-wrap justify-center gap-1 w-full shadow-inner">
                   <TabsTrigger value="all" className="rounded-full text-xs font-semibold px-4 cursor-pointer">
-                    جميع الإطلالات
+                    {t("جميع الإطلالات", "All Looks")}
                   </TabsTrigger>
                   <TabsTrigger value="artist" className="rounded-full text-xs font-semibold px-4 cursor-pointer text-[#4a1521] font-bold">
-                    جلسات الخبيرة أماني
+                    {t("جلسات الخبيرة أماني", "Studio Sessions")}
                   </TabsTrigger>
                   <TabsTrigger value="bridal" className="rounded-full text-xs font-semibold px-4 cursor-pointer">
-                    عرائس ملكي
+                    {t("عرائس ملكي", "Royal Bridal")}
                   </TabsTrigger>
                   <TabsTrigger value="evening" className="rounded-full text-xs font-semibold px-4 cursor-pointer">
-                    سهرات ومناسبات
+                    {t("سهرات ومناسبات", "Evening Glam")}
                   </TabsTrigger>
                   <TabsTrigger value="soft" className="rounded-full text-xs font-semibold px-4 cursor-pointer">
-                    إطلالات ناعمة
+                    {t("إطلالات ناعمة", "Soft Natural")}
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
@@ -1334,13 +1455,15 @@ export function HomeClient() {
                   className="group relative rounded-3xl overflow-hidden bg-white border border-[#eedfe0] shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col justify-between hover-lift"
                 >
                   <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#2f020d]">
-                    <Image
-                      src={item.image}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={normalizeImageSrc(item.image) || FALLBACK_GALLERY_IMAGE}
                       alt={item.title}
-                      fill
-                      unoptimized={true}
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-700"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = FALLBACK_GALLERY_IMAGE;
+                      }}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent opacity-85 group-hover:opacity-95 transition-opacity pointer-events-none" />
 
@@ -1421,6 +1544,11 @@ export function HomeClient() {
         </section>
       </ScrollReveal>
 
+      {/* 5.5 NEW: Riyadh Neighborhood Coverage & Concierge Travel Fees */}
+      <ScrollReveal>
+        <RiyadhCoverageSection onSelectArea={handleSelectArea} />
+      </ScrollReveal>
+
       {/* 6. EXPANDED CLIENT REVIEWS & SOCIAL PROOF SECTION */}
       <ScrollReveal>
         <section className="py-20 bg-[#fff0f1] border-y border-[#eedfe0]">
@@ -1429,13 +1557,16 @@ export function HomeClient() {
               <div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-[#735c00] text-xs font-bold mb-2 shadow-sm">
                   <Star className="w-3.5 h-3.5 fill-current text-amber-500" />
-                  <span>تقييمات واقعية وموثقة</span>
+                  <span>{t("تقييمات واقعية وموثقة", "Verified Client Testimonials")}</span>
                 </div>
                 <h2 className="text-2xl sm:text-4xl font-bold font-serif text-[#2f020d]">
-                  تجارب وآراء عميلاتنا الوفيات
+                  {t("تجارب وآراء عميلاتنا الوفيات", "Bridal Reviews & Experiences")}
                 </h2>
                 <p className="text-sm text-[#524345] mt-2">
-                  شهادات حقيقية من عرائس وسيدات الرياض اللاتي تألقن في مناسباتهن الخاصة
+                  {t(
+                    "شهادات حقيقية من عرائس وسيدات الرياض اللاتي تألقن في مناسباتهن الخاصة",
+                    "Real reviews from brides and VIP clients across Riyadh."
+                  )}
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -1444,13 +1575,13 @@ export function HomeClient() {
                   className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white text-xs font-bold h-11 px-6 shadow-sm gap-1.5"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>شاركينا تقييمكِ</span>
+                  <span>{t("شاركينا تقييمكِ", "Share Your Review")}</span>
                 </Button>
                 <Link
                   href="/reviews"
                   className="inline-flex items-center gap-1.5 text-xs font-bold text-[#4a1521] hover:underline"
                 >
-                  <span>جميع التقييمات ({reviews.length})</span>
+                  <span>{t(`جميع التقييمات (${reviews.length})`, `All Reviews (${reviews.length})`)}</span>
                   <ArrowLeft className="h-4 w-4" />
                 </Link>
               </div>
@@ -1459,32 +1590,38 @@ export function HomeClient() {
             {/* Rating Summary Scorecard Banner */}
             <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#eedfe0] shadow-sm mb-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
               <div className="md:col-span-4 flex flex-col items-center md:items-start text-center md:text-right border-b md:border-b-0 md:border-l md:border-[#eedfe0] pb-6 md:pb-0 md:pe-6">
-                <span className="text-5xl sm:text-6xl font-bold font-serif text-[#2f020d]">٤.٩</span>
+                <span className="text-5xl sm:text-6xl font-bold font-serif text-[#2f020d]">
+                  <AnimatedCounter target={4.9} decimals={1} />
+                </span>
                 <div className="flex items-center gap-1 text-amber-500 my-2">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star key={i} className="h-5 w-5 fill-current" />
                   ))}
                 </div>
                 <p className="text-xs text-[#524345]">
-                  متوسط التقييم العام بناءً على <strong className="text-[#2f020d]">+١٬٥٠٠ عروس ومناسبة</strong>
+                  متوسط التقييم العام بناءً على <strong className="text-[#2f020d]">+1,500 عروس ومناسبة</strong>
                 </p>
               </div>
 
               <div className="md:col-span-5 space-y-2.5">
                 <div className="flex items-center gap-3 text-xs">
-                  <span className="w-12 font-semibold text-[#524345]">٥ نجوم</span>
+                  <span className="w-12 font-semibold text-[#524345]">5 نجوم</span>
                   <Progress value={96} className="h-2 flex-1" />
-                  <span className="w-10 text-left font-bold text-[#2f020d]">٩٦٪</span>
+                  <span className="w-10 text-left font-bold text-[#2f020d]">
+                    <AnimatedCounter target={96} suffix="%" />
+                  </span>
                 </div>
                 <div className="flex items-center gap-3 text-xs">
-                  <span className="w-12 font-semibold text-[#524345]">٤ نجوم</span>
+                  <span className="w-12 font-semibold text-[#524345]">4 نجوم</span>
                   <Progress value={4} className="h-2 flex-1" />
-                  <span className="w-10 text-left font-bold text-[#2f020d]">٤٪</span>
+                  <span className="w-10 text-left font-bold text-[#2f020d]">
+                    <AnimatedCounter target={4} suffix="%" />
+                  </span>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-[#857374]">
-                  <span className="w-12">٣ نجوم</span>
+                  <span className="w-12">3 نجوم</span>
                   <Progress value={0} className="h-2 flex-1" />
-                  <span className="w-10 text-left font-bold">٠٪</span>
+                  <span className="w-10 text-left font-bold">0%</span>
                 </div>
               </div>
 
@@ -1553,54 +1690,9 @@ export function HomeClient() {
         </section>
       </ScrollReveal>
 
-      {/* 7. World-Class Cosmetic Brands & Infinite Runway Marquee */}
+      {/* 8. NEW: Live Editorial Blog, Pre-Booking FAQ & Final Concierge CTA */}
       <ScrollReveal>
-        <section className="py-16 bg-[#fff8f7] border-b border-[#eedfe0] overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 mb-8 text-center">
-            <span className="text-xs font-bold text-[#735c00] uppercase tracking-wider">
-              أصالة وجودة لا تهاون فيها
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-bold font-serif text-[#2f020d] mt-2">
-              الماركات العالمية الفاخرة المعتمدة
-            </h2>
-            <p className="text-xs text-[#524345] mt-1 max-w-lg mx-auto">
-              نقتني مستحضراتنا الأصلية مباشرة من دور الأزياء الفرنسية والبريطانية مع بروتوكول تعقيم طبي قبل كل جلسة
-            </p>
-          </div>
-
-          {/* Continuous Infinite Runway Glide */}
-          <div className="relative overflow-hidden w-full py-4">
-            <div className="animate-marquee flex items-center gap-6">
-              {[
-                { brand: "DIOR", note: "Backstage & Capture Totale" },
-                { brand: "CHARLOTTE TILBURY", note: "Hollywood Flawless Filter" },
-                { brand: "TOM FORD", note: "Shade & Illuminate" },
-                { brand: "CHANEL", note: "Les Beiges Water-Fresh" },
-                { brand: "NARS", note: "Radiant Creamy Concealer" },
-                { brand: "HOURGLASS", note: "Ambient Lighting Powder" },
-                { brand: "YVES SAINT LAURENT", note: "Touche Éclat Le Teint" },
-                { brand: "HUDA BEAUTY", note: "Easy Bake Loose Powder" },
-                // Duplicate items for continuous infinite scroll loop
-                { brand: "DIOR", note: "Backstage & Capture Totale" },
-                { brand: "CHARLOTTE TILBURY", note: "Hollywood Flawless Filter" },
-                { brand: "TOM FORD", note: "Shade & Illuminate" },
-                { brand: "CHANEL", note: "Les Beiges Water-Fresh" },
-                { brand: "NARS", note: "Radiant Creamy Concealer" },
-                { brand: "HOURGLASS", note: "Ambient Lighting Powder" },
-                { brand: "YVES SAINT LAURENT", note: "Touche Éclat Le Teint" },
-                { brand: "HUDA BEAUTY", note: "Easy Bake Loose Powder" },
-              ].map((b, bIdx) => (
-                <div
-                  key={bIdx}
-                  className="w-52 p-4 rounded-2xl bg-white border border-[#eedfe0] shadow-sm flex flex-col items-center justify-center gap-1 hover:border-[#735c00]/60 transition-all flex-shrink-0 hover-lift cursor-default"
-                >
-                  <span className="font-serif font-bold text-sm text-[#2f020d] tracking-widest">{b.brand}</span>
-                  <span className="text-[10px] text-[#735c00] font-medium">{b.note}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <HomeBlogFaqCta />
       </ScrollReveal>
 
       {/* Hero Studio Image Fullscreen Modal */}
@@ -1657,12 +1749,15 @@ export function HomeClient() {
               </DialogHeader>
 
               <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden my-3 border border-white/20 bg-black">
-                <Image
-                  src={filteredLooks[lightboxIndex].image}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={normalizeImageSrc(filteredLooks[lightboxIndex].image) || FALLBACK_GALLERY_IMAGE}
                   alt={filteredLooks[lightboxIndex].title}
-                  fill
-                  unoptimized={true}
-                  className="object-contain"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = FALLBACK_GALLERY_IMAGE;
+                  }}
+                  className="w-full h-full object-contain"
                 />
               </div>
 

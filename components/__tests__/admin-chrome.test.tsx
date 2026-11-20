@@ -128,6 +128,7 @@ describe("AdminChrome - Navigation Menu & Interactive Buttons", () => {
       deleteInvoice: vi.fn(),
       deleteCustomer: vi.fn(),
       addGalleryLook: vi.fn(),
+      updateGalleryLook: vi.fn(),
       deleteGalleryLook: vi.fn(),
     });
   });

@@ -149,6 +149,7 @@ describe("AdminOverviewClient - Real Data & Dynamic Actions", () => {
       deleteInvoice: vi.fn(),
       deleteCustomer: vi.fn(),
       addGalleryLook: vi.fn(),
+      updateGalleryLook: vi.fn(),
       deleteGalleryLook: vi.fn(),
       reviews: [],
     });

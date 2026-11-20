@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@/providers/app-store-provider";
+import { useLanguage } from "@/providers/language-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +30,7 @@ import { toast } from "sonner";
 
 export function BookingFlowClient() {
   const router = useRouter();
+  const { t, dir } = useLanguage();
   const {
     packages,
     addons,
@@ -167,32 +169,38 @@ export function BookingFlowClient() {
   });
 
   return (
-    <div dir="rtl" className="w-full min-h-screen bg-[#fff8f7] text-[#211a1b] pt-20">
+    <div dir={dir} className="w-full min-h-screen bg-[#fff8f7] text-[#211a1b] pt-20">
       {/* 1. Header Banner */}
       <section className="bg-gradient-to-b from-[#2f020d] to-[#4a1521] text-white py-12 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 text-center">
           <Badge variant="gold" className="mb-3">
-            حجز محمي ومعتمد • ترخيص وثيقة عمل حر
+            {t("حجز محمي ومعتمد • ترخيص وثيقة عمل حر", "Verified & Protected Booking • Licensed Studio")}
           </Badge>
           <h1 className="text-2xl sm:text-4xl font-bold font-serif leading-tight">
-            حجز موعدكِ الفاخر | خطوتكِ الأولى نحو إطلالة لا تُنسى
+            {t(
+              "حجز موعدكِ الفاخر | خطوتكِ الأولى نحو إطلالة لا تُنسى",
+              "Book Your Luxury Session | Your First Step to an Unforgettable Look"
+            )}
           </h1>
           <p className="text-xs sm:text-sm text-[#eedfe0] max-w-xl mx-auto mt-2 leading-relaxed">
-            تجربة حجز سلسة وشفافة تضمن لكِ تثبيت موعدكِ بدقة وسرية تامة مع خبيرة التجميل أماني خليل في الرياض.
+            {t(
+              "تجربة حجز سلسة وشفافة تضمن لكِ تثبيت موعدكِ بدقة وسرية تامة مع خبيرة التجميل أماني خليل في الرياض.",
+              "A seamless, transparent booking experience locking in your date with complete privacy in Riyadh."
+            )}
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-6 mt-6 text-xs text-[#eedfe0]">
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="h-4 w-4 text-[#fed65b]" />
-              <span>عروس واحدة يومياً للتفرغ التام</span>
+              <span>{t("عروس واحدة يومياً للتفرغ التام", "Strictly One Bride Per Day")}</span>
             </span>
             <span className="flex items-center gap-1.5">
               <Sparkles className="h-4 w-4 text-[#fed65b]" />
-              <span>مستحضرات عالمية فاخرة ١٠٠٪</span>
+              <span>{t("مستحضرات عالمية فاخرة 100%", "100% Authentic Luxury Cosmetics")}</span>
             </span>
             <span className="flex items-center gap-1.5">
               <Heart className="h-4 w-4 text-[#fed65b]" />
-              <span>ضمان سرية وخصوصية الصور ١٠٠٪</span>
+              <span>{t("ضمان سرية وخصوصية الصور 100%", "100% Strict NDA Privacy")}</span>
             </span>
           </div>
         </div>

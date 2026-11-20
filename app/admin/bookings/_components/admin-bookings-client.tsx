@@ -40,6 +40,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
+import { downloadCsvFile } from "@/lib/image-upload";
 
 export function AdminBookingsClient() {
   const { bookings, updateBookingStatus, deleteBooking } = useAppStore();
@@ -90,7 +91,25 @@ export function AdminBookingsClient() {
   };
 
   const handleExportCsv = () => {
-    toast.success("جارٍ تصدير جدول الحجوزات الرسمية بصيغة Excel / CSV...");
+    const today = new Date().toISOString().split("T")[0];
+    downloadCsvFile(
+      `amani-bookings-${today}.csv`,
+      ["رقم المرجع", "اسم العميلة", "الجوال", "الباقة", "التاريخ", "الفترة", "الموقع / الفندق", "الإجمالي (ر.س)", "العربون (ر.س)", "المتبقي (ر.س)", "الحالة"],
+      filteredBookings.map((b) => [
+        b.ref,
+        b.clientName,
+        b.phone,
+        b.packageName,
+        b.date,
+        b.timeSlot,
+        b.venue,
+        b.totalAmount,
+        b.depositAmount,
+        b.remainingAmount,
+        b.status,
+      ])
+    );
+    toast.success(`تم تصدير ${filteredBookings.length} حجز بنجاح بصيغة Excel / CSV ✨`);
   };
 
   return (
