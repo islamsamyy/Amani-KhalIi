@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAppStore } from "@/providers/app-store-provider";
+import { useLanguage } from "@/providers/language-provider";
 import { BookingRecord, CustomerProfile } from "@/features/data/initial-data";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -37,6 +38,7 @@ import {
 import { toast } from "sonner";
 
 export function AdminOverviewClient() {
+  const { t, dir } = useLanguage();
   const {
     bookings,
     invoices,
@@ -180,7 +182,7 @@ export function AdminOverviewClient() {
   };
 
   return (
-    <div dir="rtl" className="lg:pr-72 transition-all duration-300">
+    <div dir={dir} className="lg:ps-72 transition-all duration-300">
       <main className="w-full pt-24 px-4 sm:px-6 lg:px-10 pb-16 bg-[#fff8f7] min-h-screen space-y-8">
         {/* 1. Executive Greeting Bar */}
         <section className="relative overflow-hidden rounded-3xl bg-gradient-to-l from-[#4a1521] via-[#2f020d] to-[#1b120e] text-white p-6 sm:p-10 shadow-xl">
@@ -189,21 +191,28 @@ export function AdminOverviewClient() {
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fed65b] text-[#241a00] text-xs font-bold shadow-sm">
                   <span className="w-2 h-2 rounded-full bg-[#735c00] animate-ping" />
-                  <span>الأتيليه جاهز • مواعيد نشطة ({activeBookingsSorted.length})</span>
+                  <span>
+                    {t(
+                      `الأتيليه جاهز • مواعيد نشطة (${activeBookingsSorted.length})`,
+                      `Atelier Ready • Active Bookings (${activeBookingsSorted.length})`
+                    )}
+                  </span>
                 </span>
                 <span className="text-xs text-[#eedfe0]">{currentDateStr}</span>
               </div>
               <h1 className="text-2xl sm:text-4xl font-bold font-serif">
-                صباح الخير، أماني ✨
+                {t("صباح الخير، أماني ✨", "Welcome Back, Amani ✨")}
               </h1>
               <p className="text-xs sm:text-sm text-[#eedfe0] max-w-2xl leading-relaxed">
-                جدول المواعيد النشطة يضم{" "}
+                {t("جدول المواعيد النشطة يضم", "Your active schedule has")}{" "}
                 <strong className="text-[#fed65b]">
-                  {activeBookingsSorted.length} جلسات مؤكدة وقادمة
+                  {activeBookingsSorted.length}{" "}
+                  {t("جلسات مؤكدة وقادمة", "confirmed upcoming sessions")}
                 </strong>{" "}
-                مرتبة حسب التاريخ، بالإضافة إلى{" "}
+                {t("مرتبة حسب التاريخ، بالإضافة إلى", "sorted by date, plus")}{" "}
                 <strong className="text-[#fed65b]">
-                  {pendingBookings.length} طلبات بانتظار سداد العربون
+                  {pendingBookings.length}{" "}
+                  {t("طلبات بانتظار سداد العربون", "pending deposit requests")}
                 </strong>
                 .
               </p>
@@ -215,13 +224,13 @@ export function AdminOverviewClient() {
                 className="h-11 px-5 rounded-full bg-[#fed65b] text-[#241a00] hover:bg-[#ffe088] font-bold text-xs flex items-center gap-2 shadow-md transition-all"
               >
                 <PlusCircle className="h-4 w-4" />
-                <span>إضافة باقة جديدة</span>
+                <span>{t("إضافة باقة جديدة", "Add New Package")}</span>
               </Link>
               <Link
                 href="/admin/bookings"
                 className="h-11 px-5 rounded-full bg-white/10 hover:bg-white/20 text-white font-semibold text-xs flex items-center gap-2 border border-white/20 transition-all"
               >
-                <span>مراجعة الطلبات</span>
+                <span>{t("مراجعة الطلبات", "Review Requests")}</span>
                 <span className="px-2 py-0.5 rounded-full bg-[#fed65b] text-[#241a00] font-bold text-[10px]">
                   {pendingBookings.length}
                 </span>
@@ -232,12 +241,12 @@ export function AdminOverviewClient() {
                   await refreshFromDatabase();
                   toast.success(
                     isSupabaseConnected
-                      ? "تمت مزامنة البيانات المباشرة من Supabase بنجاح ✨"
-                      : "تم تحديث البيانات بنجاح"
+                      ? t("تمت مزامنة البيانات المباشرة من Supabase بنجاح ✨", "Synced live data from Supabase ✨")
+                      : t("تم تحديث البيانات بنجاح", "Data refreshed successfully")
                   );
                 }}
                 className="h-11 w-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all cursor-pointer"
-                title="تحديث ومزامنة قاعدة البيانات"
+                title={t("تحديث ومزامنة قاعدة البيانات", "Sync & Refresh Database")}
               >
                 <RefreshCw
                   className={`h-4 w-4 ${isSyncing ? "animate-spin" : ""}`}

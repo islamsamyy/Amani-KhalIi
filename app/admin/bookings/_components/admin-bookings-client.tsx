@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useAppStore } from "@/providers/app-store-provider";
+import { useLanguage } from "@/providers/language-provider";
 import { BookingRecord } from "@/features/data/initial-data";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -43,6 +44,7 @@ import { toast } from "sonner";
 import { downloadCsvFile } from "@/lib/image-upload";
 
 export function AdminBookingsClient() {
+  const { t, dir } = useLanguage();
   const { bookings, updateBookingStatus, deleteBooking } = useAppStore();
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
@@ -113,14 +115,19 @@ export function AdminBookingsClient() {
   };
 
   return (
-    <div dir="rtl" className="lg:pr-72 transition-all duration-300">
+    <div dir={dir} className="lg:ps-72 transition-all duration-300">
       <main className="w-full pt-24 px-4 sm:px-6 lg:px-10 pb-16 bg-[#fff8f7] min-h-screen space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold font-serif text-[#2f020d]">إدارة الحجوزات والمواعيد</h1>
+            <h1 className="text-2xl font-bold font-serif text-[#2f020d]">
+              {t("إدارة الحجوزات والمواعيد", "Bookings & Appointments")}
+            </h1>
             <p className="text-xs text-[#524345] mt-1">
-              متابعة مواعيد العرائس والسهرات، الفرز الفوري، فحص الفواتير، وتحديث حالات المواعيد.
+              {t(
+                "متابعة مواعيد العرائس والسهرات، الفرز الفوري، فحص الفواتير، وتحديث حالات المواعيد.",
+                "Track bridal & soirée bookings, filter statuses, inspect invoices, and update appointment states."
+              )}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -131,7 +138,7 @@ export function AdminBookingsClient() {
               className="rounded-full text-xs font-bold gap-1.5 bg-white"
             >
               <Download className="h-4 w-4 text-[#735c00]" />
-              <span>تصدير كشف المواعيد</span>
+              <span>{t("تصدير كشف المواعيد", "Export Bookings CSV")}</span>
             </Button>
           </div>
         </div>

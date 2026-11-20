@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useAppStore } from "@/providers/app-store-provider";
+import { useLanguage } from "@/providers/language-provider";
 import { InvoiceRecord } from "@/features/data/initial-data";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -38,6 +39,7 @@ import { toast } from "sonner";
 import { downloadCsvFile } from "@/lib/image-upload";
 
 export function AdminInvoicesClient() {
+  const { t, dir } = useLanguage();
   const { invoices, deleteInvoice } = useAppStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedInvoice, setSelectedInvoice] = useState<InvoiceRecord | null>(null);
@@ -79,14 +81,19 @@ export function AdminInvoicesClient() {
   };
 
   return (
-    <div dir="rtl" className="lg:pr-72 transition-all duration-300">
+    <div dir={dir} className="lg:ps-72 transition-all duration-300">
       <main className="w-full pt-24 px-4 sm:px-6 lg:px-10 pb-16 bg-[#fff8f7] min-h-screen space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold font-serif text-[#2f020d]">سجل الفواتير والمدفوعات الرسمية</h1>
+            <h1 className="text-2xl font-bold font-serif text-[#2f020d]">
+              {t("سجل الفواتير والمدفوعات الرسمية", "Official Invoices & Payments")}
+            </h1>
             <p className="text-xs text-[#524345] mt-1">
-              متابعة العرابين المحصلة 30%، الفواتير الإلكترونية، والمبالغ المستحقة يوم المناسبة.
+              {t(
+                "متابعة العرابين المحصلة 30%، الفواتير الإلكترونية، والمبالغ المستحقة يوم المناسبة.",
+                "Monitor collected 30% deposits, digital invoices, and remaining balances due on event day."
+              )}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -97,7 +104,7 @@ export function AdminInvoicesClient() {
               className="rounded-full text-xs font-bold gap-1.5 bg-white"
             >
               <Download className="h-4 w-4 text-[#735c00]" />
-              <span>تصدير التقرير المالي</span>
+              <span>{t("تصدير التقرير المالي", "Export Financial CSV")}</span>
             </Button>
           </div>
         </div>

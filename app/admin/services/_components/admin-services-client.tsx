@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useAppStore } from "@/providers/app-store-provider";
+import { useLanguage } from "@/providers/language-provider";
 import { ServicePackage } from "@/features/data/initial-data";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +29,7 @@ import {
 import { toast } from "sonner";
 
 export function AdminServicesClient() {
+  const { t, dir } = useLanguage();
   const { packages, togglePackageActive, updatePackage, deletePackage } = useAppStore();
   const [editingPkg, setEditingPkg] = useState<ServicePackage | null>(null);
 
@@ -84,14 +86,19 @@ export function AdminServicesClient() {
   };
 
   return (
-    <div dir="rtl" className="lg:pr-72 transition-all duration-300">
+    <div dir={dir} className="lg:ps-72 transition-all duration-300">
       <main className="w-full pt-24 px-4 sm:px-6 lg:px-10 pb-16 bg-[#fff8f7] min-h-screen space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold font-serif text-[#2f020d]">إدارة الخدمات والباقات الرسمية</h1>
+            <h1 className="text-2xl font-bold font-serif text-[#2f020d]">
+              {t("إدارة الخدمات والباقات الرسمية", "Services & Official Packages")}
+            </h1>
             <p className="text-xs text-[#524345] mt-1">
-              تعديل أسعار الباقات، تفعيل أو إيقاف العروض مؤقتاً، وإضافة باقات جديدة للموقع.
+              {t(
+                "تعديل أسعار الباقات، تفعيل أو إيقاف العروض مؤقتاً، وإضافة باقات جديدة للموقع.",
+                "Edit package pricing, pause or activate offers, and create new packages for the storefront."
+              )}
             </p>
           </div>
           <Link
@@ -99,7 +106,7 @@ export function AdminServicesClient() {
             className="h-11 px-5 rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white font-bold text-xs flex items-center gap-2 shadow-md transition-all self-start sm:self-auto cursor-pointer"
           >
             <Plus className="h-4 w-4 text-[#fed65b]" />
-            <span>إنشاء باقة خدمة جديدة</span>
+            <span>{t("إنشاء باقة خدمة جديدة", "Create New Package")}</span>
           </Link>
         </div>
 

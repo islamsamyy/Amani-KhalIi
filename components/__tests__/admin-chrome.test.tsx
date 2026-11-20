@@ -2,6 +2,7 @@ import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { AdminChrome } from "../admin-chrome";
+import { LanguageProvider } from "@/providers/language-provider";
 import * as AppStoreModule from "@/providers/app-store-provider";
 
 const mockPush = vi.fn();
@@ -258,5 +259,28 @@ describe("AdminChrome - Navigation Menu & Interactive Buttons", () => {
 
     expect(screen.getByText("لوحة التحكم الملكية")).toBeInTheDocument();
     expect(screen.getByText("إدارة المواعيد، الباقات، الفواتير، وملفات العرائس.")).toBeInTheDocument();
+  });
+
+  it("switches AdminChrome navigation and buttons to English via the top bar language switcher", () => {
+    localStorage.clear();
+    document.documentElement.dir = "rtl";
+    document.documentElement.lang = "ar";
+    render(
+      <LanguageProvider>
+        <AdminChrome
+          onOpenManualBooking={mockOnOpenManualBooking}
+          onOpenNotifications={mockOnOpenNotifications}
+          unreadCount={0}
+        />
+      </LanguageProvider>
+    );
+
+    const switchBtn = screen.getByRole("button", { name: "Switch to English" });
+    fireEvent.click(switchBtn);
+
+    expect(screen.getByText("Overview & Activity")).toBeInTheDocument();
+    expect(screen.getByText("Bookings & Schedule")).toBeInTheDocument();
+    expect(screen.getByText("Add Manual Booking")).toBeInTheDocument();
+    expect(document.documentElement.dir).toBe("ltr");
   });
 });

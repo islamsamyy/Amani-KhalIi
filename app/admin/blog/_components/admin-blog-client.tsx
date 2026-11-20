@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useAppStore } from "@/providers/app-store-provider";
+import { useLanguage } from "@/providers/language-provider";
 import { BlogPost } from "@/features/data/initial-data";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -36,6 +37,7 @@ import { AdminImageUploader } from "@/components/admin-image-uploader";
 import { FALLBACK_GALLERY_IMAGE, normalizeImageSrc } from "@/lib/image-upload";
 
 export function AdminBlogClient() {
+  const { t, dir } = useLanguage();
   const {
     blogPosts,
     addBlogPost,
@@ -205,21 +207,24 @@ export function AdminBlogClient() {
   });
 
   return (
-    <div dir="rtl" className="lg:pr-72 transition-all duration-300">
+    <div dir={dir} className="lg:ps-72 transition-all duration-300">
       <main className="w-full pt-24 px-4 sm:px-6 lg:px-10 pb-16 bg-[#fff8f7] min-h-screen space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold font-serif text-[#2f020d]">
-                إدارة المدونة والمقالات الملكية
+                {t("إدارة المدونة والمقالات الملكية", "Royal Blog & Journal Management")}
               </h1>
               <Badge className="bg-[#735c00] text-[#fed65b] border-none text-[10px]">
-                {blogPosts.length} مقالات
+                {blogPosts.length} {t("مقالات", "articles")}
               </Badge>
             </div>
             <p className="text-xs text-[#524345] mt-1">
-              إضافة وتعديل مقالات الجمال والعرائس، التحكم بالنشر، والظهور في الموقع العام.
+              {t(
+                "إضافة وتعديل مقالات الجمال والعرائس، التحكم بالنشر، والظهور في الموقع العام.",
+                "Create and edit beauty & bridal articles, control publishing, and manage featured posts."
+              )}
             </p>
           </div>
 
@@ -231,7 +236,7 @@ export function AdminBlogClient() {
                 className="rounded-full text-xs border-[#eedfe0] gap-1.5"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
-                معاينة المدونة الحية
+                {t("معاينة المدونة الحية", "Preview Live Journal")}
               </Button>
             </Link>
             <Button
@@ -240,7 +245,7 @@ export function AdminBlogClient() {
               className="rounded-full bg-[#2f020d] hover:bg-[#4a1521] text-white text-xs gap-1.5"
             >
               <Plus className="h-3.5 w-3.5" />
-              إضافة مقال جديد
+              {t("إضافة مقال جديد", "Add New Article")}
             </Button>
           </div>
         </div>

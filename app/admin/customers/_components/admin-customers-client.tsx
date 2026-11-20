@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useAppStore } from "@/providers/app-store-provider";
+import { useLanguage } from "@/providers/language-provider";
 import { CustomerProfile } from "@/features/data/initial-data";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +23,7 @@ import {
 import { toast } from "sonner";
 
 export function AdminCustomersClient() {
+  const { t, dir } = useLanguage();
   const { customers, updateCustomerNotes, deleteCustomer } = useAppStore();
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>(customers[0]?.id || "c-01");
   const [searchQuery, setSearchQuery] = useState("");
@@ -50,14 +52,19 @@ export function AdminCustomersClient() {
   };
 
   return (
-    <div dir="rtl" className="lg:pr-72 transition-all duration-300">
+    <div dir={dir} className="lg:ps-72 transition-all duration-300">
       <main className="w-full pt-24 px-4 sm:px-6 lg:px-10 pb-16 bg-[#fff8f7] min-h-screen space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold font-serif text-[#2f020d]">سجل العميلات وتتبع التفضيلات (CRM)</h1>
+            <h1 className="text-2xl font-bold font-serif text-[#2f020d]">
+              {t("سجل العميلات وتتبع التفضيلات (CRM)", "Clients Directory & Preferences (CRM)")}
+            </h1>
             <p className="text-xs text-[#524345] mt-1">
-              ملفات العرائس الخاصة، نوع البشرة، أرقام الفاونديشن المفضلة، وسجل الحجوزات المكتملة.
+              {t(
+                "ملفات العرائس الخاصة، نوع البشرة، أرقام الفاونديشن المفضلة، وسجل الحجوزات المكتملة.",
+                "Private bridal profiles, skin types, preferred foundation shades, and completed booking history."
+              )}
             </p>
           </div>
         </div>

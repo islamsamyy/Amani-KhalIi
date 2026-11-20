@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useAppStore } from "@/providers/app-store-provider";
+import { useLanguage } from "@/providers/language-provider";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,6 +21,7 @@ import {
 import { toast } from "sonner";
 
 export function AdminSettingsClient() {
+  const { t, dir } = useLanguage();
   const { areas } = useAppStore();
 
   const [atelierName, setAtelierName] = useState(
@@ -63,14 +65,19 @@ export function AdminSettingsClient() {
   };
 
   return (
-    <div dir="rtl" className="lg:pr-72 transition-all duration-300">
+    <div dir={dir} className="lg:ps-72 transition-all duration-300">
       <main className="w-full pt-24 px-4 sm:px-6 lg:px-10 pb-16 bg-[#fff8f7] min-h-screen space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold font-serif text-[#2f020d]">إعدادات النظام والصلاحيات</h1>
+            <h1 className="text-2xl font-bold font-serif text-[#2f020d]">
+              {t("إعدادات النظام والصلاحيات", "System Settings & Permissions")}
+            </h1>
             <p className="text-xs text-[#524345] mt-1">
-              ضبط سياسات الحجز، نسب العرابين، صلاحيات الفريق، وقوالب إشعارات الواتساب الرسمية.
+              {t(
+                "ضبط سياسات الحجز، نسب العرابين، صلاحيات الفريق، وقوالب إشعارات الواتساب الرسمية.",
+                "Configure booking policies, deposit percentages, team permissions, and WhatsApp templates."
+              )}
             </p>
           </div>
           <Button
@@ -78,7 +85,7 @@ export function AdminSettingsClient() {
             className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white text-xs font-bold gap-1.5 shadow-md px-6 self-start sm:self-auto cursor-pointer"
           >
             <Save className="h-4 w-4 text-[#fed65b]" />
-            <span>حفظ كافة التغييرات</span>
+            <span>{t("حفظ كافة التغييرات", "Save All Changes")}</span>
           </Button>
         </div>
 

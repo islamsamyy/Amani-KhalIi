@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useAppStore } from "@/providers/app-store-provider";
+import { useLanguage } from "@/providers/language-provider";
 import type { GalleryLook } from "@/features/data/initial-data";
 import { AdminImageUploader } from "@/components/admin-image-uploader";
 import { FALLBACK_GALLERY_IMAGE, normalizeImageSrc } from "@/lib/image-upload";
@@ -42,6 +43,7 @@ import {
 import { toast } from "sonner";
 
 export function AdminContentClient() {
+  const { t, dir } = useLanguage();
   const {
     reviews,
     toggleReviewApproval,
@@ -195,24 +197,27 @@ export function AdminContentClient() {
   const pendingCount = reviews.filter((r) => !r.approved).length;
 
   return (
-    <div dir="rtl" className="lg:pr-72 transition-all duration-300">
+    <div dir={dir} className="lg:ps-72 transition-all duration-300">
       <main className="w-full pt-24 px-4 sm:px-6 lg:px-10 pb-16 bg-[#fff8f7] min-h-screen space-y-6">
-        {/* Header Bar */}
+        {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#eedfe0]">
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold text-[#735c00] uppercase tracking-wider">
-                لوحة إدارة المحتوى الرقمي
+                {t("لوحة إدارة المحتوى الرقمي", "Digital Content Management")}
               </span>
               <Badge variant="gold" className="text-[10px] px-2 py-0.5">
-                تحديث فوري
+                {t("تحديث فوري", "Live Sync")}
               </Badge>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#2f020d] mt-1">
-              إدارة المحتوى والتقييمات والمعرض
+              {t("إدارة المحتوى والتقييمات والمعرض", "Content, Reviews & Gallery Management")}
             </h1>
             <p className="text-xs text-[#524345] mt-1 max-w-2xl leading-relaxed">
-              اعتماد تقييمات العميلات الجديدة، حذف المراجعات غير اللائقة، إدارة إطلالات المعرض، وتحديث بنود عقد الحجز الإلكتروني الموثق.
+              {t(
+                "اعتماد تقييمات العميلات الجديدة، حذف المراجعات غير اللائقة، إدارة إطلالات المعرض، وتحديث بنود عقد الحجز الإلكتروني الموثق.",
+                "Approve client reviews, upload & edit portfolio gallery looks, and update verified digital contract clauses."
+              )}
             </p>
           </div>
 
@@ -222,7 +227,7 @@ export function AdminContentClient() {
               target="_blank"
               className="h-10 px-4 rounded-full border border-[#eedfe0] bg-white text-xs font-bold text-[#2f020d] flex items-center gap-1.5 hover:bg-[#faeaeb] transition-colors"
             >
-              <span>معاينة صفحة التقييمات العامة</span>
+              <span>{t("معاينة صفحة التقييمات العامة", "Preview Public Reviews")}</span>
               <ExternalLink className="h-3.5 w-3.5 text-[#735c00]" />
             </Link>
           </div>

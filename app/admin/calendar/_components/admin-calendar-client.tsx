@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useAppStore } from "@/providers/app-store-provider";
+import { useLanguage } from "@/providers/language-provider";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -25,6 +26,7 @@ interface AdminCalendarClientProps {
 export function AdminCalendarClient({
   initialDate = "2025-10-09",
 }: AdminCalendarClientProps = {}) {
+  const { t, dir } = useLanguage();
   const { bookings, blockedDates, toggleBlockedDate } = useAppStore();
 
   const [dateCursor, setDateCursor] = useState(() => {
@@ -100,7 +102,7 @@ export function AdminCalendarClient({
   const activeDayBlocked = isDayBlocked(selectedDay);
 
   return (
-    <div dir="rtl" className="lg:pr-72 transition-all duration-300">
+    <div dir={dir} className="lg:ps-72 transition-all duration-300">
       <main className="w-full pt-24 px-4 sm:px-6 lg:px-10 pb-16 bg-[#fff8f7] min-h-screen space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
