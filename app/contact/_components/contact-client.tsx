@@ -72,7 +72,7 @@ export function ContactClient() {
       <section className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <a
-            href="https://wa.me/966501284492"
+            href="https://wa.me/966504655724"
             target="_blank"
             rel="noreferrer"
             className="p-6 rounded-3xl bg-white border border-[#eedfe0] shadow-sm hover:shadow-md hover:border-[#25D366] transition-all flex flex-col items-start gap-3 group"
@@ -81,19 +81,19 @@ export function ContactClient() {
               <MessageCircle className="h-6 w-6" />
             </div>
             <span className="text-xs text-[#735c00] font-bold">واتساب رسمي مباشر</span>
-            <h3 className="text-sm font-bold text-[#2f020d]">+966 50 128 4492</h3>
+            <h3 className="text-sm font-bold text-[#2f020d]">+966 50 465 5724</h3>
             <p className="text-[11px] text-[#524345]">رد فوري وتأكيد عقود الحجوزات</p>
           </a>
 
           <a
-            href="tel:+966501284492"
+            href="tel:+966504655724"
             className="p-6 rounded-3xl bg-white border border-[#eedfe0] shadow-sm hover:shadow-md hover:border-[#735c00] transition-all flex flex-col items-start gap-3 group"
           >
             <div className="h-12 w-12 rounded-2xl bg-[#faeaeb] text-[#4a1521] group-hover:bg-[#4a1521] group-hover:text-white transition-colors flex items-center justify-center font-bold">
               <Phone className="h-6 w-6" />
             </div>
             <span className="text-xs text-[#735c00] font-bold">اتصال هاتفي</span>
-            <h3 className="text-sm font-bold text-[#2f020d]">+966 50 128 4492</h3>
+            <h3 className="text-sm font-bold text-[#2f020d]">+966 50 465 5724</h3>
             <p className="text-[11px] text-[#524345]">من ١٠:٠٠ ص حتى ١٠:٠٠ م</p>
           </a>
 

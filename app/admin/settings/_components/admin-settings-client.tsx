@@ -25,7 +25,7 @@ export function AdminSettingsClient() {
   const [atelierName, setAtelierName] = useState(
     "أتيليه أماني خليل — Haute Beauté"
   );
-  const [atelierPhone, setAtelierPhone] = useState("+966 50 128 4492");
+  const [atelierPhone, setAtelierPhone] = useState("+966 50 465 5724");
   const [depositPct, setDepositPct] = useState(30);
   const [maxSessionsPerDay, setMaxSessionsPerDay] = useState(2);
   const [whatsappTemplate, setWhatsappTemplate] = useState(

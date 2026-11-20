@@ -481,7 +481,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 <span>موثق من المركز السعودي للأعمال • #FL-9941082</span>
               </div>
               <a
-                href="https://wa.me/966501284492"
+                href="https://wa.me/966504655724"
                 target="_blank"
                 rel="noreferrer"
                 className="text-[#735c00] font-semibold hover:underline inline-flex items-center gap-1"

@@ -436,7 +436,7 @@ export function ConfirmationClient() {
             ← العودة للصفحة الرئيسية
           </Link>
           <a
-            href="https://wa.me/966501284492"
+            href="https://wa.me/966504655724"
             target="_blank"
             rel="noreferrer"
             className="text-xs font-bold text-[#25D366] hover:underline flex items-center gap-1"

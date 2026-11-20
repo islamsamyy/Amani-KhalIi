@@ -405,7 +405,7 @@ export function HomeClient() {
               </div>
 
               {/* CTA Buttons */}
-              <div className="flex flex-wrap items-center gap-4 pt-2">
+              <div className="flex flex-wrap items-center gap-3.5 pt-2">
                 <Link
                   href="/book"
                   className="h-13 px-8 rounded-full bg-white text-[#2f020d] hover:bg-[#fed65b] text-sm font-bold flex items-center gap-2 shadow-2xl hover:scale-105 active:scale-95 transition-all cursor-pointer hover-shine"
@@ -413,13 +413,25 @@ export function HomeClient() {
                   <Calendar className="h-4 w-4 text-[#735c00]" />
                   <span>{t("احجزي موعدكِ الآن", "Book Your Session Now")}</span>
                 </Link>
+                <a
+                  href="https://wa.me/966504655724"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="h-13 px-6 rounded-full bg-[#25D366]/20 hover:bg-[#25D366] text-white text-sm font-bold flex items-center gap-2 border border-[#25D366]/50 transition-all cursor-pointer hover-lift"
+                >
+                  <MessageCircle className="h-4 w-4 text-[#25D366] group-hover:text-white" />
+                  <span>{t("واتساب مباشر", "WhatsApp")}</span>
+                  <span dir="ltr" className="text-xs opacity-90 hidden sm:inline">
+                    +966 50 465 5724
+                  </span>
+                </a>
                 <button
                   type="button"
                   onClick={() => {
                     const el = document.getElementById("quick-wizard");
                     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
                   }}
-                  className="h-13 px-7 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm font-semibold flex items-center gap-2 border border-white/20 transition-all cursor-pointer hover-lift"
+                  className="h-13 px-6 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm font-semibold flex items-center gap-2 border border-white/20 transition-all cursor-pointer hover-lift"
                 >
                   <span>{t("معالج الحجز السريع", "Quick Booking Wizard")}</span>
                   <ArrowDown className="h-4 w-4 text-[#fed65b]" />

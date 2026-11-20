@@ -178,7 +178,7 @@ export function FaqClient() {
             <p className="text-xs text-[#eedfe0]">أماني خليل وفريق المنسقات جاهزون للإجابة الفورية على مدار اليوم.</p>
           </div>
           <a
-            href="https://wa.me/966501284492"
+            href="https://wa.me/966504655724"
             target="_blank"
             rel="noreferrer"
             className="h-11 px-6 rounded-full bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs flex items-center gap-2 shadow-lg shrink-0"

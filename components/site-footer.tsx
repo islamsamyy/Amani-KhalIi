@@ -89,7 +89,7 @@ export function SiteFooter() {
                 <InstagramIcon className="h-4 w-4" />
               </a>
               <a
-                href="https://wa.me/966501284492"
+                href="https://wa.me/966504655724"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="WhatsApp"
@@ -98,7 +98,7 @@ export function SiteFooter() {
                 <MessageCircle className="h-4 w-4" />
               </a>
               <a
-                href="tel:+966501284492"
+                href="tel:+966504655724"
                 aria-label="Phone"
                 className="h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
               >
@@ -197,13 +197,13 @@ export function SiteFooter() {
               </p>
               <div className="pt-2 flex flex-col gap-1.5">
                 <a
-                  href="https://wa.me/966501284492"
+                  href="https://wa.me/966504655724"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-2 text-[#fed65b] hover:underline font-bold"
                 >
                   <MessageCircle className="h-4 w-4" />
-                  <span dir="ltr">+966 50 128 4492 ({t("واتساب", "WhatsApp")})</span>
+                  <span dir="ltr">+966 50 465 5724 ({t("واتساب", "WhatsApp")})</span>
                 </a>
                 <Link
                   href="/admin/login"

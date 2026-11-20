@@ -100,6 +100,13 @@ describe("Home Page Senior UI/UX Enhancements", () => {
     expect(screen.getAllByText("+1,500").length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText("4.9 ★").length).toBeGreaterThanOrEqual(1);
 
+    // Hero WhatsApp direct button with updated number
+    expect(screen.getByText("+966 50 465 5724")).toBeInTheDocument();
+    const waLinks = screen
+      .getAllByRole("link")
+      .filter((a) => a.getAttribute("href") === "https://wa.me/966504655724");
+    expect(waLinks.length).toBeGreaterThanOrEqual(1);
+
     // Brands slideshow is 2nd section; VenuesTrustStrip is removed
     const sections = container.querySelectorAll("section");
     expect(sections[1]).toHaveAttribute("aria-label", "الماركات العالمية الفاخرة المعتمدة");

@@ -367,7 +367,7 @@ export function BlogClient() {
                 </Button>
               </Link>
               <a
-                href="https://wa.me/966501284492"
+                href="https://wa.me/966504655724"
                 target="_blank"
                 rel="noreferrer"
               >

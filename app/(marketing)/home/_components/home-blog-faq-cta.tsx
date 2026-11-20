@@ -222,7 +222,7 @@ export function HomeBlogFaqCta() {
               <span>{t("احجزي موعدكِ الآن", "Book Your Date Now")}</span>
             </Link>
             <a
-              href="https://wa.me/966501284492"
+              href="https://wa.me/966504655724"
               target="_blank"
               rel="noreferrer"
               className="h-13 px-7 rounded-full bg-white/10 hover:bg-[#25D366] border border-white/25 hover:border-[#25D366] text-white text-sm font-semibold flex items-center gap-2 transition-all"
@@ -259,7 +259,7 @@ export function HomeBlogFaqCta() {
             <span>{t("احجزي موعدكِ الآن", "Book Now")}</span>
           </Link>
           <a
-            href="https://wa.me/966501284492"
+            href="https://wa.me/966504655724"
             target="_blank"
             rel="noreferrer"
             aria-label={t("تواصل واتساب", "WhatsApp")}
