@@ -201,7 +201,7 @@ export function AdminOverviewClient() {
                 <span className="text-xs text-[#eedfe0]">{currentDateStr}</span>
               </div>
               <h1 className="text-2xl sm:text-4xl font-bold font-serif">
-                {t("صباح الخير، أماني ✨", "Welcome Back, Amani ✨")}
+                {t("صباح الخير يا أجمل أماني ✨", "Good Morning, Beautiful Amani ✨")}
               </h1>
               <p className="text-xs sm:text-sm text-[#eedfe0] max-w-2xl leading-relaxed">
                 {t("جدول المواعيد النشطة يضم", "Your active schedule has")}{" "}
