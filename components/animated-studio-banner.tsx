@@ -135,7 +135,8 @@ export function AnimatedStudioBanner() {
 
   return (
     <section
-      aria-label="بانر الأتيليه الملكي المتحرك"
+      dir={dir}
+      aria-label={t("بانر الأتيليه الملكي المتحرك", "Royal Atelier Showcase Banner")}
       className="relative w-full overflow-hidden bg-[#1f0009] text-white py-8 sm:py-12"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
@@ -173,13 +174,13 @@ export function AnimatedStudioBanner() {
           {/* Top Bar inside Banner: Badge, Slide Index & Controls */}
           <div className="relative z-20 p-5 sm:p-8 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-xl border border-[#fed65b]/40 text-xs font-bold text-[#fed65b] shadow-lg animate-float">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-xl border border-[#fed65b]/40 text-xs font-bold text-[#fed65b] shadow-lg">
                 <Crown className="w-3.5 h-3.5 text-[#fed65b]" />
-                <span>{currentSlide.badge}</span>
+                <span>{t(currentSlide.badge, currentSlide.badgeEn)}</span>
               </span>
               <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-[11px] font-semibold text-white/90 border border-white/15">
                 <ShieldCheck className="w-3 h-3 text-[#fed65b]" />
-                <span>{currentSlide.highlight}</span>
+                <span>{t(currentSlide.highlight, currentSlide.highlightEn)}</span>
               </span>
             </div>
 

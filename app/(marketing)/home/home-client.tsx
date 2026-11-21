@@ -750,268 +750,6 @@ export function HomeClient() {
         </section>
       </ScrollReveal>
 
-      {/* 2.2 CINEMATIC ANIMATED STUDIO SHOWCASE BANNER */}
-      <ScrollReveal>
-        <AnimatedStudioBanner />
-      </ScrollReveal>
-
-      {/* 2.5 MEET THE ARTIST: AMANI KHALIL (DEDICATED LUXURY SPOTLIGHT & AUTHENTIC STUDIO PHOTOS) */}
-      <ScrollReveal>
-        <section className="py-24 bg-gradient-to-b from-[#fff8f7] via-[#fff0f1] to-[#fff8f7] relative overflow-hidden border-t border-[#eedfe0]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-              {/* Right: Editorial Story & Credentials (7 cols) */}
-              <div className="lg:col-span-7 space-y-6">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white text-[#735c00] text-xs font-bold border border-[#eedfe0] shadow-sm">
-                  <Crown className="w-4 h-4 text-[#735c00]" />
-                  <span>{t("الخبيرة المعتمدة لعرائس النخبة بالرياض", "Certified Bridal Artist for Riyadh's Elite")}</span>
-                </div>
-
-                <h2 className="text-3xl sm:text-5xl font-bold font-serif text-[#2f020d] leading-tight">
-                  {t("أماني خليل", "Amani Khalil")}
-                  <span className="block text-xl sm:text-2xl font-sans font-normal text-[#735c00] mt-2">
-                    {t("شغف الجمال الملكي ودقة الإتقان السويسري", "Passion for Royal Beauty & Swiss Precision")}
-                  </span>
-                </h2>
-
-                <p className="text-sm sm:text-base text-[#524345] leading-relaxed">
-                  {t(
-                    "تخرجت أماني خليل من أعرق أكاديميات التجميل الأوروبية وحصلت على اعتماد CIDESCO الدولي السويسري، وكرّست أكثر من 10 سنوات لصناعة إطلالات لا تُنسى لعرائس العائلات الكريمة ونخبة سيدات المجتمع الراقي في الرياض.",
-                    "Graduated from prestigious European beauty academies with international CIDESCO Swiss certification, Amani Khalil has dedicated over 10 years to crafting unforgettable looks for Riyadh's most discerning brides."
-                  )}
-                </p>
-
-                <blockquote className="p-4 rounded-2xl bg-white border-s-4 border-[#735c00] shadow-sm text-xs sm:text-sm text-[#2f020d] font-serif italic leading-relaxed">
-                  &ldquo;{t(
-                    "المكياج الملكي الحقيقي لا يُغيّر ملامحكِ، بل يكشف بتناغم استثنائي عن أبهى تفاصيل جمالكِ الطبيعي — إطلالة فخمة وأصيلة تبقى خالدة في ألبوم ذكرياتكِ.",
-                    "True royal makeup never masks who you are—it harmoniously reveals your finest natural features for a timeless look in every wedding memory."
-                  )}&rdquo;
-                  <footer className="mt-2 text-xs font-sans not-italic text-[#735c00] font-bold">
-                    {t("— أماني خليل، مؤسسة الأتيليه الملكي", "— Amani Khalil, Atelier Founder")}
-                  </footer>
-                </blockquote>
-
-                {/* 3 Value Pillars */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-                  <div className="p-4 rounded-2xl bg-white border border-[#eedfe0] shadow-sm hover-lift">
-                    <div className="h-10 w-10 rounded-xl bg-[#faeaeb] text-[#4a1521] flex items-center justify-center font-bold mb-2">
-                      <ShieldCheck className="h-5 w-5 text-[#735c00]" />
-                    </div>
-                    <h4 className="text-xs font-bold text-[#2f020d]">اعتماد CIDESCO السويسري</h4>
-                    <p className="text-[11px] text-[#524345] mt-1">معايير طبية دقيقة لتهيئة البشرة والتعقيم</p>
-                  </div>
-
-                  <div className="p-4 rounded-2xl bg-white border border-[#eedfe0] shadow-sm hover-lift">
-                    <div className="h-10 w-10 rounded-xl bg-[#faeaeb] text-[#4a1521] flex items-center justify-center font-bold mb-2">
-                      <Sparkles className="h-5 w-5 text-[#735c00]" />
-                    </div>
-                    <h4 className="text-xs font-bold text-[#2f020d]">تثبيت هيدروليكي 4K</h4>
-                    <p className="text-[11px] text-[#524345] mt-1">مقاوم للتعرق والدموع والأضواء حتى ١٨ ساعة</p>
-                  </div>
-
-                  <div className="p-4 rounded-2xl bg-white border border-[#eedfe0] shadow-sm hover-lift">
-                    <div className="h-10 w-10 rounded-xl bg-[#faeaeb] text-[#4a1521] flex items-center justify-center font-bold mb-2">
-                      <Crown className="h-5 w-5 text-[#735c00]" />
-                    </div>
-                    <h4 className="text-xs font-bold text-[#2f020d]">تفرغ ملكي كامل</h4>
-                    <p className="text-[11px] text-[#524345] mt-1">عروس واحدة فقط يومياً لضمان كامل وقتي واهتمامي بكِ</p>
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex flex-wrap items-center gap-4 pt-4">
-                  <Button
-                    onClick={() => {
-                      const el = document.getElementById("quick-wizard");
-                      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-                    }}
-                    className="h-12 px-8 rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white font-bold text-xs shadow-md hover-shine cursor-pointer"
-                  >
-                    <Calendar className="h-4 w-4 ms-2 text-[#fed65b]" />
-                    <span>احجزي جلستكِ الخاصة مع أماني</span>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => setCertModalOpen(true)}
-                    className="h-12 px-6 rounded-full border-[#735c00]/40 text-[#4a1521] hover:bg-white text-xs font-bold hover-lift"
-                  >
-                    <Award className="h-4 w-4 ms-2 text-[#735c00]" />
-                    <span>معاينة شهادات الاعتماد والخبرة</span>
-                  </Button>
-                </div>
-              </div>
-
-              {/* Left: Artistic 3-Photo Showcase of Amani Khalil (5 cols) */}
-              <div className="lg:col-span-5 relative space-y-4">
-                {/* Main Featured Photo (Amani in Emerald Green dress - amani-1.jpg) */}
-                <div className="relative rounded-3xl overflow-hidden aspect-[4/3] shadow-2xl border-2 border-[#735c00]/30 group hover-lift bg-[#2f020d]">
-                  <Image
-                    src="/amani-1.jpg"
-                    alt="خبيرة التجميل أماني خليل — البورتريه الرسمي المعتمد"
-                    fill
-                    unoptimized={true}
-                    className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
-                  <div className="absolute bottom-4 inset-x-4 flex items-center justify-between text-white">
-                    <div>
-                      <span className="text-xs font-bold block text-[#fed65b]">أماني خليل</span>
-                      <span className="text-[11px] text-[#eedfe0]">جلسة البورتريه الرسمي المعتمد 2025</span>
-                    </div>
-                    <Badge variant="gold" className="text-[10px] font-bold">
-                      CIDESCO Certified
-                    </Badge>
-                  </div>
-                </div>
-
-                {/* Two Companion Action Cards in the Studio (amani-2.jpg & amani-3.jpg) */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="relative rounded-2xl overflow-hidden aspect-[16/11] shadow-lg border border-[#eedfe0] group hover-lift bg-[#2f020d]">
-                    <Image
-                      src="/amani-2.jpg"
-                      alt="أماني خليل في استوديو التجهيز الملكي وانتقاء الفرش"
-                      fill
-                      unoptimized={true}
-                      className="object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
-                    <span className="absolute bottom-2 start-2 text-[10px] font-bold text-white">
-                      كواليس انتقاء الفرش
-                    </span>
-                  </div>
-
-                  <div className="relative rounded-2xl overflow-hidden aspect-[16/11] shadow-lg border border-[#eedfe0] group hover-lift bg-[#2f020d]">
-                    <Image
-                      src="/amani-3.jpg"
-                      alt="أماني خليل وتنسيق باليتات الألوان الفاخرة"
-                      fill
-                      unoptimized={true}
-                      className="object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
-                    <span className="absolute bottom-2 start-2 text-[10px] font-bold text-white">
-                      تنسيق الباليتات
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </ScrollReveal>
-
-      {/* 2.8 NEW: Bridal Day Timeline & Medical Hygiene Guarantee */}
-      <ScrollReveal>
-        <BridalTimelineHygiene />
-      </ScrollReveal>
-
-      {/* 3. Featured Packages Grid (with Interactive Category Filter) */}
-      <ScrollReveal>
-        <section id="packages-section" className="py-20 bg-[#fff0f1] border-y border-[#eedfe0]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-              <div>
-                <span className="text-xs font-bold text-[#735c00] uppercase tracking-wider">
-                  {t("باقات مميزة", "Curated Packages")}
-                </span>
-                <h2 className="text-2xl sm:text-4xl font-bold font-serif text-[#2f020d] mt-2">
-                  {t("باقات الخدمات والأسعار الرسمية", "Official Services & Packages")}
-                </h2>
-                <p className="text-sm text-[#524345] mt-2">
-                  {t(
-                    "أسعار شفافة ومحددة تشمل التجهيز المتكامل مع حقيبة رتوش هدية للعروس",
-                    "Transparent official rates including full prep and a complimentary bridal touch-up kit."
-                  )}
-                </p>
-              </div>
-              <Link
-                href="/services"
-                className="inline-flex items-center gap-2 text-sm font-bold text-[#4a1521] hover:text-[#2f020d] hover:underline hover-lift"
-              >
-                <span>{t("مقارنة كافة الباقات والأسعار", "Compare All Packages & Rates")}</span>
-                <ArrowLeft className="h-4 w-4" />
-              </Link>
-            </div>
-
-            {/* Interactive Category Filter Tabs */}
-            <div className="flex justify-center mb-10">
-              <Tabs value={packageCategory} onValueChange={setPackageCategory} className="w-full max-w-md">
-                <TabsList className="bg-white p-1 rounded-full border border-[#eedfe0] grid grid-cols-3 w-full shadow-sm">
-                  <TabsTrigger value="all" className="rounded-full text-xs font-semibold cursor-pointer">
-                    {t("جميع الباقات", "All Packages")}
-                  </TabsTrigger>
-                  <TabsTrigger value="bridal" className="rounded-full text-xs font-semibold cursor-pointer">
-                    {t("باقات العرائس", "Bridal")}
-                  </TabsTrigger>
-                  <TabsTrigger value="evening" className="rounded-full text-xs font-semibold cursor-pointer">
-                    {t("السهرات والملكة", "Soirée")}
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {activePackages.slice(0, 3).map((pkg) => (
-                <Card
-                  key={pkg.id}
-                  className={`relative flex flex-col justify-between overflow-hidden rounded-3xl transition-all duration-300 hover-lift ${pkg.popular
-                      ? "border-2 border-[#735c00] shadow-[0_12px_32px_rgba(74,21,33,0.12)] bg-[#fff8f7]"
-                      : "border border-[#eedfe0] bg-white shadow-sm hover:shadow-xl"
-                    }`}
-                >
-                  {pkg.popular && (
-                    <div className="bg-[#4a1521] text-white text-center py-1.5 text-xs font-bold animate-shimmer">
-                      ★ الأكثر طلباً لعرائس الموسم
-                    </div>
-                  )}
-
-                  <div className="p-6 sm:p-8">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-xs font-bold text-[#735c00] bg-[#faeaeb] px-3 py-1 rounded-full">
-                        {pkg.duration}
-                      </span>
-                      <span className="text-xs text-[#857374]">العربون: 30%</span>
-                    </div>
-
-                    <h3 className="text-xl font-bold text-[#2f020d] mb-2">{pkg.title}</h3>
-                    <p className="text-xs text-[#524345] leading-relaxed mb-6">{pkg.description}</p>
-
-                    <div className="flex items-baseline gap-2 pb-6 border-b border-[#eedfe0]">
-                      <span className="text-3xl sm:text-4xl font-bold font-serif text-[#2f020d]">
-                        {pkg.price.toLocaleString("en-US")}
-                      </span>
-                      <span className="text-sm font-bold text-[#735c00]">ر.س</span>
-                    </div>
-
-                    <ul className="space-y-3 pt-6 mb-8">
-                      {pkg.features.slice(0, 4).map((feat, i) => (
-                        <li key={i} className="flex items-start gap-2.5 text-xs text-[#211a1b]">
-                          <Check className="h-4 w-4 text-[#735c00] shrink-0 mt-0.5" />
-                          <span>{feat}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="p-6 pt-0 sm:p-8 sm:pt-0 space-y-2">
-                    <Button
-                      onClick={() => handleScrollToWizard(pkg.id)}
-                      className={`w-full h-12 rounded-full text-xs font-bold shadow-md cursor-pointer hover-shine ${pkg.popular
-                          ? "bg-[#4a1521] hover:bg-[#2f020d] text-white"
-                          : "bg-[#faeaeb] hover:bg-[#eedfe0] text-[#2f020d]"
-                        }`}
-                    >
-                      <Calendar className="h-4 w-4 ms-2 text-[#fed65b]" />
-                      <span>حجز فوري بالمعالج أدناه ↓</span>
-                    </Button>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-      </ScrollReveal>
-
       {/* 4. INTERACTIVE 4-STEP QUICK BOOKING WIZARD (IMMEDIATELY AFTER PACKAGES!) */}
       <ScrollReveal>
         <section id="quick-wizard" className="py-20 bg-[#fff8f7] scroll-mt-24">
@@ -1398,6 +1136,268 @@ export function HomeClient() {
                 )}
               </CardContent>
             </Card>
+          </div>
+        </section>
+      </ScrollReveal>
+
+      {/* 2.2 CINEMATIC ANIMATED STUDIO SHOWCASE BANNER */}
+      <ScrollReveal>
+        <AnimatedStudioBanner />
+      </ScrollReveal>
+
+      {/* 2.5 MEET THE ARTIST: AMANI KHALIL (DEDICATED LUXURY SPOTLIGHT & AUTHENTIC STUDIO PHOTOS) */}
+      <ScrollReveal>
+        <section className="py-24 bg-gradient-to-b from-[#fff8f7] via-[#fff0f1] to-[#fff8f7] relative overflow-hidden border-t border-[#eedfe0]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+              {/* Right: Editorial Story & Credentials (7 cols) */}
+              <div className="lg:col-span-7 space-y-6">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white text-[#735c00] text-xs font-bold border border-[#eedfe0] shadow-sm">
+                  <Crown className="w-4 h-4 text-[#735c00]" />
+                  <span>{t("الخبيرة المعتمدة لعرائس النخبة بالرياض", "Certified Bridal Artist for Riyadh's Elite")}</span>
+                </div>
+
+                <h2 className="text-3xl sm:text-5xl font-bold font-serif text-[#2f020d] leading-tight">
+                  {t("أماني خليل", "Amani Khalil")}
+                  <span className="block text-xl sm:text-2xl font-sans font-normal text-[#735c00] mt-2">
+                    {t("شغف الجمال الملكي ودقة الإتقان السويسري", "Passion for Royal Beauty & Swiss Precision")}
+                  </span>
+                </h2>
+
+                <p className="text-sm sm:text-base text-[#524345] leading-relaxed">
+                  {t(
+                    "تخرجت أماني خليل من أعرق أكاديميات التجميل الأوروبية وحصلت على اعتماد CIDESCO الدولي السويسري، وكرّست أكثر من 10 سنوات لصناعة إطلالات لا تُنسى لعرائس العائلات الكريمة ونخبة سيدات المجتمع الراقي في الرياض.",
+                    "Graduated from prestigious European beauty academies with international CIDESCO Swiss certification, Amani Khalil has dedicated over 10 years to crafting unforgettable looks for Riyadh's most discerning brides."
+                  )}
+                </p>
+
+                <blockquote className="p-4 rounded-2xl bg-white border-s-4 border-[#735c00] shadow-sm text-xs sm:text-sm text-[#2f020d] font-serif italic leading-relaxed">
+                  &ldquo;{t(
+                    "المكياج الملكي الحقيقي لا يُغيّر ملامحكِ، بل يكشف بتناغم استثنائي عن أبهى تفاصيل جمالكِ الطبيعي — إطلالة فخمة وأصيلة تبقى خالدة في ألبوم ذكرياتكِ.",
+                    "True royal makeup never masks who you are—it harmoniously reveals your finest natural features for a timeless look in every wedding memory."
+                  )}&rdquo;
+                  <footer className="mt-2 text-xs font-sans not-italic text-[#735c00] font-bold">
+                    {t("— أماني خليل، مؤسسة الأتيليه الملكي", "— Amani Khalil, Atelier Founder")}
+                  </footer>
+                </blockquote>
+
+                {/* 3 Value Pillars */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                  <div className="p-4 rounded-2xl bg-white border border-[#eedfe0] shadow-sm hover-lift">
+                    <div className="h-10 w-10 rounded-xl bg-[#faeaeb] text-[#4a1521] flex items-center justify-center font-bold mb-2">
+                      <ShieldCheck className="h-5 w-5 text-[#735c00]" />
+                    </div>
+                    <h4 className="text-xs font-bold text-[#2f020d]">اعتماد CIDESCO السويسري</h4>
+                    <p className="text-[11px] text-[#524345] mt-1">معايير طبية دقيقة لتهيئة البشرة والتعقيم</p>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-white border border-[#eedfe0] shadow-sm hover-lift">
+                    <div className="h-10 w-10 rounded-xl bg-[#faeaeb] text-[#4a1521] flex items-center justify-center font-bold mb-2">
+                      <Sparkles className="h-5 w-5 text-[#735c00]" />
+                    </div>
+                    <h4 className="text-xs font-bold text-[#2f020d]">تثبيت هيدروليكي 4K</h4>
+                    <p className="text-[11px] text-[#524345] mt-1">مقاوم للتعرق والدموع والأضواء حتى ١٨ ساعة</p>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-white border border-[#eedfe0] shadow-sm hover-lift">
+                    <div className="h-10 w-10 rounded-xl bg-[#faeaeb] text-[#4a1521] flex items-center justify-center font-bold mb-2">
+                      <Crown className="h-5 w-5 text-[#735c00]" />
+                    </div>
+                    <h4 className="text-xs font-bold text-[#2f020d]">تفرغ ملكي كامل</h4>
+                    <p className="text-[11px] text-[#524345] mt-1">عروس واحدة فقط يومياً لضمان كامل وقتي واهتمامي بكِ</p>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-wrap items-center gap-4 pt-4">
+                  <Button
+                    onClick={() => {
+                      const el = document.getElementById("quick-wizard");
+                      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }}
+                    className="h-12 px-8 rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white font-bold text-xs shadow-md hover-shine cursor-pointer"
+                  >
+                    <Calendar className="h-4 w-4 ms-2 text-[#fed65b]" />
+                    <span>احجزي جلستكِ الخاصة مع أماني</span>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setCertModalOpen(true)}
+                    className="h-12 px-6 rounded-full border-[#735c00]/40 text-[#4a1521] hover:bg-white text-xs font-bold hover-lift"
+                  >
+                    <Award className="h-4 w-4 ms-2 text-[#735c00]" />
+                    <span>معاينة شهادات الاعتماد والخبرة</span>
+                  </Button>
+                </div>
+              </div>
+
+              {/* Left: Artistic 3-Photo Showcase of Amani Khalil (5 cols) */}
+              <div className="lg:col-span-5 relative space-y-4">
+                {/* Main Featured Photo (Amani in Emerald Green dress - amani-1.jpg) */}
+                <div className="relative rounded-3xl overflow-hidden aspect-[4/3] shadow-2xl border-2 border-[#735c00]/30 group hover-lift bg-[#2f020d]">
+                  <Image
+                    src="/amani-1.jpg"
+                    alt="خبيرة التجميل أماني خليل — البورتريه الرسمي المعتمد"
+                    fill
+                    unoptimized={true}
+                    className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+                  <div className="absolute bottom-4 inset-x-4 flex items-center justify-between text-white">
+                    <div>
+                      <span className="text-xs font-bold block text-[#fed65b]">أماني خليل</span>
+                      <span className="text-[11px] text-[#eedfe0]">جلسة البورتريه الرسمي المعتمد 2025</span>
+                    </div>
+                    <Badge variant="gold" className="text-[10px] font-bold">
+                      CIDESCO Certified
+                    </Badge>
+                  </div>
+                </div>
+
+                {/* Two Companion Action Cards in the Studio (amani-2.jpg & amani-3.jpg) */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="relative rounded-2xl overflow-hidden aspect-[16/11] shadow-lg border border-[#eedfe0] group hover-lift bg-[#2f020d]">
+                    <Image
+                      src="/amani-2.jpg"
+                      alt="أماني خليل في استوديو التجهيز الملكي وانتقاء الفرش"
+                      fill
+                      unoptimized={true}
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+                    <span className="absolute bottom-2 start-2 text-[10px] font-bold text-white">
+                      كواليس انتقاء الفرش
+                    </span>
+                  </div>
+
+                  <div className="relative rounded-2xl overflow-hidden aspect-[16/11] shadow-lg border border-[#eedfe0] group hover-lift bg-[#2f020d]">
+                    <Image
+                      src="/amani-3.jpg"
+                      alt="أماني خليل وتنسيق باليتات الألوان الفاخرة"
+                      fill
+                      unoptimized={true}
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+                    <span className="absolute bottom-2 start-2 text-[10px] font-bold text-white">
+                      تنسيق الباليتات
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </ScrollReveal>
+
+      {/* 2.8 NEW: Bridal Day Timeline & Medical Hygiene Guarantee */}
+      <ScrollReveal>
+        <BridalTimelineHygiene />
+      </ScrollReveal>
+
+      {/* 3. Featured Packages Grid (with Interactive Category Filter) */}
+      <ScrollReveal>
+        <section id="packages-section" className="py-20 bg-[#fff0f1] border-y border-[#eedfe0]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+              <div>
+                <span className="text-xs font-bold text-[#735c00] uppercase tracking-wider">
+                  {t("باقات مميزة", "Curated Packages")}
+                </span>
+                <h2 className="text-2xl sm:text-4xl font-bold font-serif text-[#2f020d] mt-2">
+                  {t("باقات الخدمات والأسعار الرسمية", "Official Services & Packages")}
+                </h2>
+                <p className="text-sm text-[#524345] mt-2">
+                  {t(
+                    "أسعار شفافة ومحددة تشمل التجهيز المتكامل مع حقيبة رتوش هدية للعروس",
+                    "Transparent official rates including full prep and a complimentary bridal touch-up kit."
+                  )}
+                </p>
+              </div>
+              <Link
+                href="/services"
+                className="inline-flex items-center gap-2 text-sm font-bold text-[#4a1521] hover:text-[#2f020d] hover:underline hover-lift"
+              >
+                <span>{t("مقارنة كافة الباقات والأسعار", "Compare All Packages & Rates")}</span>
+                <ArrowLeft className="h-4 w-4" />
+              </Link>
+            </div>
+
+            {/* Interactive Category Filter Tabs */}
+            <div className="flex justify-center mb-10">
+              <Tabs value={packageCategory} onValueChange={setPackageCategory} className="w-full max-w-md">
+                <TabsList className="bg-white p-1 rounded-full border border-[#eedfe0] grid grid-cols-3 w-full shadow-sm">
+                  <TabsTrigger value="all" className="rounded-full text-xs font-semibold cursor-pointer">
+                    {t("جميع الباقات", "All Packages")}
+                  </TabsTrigger>
+                  <TabsTrigger value="bridal" className="rounded-full text-xs font-semibold cursor-pointer">
+                    {t("باقات العرائس", "Bridal")}
+                  </TabsTrigger>
+                  <TabsTrigger value="evening" className="rounded-full text-xs font-semibold cursor-pointer">
+                    {t("السهرات والملكة", "Soirée")}
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {activePackages.slice(0, 3).map((pkg) => (
+                <Card
+                  key={pkg.id}
+                  className={`relative flex flex-col justify-between overflow-hidden rounded-3xl transition-all duration-300 hover-lift ${pkg.popular
+                      ? "border-2 border-[#735c00] shadow-[0_12px_32px_rgba(74,21,33,0.12)] bg-[#fff8f7]"
+                      : "border border-[#eedfe0] bg-white shadow-sm hover:shadow-xl"
+                    }`}
+                >
+                  {pkg.popular && (
+                    <div className="bg-[#4a1521] text-white text-center py-1.5 text-xs font-bold animate-shimmer">
+                      ★ الأكثر طلباً لعرائس الموسم
+                    </div>
+                  )}
+
+                  <div className="p-6 sm:p-8">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-xs font-bold text-[#735c00] bg-[#faeaeb] px-3 py-1 rounded-full">
+                        {pkg.duration}
+                      </span>
+                      <span className="text-xs text-[#857374]">العربون: 30%</span>
+                    </div>
+
+                    <h3 className="text-xl font-bold text-[#2f020d] mb-2">{pkg.title}</h3>
+                    <p className="text-xs text-[#524345] leading-relaxed mb-6">{pkg.description}</p>
+
+                    <div className="flex items-baseline gap-2 pb-6 border-b border-[#eedfe0]">
+                      <span className="text-3xl sm:text-4xl font-bold font-serif text-[#2f020d]">
+                        {pkg.price.toLocaleString("en-US")}
+                      </span>
+                      <span className="text-sm font-bold text-[#735c00]">ر.س</span>
+                    </div>
+
+                    <ul className="space-y-3 pt-6 mb-8">
+                      {pkg.features.slice(0, 4).map((feat, i) => (
+                        <li key={i} className="flex items-start gap-2.5 text-xs text-[#211a1b]">
+                          <Check className="h-4 w-4 text-[#735c00] shrink-0 mt-0.5" />
+                          <span>{feat}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="p-6 pt-0 sm:p-8 sm:pt-0 space-y-2">
+                    <Button
+                      onClick={() => handleScrollToWizard(pkg.id)}
+                      className={`w-full h-12 rounded-full text-xs font-bold shadow-md cursor-pointer hover-shine ${pkg.popular
+                          ? "bg-[#4a1521] hover:bg-[#2f020d] text-white"
+                          : "bg-[#faeaeb] hover:bg-[#eedfe0] text-[#2f020d]"
+                        }`}
+                    >
+                      <Calendar className="h-4 w-4 ms-2 text-[#fed65b]" />
+                      <span>حجز فوري بالمعالج أدناه ↓</span>
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+            </div>
           </div>
         </section>
       </ScrollReveal>
