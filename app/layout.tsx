@@ -12,6 +12,11 @@ export const metadata: Metadata = {
   title: "أماني خليل | خبيرة التجميل ومكياج العرائس بالرياض",
   description:
     "الموقع الرسمي لخبيرة التجميل أماني خليل - جلسات مكياج منزلية خاصة وفاخرة بالرياض للعرائس، السهرات، والمناسبات الملكية.",
+  icons: {
+    icon: [{ url: "/site-icon.png", type: "image/png" }],
+    shortcut: ["/site-icon.png"],
+    apple: [{ url: "/site-icon.png", sizes: "180x180", type: "image/png" }],
+  },
 };
 
 export default function RootLayout({
