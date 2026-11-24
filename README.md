@@ -48,6 +48,33 @@ Live screenshots captured from the running Next.js application (`1440x900` deskt
 | :---: |
 | ![Admin Login](./docs/screenshots/07-admin-login.png) |
 
+### 3. Royal Admin Suite (`/admin`) — Dashboard & Functionality
+The invite-only, role-gated admin dashboard provides end-to-end operational control in both Arabic and English, with global instant search (`#AK` ref, client name, phone, status), manual booking creation, light/dark mode, and real-time notifications:
+
+| Overview & Activity (`/admin`) | Bookings & Schedule (`/admin/bookings`) | Bridal Calendar (`/admin/calendar`) |
+| :---: | :---: | :---: |
+| ![Admin Overview](./docs/screenshots/admin/01-admin-overview.jpg) | ![Admin Bookings](./docs/screenshots/admin/02-admin-bookings.png) | ![Admin Calendar](./docs/screenshots/admin/03-admin-calendar.jpg) |
+
+| Services & Packages (`/admin/services`) | Invoices & Payments (`/admin/invoices`) | Clients CRM (`/admin/customers`) |
+| :---: | :---: | :---: |
+| ![Admin Services](./docs/screenshots/admin/04-admin-services.jpg) | ![Admin Invoices](./docs/screenshots/admin/05-admin-invoices.jpg) | ![Admin CRM](./docs/screenshots/admin/06-admin-customers-crm.jpg) |
+
+| Content, Reviews & Gallery (`/admin/content`) | Royal Blog & Journal (`/admin/blog`) | System Settings & Access (`/admin/settings`) |
+| :---: | :---: | :---: |
+| ![Admin Content](./docs/screenshots/admin/07-admin-content-reviews.jpg) | ![Admin Blog](./docs/screenshots/admin/08-admin-blog.jpg) | ![Admin Settings](./docs/screenshots/admin/09-admin-settings.png) |
+
+| Admin Module | Route | Key Functionality |
+| :--- | :--- | :--- |
+| **Overview & Activity** | `/admin` | Live KPI cards (active contracts, total bookings, collected deposits & remaining balances, pending deposit requests), upcoming sessions with automatic travel buffer (`45 min`), pending bride alerts, and featured gallery look |
+| **Bookings & Schedule** | `/admin/bookings` | Track bridal & soirée appointments, filter by status (All / Confirmed / Pending / Completed), search by name/`#AK` ref/phone, add manual bookings, inspect/delete records, and **Export Bookings CSV** |
+| **Bridal Calendar** | `/admin/calendar` | Monthly occupancy view, artist capacity indicator (`1 VIP bride/day`), per-day schedule inspector, and one-click date blocking/holidays |
+| **Services & Packages** | `/admin/services` | Create, edit, pause/activate, or delete storefront packages, durations, deposit percentages, and feature bullets without code changes |
+| **Invoices & Payments** | `/admin/invoices` | Real-time financial summary (total contracts, 30% collected deposits, remaining due on event day), payment method tracking (e.g., Apple Pay), invoice inspection, and **Export Financial CSV** |
+| **Clients CRM** | `/admin/customers` | Private client profiles with loyalty tiers (`Diamond`, `VIP Royal`), booking count, skin type & undertone, preferred palettes/products, private artist notes, and direct **Call / WhatsApp** actions |
+| **Content & Gallery** | `/admin/content` | Moderate and approve client reviews, feature testimonials on the homepage, manage portfolio gallery looks, and edit official contract/policy clauses |
+| **Blog & Journal** | `/admin/blog` | Create, edit, publish/unpublish, and feature beauty & bridal preparation articles with categories, reading time, and SEO tags |
+| **Settings & Access** | `/admin/settings` | Configure studio identity, official WhatsApp number, max daily sessions per artist, automatic travel buffer, deposit rules, Riyadh district coverage/fees, and WhatsApp templates |
+
 ---
 
 ## System Architecture & Layers

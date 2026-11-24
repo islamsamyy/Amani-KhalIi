@@ -99,10 +99,39 @@ my-app/
 | :---: | :---: |
 | ![Gallery](./screenshots/04-gallery.png) | ![Reviews](./screenshots/06-reviews.png) |
 
-### Guest Booking & Admin Operations
+### Guest Booking & Admin Portal Login
 | 4-Step Guest Booking (`/book`) | Admin Portal Login (`/admin/login`) |
 | :---: | :---: |
 | ![Booking Flow](./screenshots/05-booking-flow.png) | ![Admin Login](./screenshots/07-admin-login.png) |
+
+---
+
+## 4b. Royal Admin Suite (`/admin`) — Dashboard & Module Functionality
+
+The `/admin` operations suite is an invite-only, bilingual (Arabic/English) control center built with `admin-chrome.tsx`, Radix UI, and Supabase SSR. Every screen shares a unified top bar with instant search (by client name, `#AK` reference, package, or status), `+ Add Manual Booking`, language toggle, theme toggle, and notifications.
+
+| Overview & Activity (`/admin`) | Bookings & Schedule (`/admin/bookings`) | Bridal Calendar (`/admin/calendar`) |
+| :---: | :---: | :---: |
+| ![Admin Overview](./screenshots/admin/01-admin-overview.jpg) | ![Admin Bookings](./screenshots/admin/02-admin-bookings.png) | ![Admin Calendar](./screenshots/admin/03-admin-calendar.jpg) |
+
+| Services & Packages (`/admin/services`) | Invoices & Payments (`/admin/invoices`) | Clients CRM (`/admin/customers`) |
+| :---: | :---: | :---: |
+| ![Admin Services](./screenshots/admin/04-admin-services.jpg) | ![Admin Invoices](./screenshots/admin/05-admin-invoices.jpg) | ![Admin CRM](./screenshots/admin/06-admin-customers-crm.jpg) |
+
+| Content, Reviews & Gallery (`/admin/content`) | Royal Blog & Journal (`/admin/blog`) | System Settings & Access (`/admin/settings`) |
+| :---: | :---: | :---: |
+| ![Admin Content](./screenshots/admin/07-admin-content-reviews.jpg) | ![Admin Blog](./screenshots/admin/08-admin-blog.jpg) | ![Admin Settings](./screenshots/admin/09-admin-settings.png) |
+
+### Detailed Module Capabilities
+1. **Overview & Activity (`/admin`):** Displays executive KPIs (Total Active Contracts, Total Bookings, Collected Deposits vs. Remaining Balances, Pending Deposit Requests), chronological upcoming sessions with automatic travel buffer (`45 دقيقة`), pending bride alerts, and quick actions (`+ Add New Package`, `Review Requests`).
+2. **Bookings & Schedule (`/admin/bookings`):** Full appointment table with status filter pills (`All`, `Confirmed`, `Pending`, `Completed`), search by `#AK` ref or phone, manual booking creation, detail inspection/deletion, and **Export Bookings CSV**.
+3. **Bridal Calendar (`/admin/calendar`):** Monthly visual occupancy calendar enforcing artist daily capacity (`1 VIP bride/day` or configured limit), daily agenda side-panel, and one-click holiday/blackout date toggling (`إغلاق اليوم كإجازة`).
+4. **Services & Packages (`/admin/services` & `/admin/services/new`):** Dynamic catalog management—edit SAR prices, durations, deposit percentages, and feature bullets, pause/activate packages on the public storefront, or delete obsolete offers.
+5. **Invoices & Payments (`/admin/invoices`):** Financial control center tracking total contracted revenue, 30% collected deposits, and remaining event-day balances, with payment gateway badges (e.g., `Apple Pay`), invoice reference lookup (`INV-YYYY-XXXX`), and **Export Financial CSV**.
+6. **Clients Directory & Preferences CRM (`/admin/customers`):** Stores loyalty tiers (`Diamond`, `VIP Royal`), booking counts, skin type & undertone, preferred palettes/products (e.g., `Dior Backstage`, `Charlotte Tilbury`), private artist notes, and 1-click **Call / WhatsApp** buttons.
+7. **Content, Reviews & Gallery (`/admin/content`):** Three-tab CMS for approving/featuring client reviews (`معتمد بالموقع`, `مميز بالرئيسية`), uploading/editing portfolio gallery looks, and updating official contract/policy clauses.
+8. **Royal Blog & Journal (`/admin/blog`):** Full editorial CMS for beauty & bridal prep articles with category tabs, search, reading time, tags, publish/unpublish toggles, and homepage featuring.
+9. **System Settings & Permissions (`/admin/settings`):** Centralized configuration for studio identity, official WhatsApp number, max daily sessions per artist, automatic travel buffer (`60 min`), deposit & booking rules, Riyadh neighborhood coverage/fees, and WhatsApp message templates.
 
 ---
 
