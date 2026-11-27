@@ -9,6 +9,8 @@ import { BridalTimelineHygiene } from "../_components/bridal-timeline-hygiene";
 import { RiyadhCoverageSection } from "../_components/riyadh-coverage-section";
 import { HomeBlogFaqCta } from "../_components/home-blog-faq-cta";
 import * as AppStoreModule from "@/providers/app-store-provider";
+import { LanguageProvider } from "@/providers/language-provider";
+import { getLocalizedPackage, getLocalizedAddon } from "@/lib/package-i18n";
 import {
   INITIAL_PACKAGES,
   INITIAL_ADDONS,
@@ -184,5 +186,45 @@ describe("Home Page Senior UI/UX Enhancements", () => {
     const firstFaqBtn = screen.getByRole("button", { name: INITIAL_FAQS[0].question });
     await user.click(firstFaqBtn);
     expect(screen.getByText(INITIAL_FAQS[0].answer)).toBeVisible();
+  });
+
+  it("translates package and add-on details in English mode on HomeClient and via helpers", () => {
+    window.localStorage.setItem("amani_lang_v1", "en");
+
+    render(
+      <LanguageProvider>
+        <HomeClient />
+      </LanguageProvider>
+    );
+
+    // Packages section (#packages-section) should display English details instead of Arabic
+    expect(screen.getAllByText("Royal Bridal VIP Package").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("4–5 Hours Exclusive Dedication").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/Most Requested This Season/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("Deposit: 30%").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("SAR").length).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.getByText(/Includes on-site visits to all Riyadh 5-star hotels/i)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Strictly one bride per day for undivided royal attention/i)
+    ).toBeInTheDocument();
+
+    // Helper fallback for custom packages without dictionary entry
+    const customEn = getLocalizedPackage(
+      {
+        ...INITIAL_PACKAGES[0],
+        id: "custom-pkg",
+        title: "باقة مخصصة",
+        titleEn: "Custom Package",
+      },
+      "en"
+    );
+    expect(customEn.title).toBe("Custom Package");
+
+    const localizedAddon = getLocalizedAddon(INITIAL_ADDONS[0], "en");
+    expect(localizedAddon.title).not.toBe(INITIAL_ADDONS[0].title);
+
+    window.localStorage.removeItem("amani_lang_v1");
   });
 });

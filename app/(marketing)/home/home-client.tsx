@@ -11,6 +11,7 @@ import { AnimatedStudioBanner } from "@/components/animated-studio-banner";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { AnimatedCounter } from "@/components/animated-counter";
 import { FALLBACK_GALLERY_IMAGE, normalizeImageSrc } from "@/lib/image-upload";
+import { getLocalizedAddon, getLocalizedPackage } from "@/lib/package-i18n";
 import { LuxuryCountersAndInteractive } from "./_components/luxury-counters-interactive";
 import { SignatureStyleFinder } from "./_components/signature-style-finder";
 import { BridalTimelineHygiene } from "./_components/bridal-timeline-hygiene";
@@ -93,7 +94,7 @@ const AMANI_STUDIO_LOOKS = [
 
 export function HomeClient() {
   const router = useRouter();
-  const { t, dir } = useLanguage();
+  const { t, dir, lang } = useLanguage();
   const { packages, addons, reviews, gallery, setSelectedPackageId, createBooking, addReview } =
     useAppStore();
 
@@ -194,6 +195,7 @@ export function HomeClient() {
   };
 
   const selectedWizardPackageObj = packages.find((p) => p.id === wizardPkg) || packages[0];
+  const localizedSelectedPkg = getLocalizedPackage(selectedWizardPackageObj, lang);
   const basePkgPrice = selectedWizardPackageObj?.price || 0;
   const addonsTotalPrice = wizardAddons.reduce((sum, id) => {
     const ad = addons.find((a) => a.id === id);
@@ -775,26 +777,27 @@ export function HomeClient() {
                 <div className="flex items-center gap-2 flex-wrap">
                   <Crown className="w-4 h-4 text-[#fed65b]" />
                   <span>
-                    الباقة المحددة: <strong className="text-[#fed65b]">{selectedWizardPackageObj.title}</strong>
+                    {t("الباقة المحددة:", "Selected Package:")}{" "}
+                    <strong className="text-[#fed65b]">{localizedSelectedPkg.title}</strong>
                   </span>
                   {wizardAddons.length > 0 && (
                     <span className="px-2 py-0.5 rounded-full bg-[#fed65b] text-[#2f020d] text-[10px] font-bold animate-pulse-glow">
-                      +{wizardAddons.length} خدمات تكميلية
+                      +{wizardAddons.length} {t("خدمات تكميلية", "add-ons")}
                     </span>
                   )}
                 </div>
                 <div className="flex items-center gap-4 text-[11px]">
                   <span>
-                    الإجمالي:{" "}
+                    {t("الإجمالي:", "Total:")}{" "}
                     <strong className="text-sm font-bold font-serif text-[#fed65b]">
-                      {wizardTotalAmount.toLocaleString("en-US")} ر.س
+                      {wizardTotalAmount.toLocaleString("en-US")} {t("ر.س", "SAR")}
                     </strong>
                   </span>
                   <span>•</span>
                   <span>
-                    العربون (30%):{" "}
+                    {t("العربون (30%):", "Deposit (30%):")}{" "}
                     <strong>
-                      {wizardDepositAmount.toLocaleString("en-US")} ر.س
+                      {wizardDepositAmount.toLocaleString("en-US")} {t("ر.س", "SAR")}
                     </strong>
                   </span>
                 </div>
@@ -803,10 +806,10 @@ export function HomeClient() {
               {/* Step indicators */}
               <div className="grid grid-cols-4 bg-[#faeaeb] border-b border-[#eedfe0] text-center text-xs font-bold">
                 {[
-                  { s: 1, label: "١. الباقة والخدمات التكميلية" },
-                  { s: 2, label: "٢. تاريخ وتوقيت الموعد" },
-                  { s: 3, label: "٣. تفاصيل موقع الحفل" },
-                  { s: 4, label: "٤. مراجعة وتأكيد الحجز" },
+                  { s: 1, label: t("١. الباقة والخدمات التكميلية", "1. Package & Add-Ons") },
+                  { s: 2, label: t("٢. تاريخ وتوقيت الموعد", "2. Date & Time") },
+                  { s: 3, label: t("٣. تفاصيل موقع الحفل", "3. Venue Details") },
+                  { s: 4, label: t("٤. مراجعة وتأكيد الحجز", "4. Review & Confirm") },
                 ].map((st) => (
                   <button
                     key={st.s}
@@ -861,33 +864,40 @@ export function HomeClient() {
                       <div className="space-y-6">
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
-                            <h4 className="text-base font-bold text-[#2f020d]">١. اختاري باقة الجمال المطلوبة:</h4>
-                            <span className="text-xs text-[#735c00] font-medium">باقة رئيسية واحدة</span>
+                            <h4 className="text-base font-bold text-[#2f020d]">
+                              {t("١. اختاري باقة الجمال المطلوبة:", "1. Choose Your Beauty Package:")}
+                            </h4>
+                            <span className="text-xs text-[#735c00] font-medium">
+                              {t("باقة رئيسية واحدة", "One primary package")}
+                            </span>
                           </div>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            {packages.map((pkg) => (
-                              <label
-                                key={pkg.id}
-                                className={`p-4 rounded-2xl border cursor-pointer flex flex-col justify-between gap-2 transition-all ${wizardPkg === pkg.id
-                                    ? "border-[#4a1521] bg-[#fff0f1] ring-2 ring-[#4a1521] shadow-sm"
-                                    : "border-[#eedfe0] hover:bg-[#fff8f7]"
-                                  }`}
-                              >
-                                <div className="flex items-center justify-between">
-                                  <span className="font-bold text-sm text-[#2f020d]">{pkg.title}</span>
-                                  <input
-                                    type="radio"
-                                    name="pkg"
-                                    checked={wizardPkg === pkg.id}
-                                    onChange={() => setWizardPkg(pkg.id)}
-                                    className="text-[#4a1521] focus:ring-[#735c00]"
-                                  />
-                                </div>
-                                <span className="text-xs font-bold text-[#735c00]">
-                                  {pkg.price.toLocaleString("en-US")} ر.س
-                                </span>
-                              </label>
-                            ))}
+                            {packages.map((pkg) => {
+                              const locPkg = getLocalizedPackage(pkg, lang);
+                              return (
+                                <label
+                                  key={pkg.id}
+                                  className={`p-4 rounded-2xl border cursor-pointer flex flex-col justify-between gap-2 transition-all ${wizardPkg === pkg.id
+                                      ? "border-[#4a1521] bg-[#fff0f1] ring-2 ring-[#4a1521] shadow-sm"
+                                      : "border-[#eedfe0] hover:bg-[#fff8f7]"
+                                    }`}
+                                >
+                                  <div className="flex items-center justify-between">
+                                    <span className="font-bold text-sm text-[#2f020d]">{locPkg.title}</span>
+                                    <input
+                                      type="radio"
+                                      name="pkg"
+                                      checked={wizardPkg === pkg.id}
+                                      onChange={() => setWizardPkg(pkg.id)}
+                                      className="text-[#4a1521] focus:ring-[#735c00]"
+                                    />
+                                  </div>
+                                  <span className="text-xs font-bold text-[#735c00]">
+                                    {pkg.price.toLocaleString("en-US")} {t("ر.س", "SAR")}
+                                  </span>
+                                </label>
+                              );
+                            })}
                           </div>
                         </div>
 
@@ -897,10 +907,13 @@ export function HomeClient() {
                             <div>
                               <h4 className="text-sm font-bold text-[#2f020d] flex items-center gap-2">
                                 <Sparkles className="w-4 h-4 text-[#735c00]" />
-                                <span>٢. الخدمات التكميلية والمرافقة (اختياري):</span>
+                                <span>{t("٢. الخدمات التكميلية والمرافقة (اختياري):", "2. Optional Add-On Services:")}</span>
                               </h4>
                               <p className="text-xs text-[#524345] mt-0.5">
-                                أضيفي لمسات استثنائية لراحتكِ وراحة مرافقتكِ بيوم المناسبة
+                                {t(
+                                  "أضيفي لمسات استثنائية لراحتكِ وراحة مرافقتكِ بيوم المناسبة",
+                                  "Enhance your wedding prep with hairstyling, facial prep, or companion glam."
+                                )}
                               </p>
                             </div>
                             {wizardAddons.length > 0 && (
@@ -909,7 +922,7 @@ export function HomeClient() {
                                 onClick={() => setWizardAddons([])}
                                 className="text-xs font-semibold text-[#ba1a1a] hover:underline"
                               >
-                                إلغاء التحديد ({wizardAddons.length})
+                                {t("إلغاء التحديد", "Clear")} ({wizardAddons.length})
                               </button>
                             )}
                           </div>
@@ -917,6 +930,7 @@ export function HomeClient() {
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {addons.map((addon) => {
                               const isChecked = wizardAddons.includes(addon.id);
+                              const locAddon = getLocalizedAddon(addon, lang);
                               return (
                                 <label
                                   key={addon.id}
@@ -935,22 +949,24 @@ export function HomeClient() {
                                     />
                                     <div className="flex-1">
                                       <div className="flex items-center justify-between gap-2">
-                                        <span className="font-bold text-xs text-[#2f020d]">{addon.title}</span>
+                                        <span className="font-bold text-xs text-[#2f020d]">{locAddon.title}</span>
                                         {addon.popular && (
                                           <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#faeaeb] text-[#735c00] font-bold">
-                                            ★ الأكثر طلباً
+                                            ★ {t("الأكثر طلباً", "Popular")}
                                           </span>
                                         )}
                                       </div>
                                       <p className="text-[11px] text-[#524345] leading-relaxed mt-1">
-                                        {addon.description}
+                                        {locAddon.description}
                                       </p>
                                     </div>
                                   </div>
                                   <div className="pt-2 border-t border-[#eedfe0]/60 flex items-center justify-between text-xs">
-                                    <span className="text-[10px] text-[#735c00] font-medium">خدمة مساندة ملكية</span>
+                                    <span className="text-[10px] text-[#735c00] font-medium">
+                                      {t("خدمة مساندة ملكية", "Royal Add-On")}
+                                    </span>
                                     <span className="font-bold text-[#735c00]">
-                                      +{addon.price.toLocaleString("en-US")} ر.س
+                                      +{addon.price.toLocaleString("en-US")} {t("ر.س", "SAR")}
                                     </span>
                                   </div>
                                 </label>
@@ -961,13 +977,13 @@ export function HomeClient() {
 
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-[#eedfe0]">
                           <div className="text-xs text-[#524345] flex items-center gap-2">
-                            <span>الإجمالي المبدئي: </span>
+                            <span>{t("الإجمالي المبدئي:", "Estimated Total:")} </span>
                             <strong className="text-base font-bold font-serif text-[#4a1521]">
-                              {wizardTotalAmount.toLocaleString("en-US")} ر.س
+                              {wizardTotalAmount.toLocaleString("en-US")} {t("ر.س", "SAR")}
                             </strong>
                             {wizardAddons.length > 0 && (
                               <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#fed65b]/30 text-[#735c00] font-semibold">
-                                (شامل {wizardAddons.length} خدمات تكميلية)
+                                ({t(`شامل ${wizardAddons.length} خدمات تكميلية`, `incl. ${wizardAddons.length} add-ons`)})
                               </span>
                             )}
                           </div>
@@ -976,7 +992,7 @@ export function HomeClient() {
                             onClick={() => setWizardStep(2)}
                             className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white px-8 py-2.5 font-bold text-xs flex items-center gap-2 shadow-lg hover-lift"
                           >
-                            <span>المتابعة لاختيار التاريخ والموعد</span>
+                            <span>{t("المتابعة لاختيار التاريخ والموعد", "Continue to Date & Time")}</span>
                             <ArrowLeft className="w-4 h-4" />
                           </Button>
                         </div>
@@ -1186,62 +1202,67 @@ export function HomeClient() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {activePackages.slice(0, 3).map((pkg) => (
-                <Card
-                  key={pkg.id}
-                  className={`relative flex flex-col justify-between overflow-hidden rounded-3xl transition-all duration-300 hover-lift ${pkg.popular
-                      ? "border-2 border-[#735c00] shadow-[0_12px_32px_rgba(74,21,33,0.12)] bg-[#fff8f7]"
-                      : "border border-[#eedfe0] bg-white shadow-sm hover:shadow-xl"
-                    }`}
-                >
-                  {pkg.popular && (
-                    <div className="bg-[#4a1521] text-white text-center py-1.5 text-xs font-bold animate-shimmer">
-                      ★ الأكثر طلباً لعرائس الموسم
+              {activePackages.slice(0, 3).map((pkg) => {
+                const locPkg = getLocalizedPackage(pkg, lang);
+                return (
+                  <Card
+                    key={pkg.id}
+                    className={`relative flex flex-col justify-between overflow-hidden rounded-3xl transition-all duration-300 hover-lift ${pkg.popular
+                        ? "border-2 border-[#735c00] shadow-[0_12px_32px_rgba(74,21,33,0.12)] bg-[#fff8f7]"
+                        : "border border-[#eedfe0] bg-white shadow-sm hover:shadow-xl"
+                      }`}
+                  >
+                    {pkg.popular && (
+                      <div className="bg-[#4a1521] text-white text-center py-1.5 text-xs font-bold animate-shimmer">
+                        ★ {t("الأكثر طلباً لعرائس الموسم", "Most Requested This Season")}
+                      </div>
+                    )}
+
+                    <div className="p-6 sm:p-8">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-xs font-bold text-[#735c00] bg-[#faeaeb] px-3 py-1 rounded-full">
+                          {locPkg.duration}
+                        </span>
+                        <span className="text-xs text-[#857374]">
+                          {t("العربون: 30%", "Deposit: 30%")}
+                        </span>
+                      </div>
+
+                      <h3 className="text-xl font-bold text-[#2f020d] mb-2">{locPkg.title}</h3>
+                      <p className="text-xs text-[#524345] leading-relaxed mb-6">{locPkg.description}</p>
+
+                      <div className="flex items-baseline gap-2 pb-6 border-b border-[#eedfe0]">
+                        <span className="text-3xl sm:text-4xl font-bold font-serif text-[#2f020d]">
+                          {pkg.price.toLocaleString("en-US")}
+                        </span>
+                        <span className="text-sm font-bold text-[#735c00]">{t("ر.س", "SAR")}</span>
+                      </div>
+
+                      <ul className="space-y-3 pt-6 mb-8">
+                        {locPkg.features.slice(0, 4).map((feat, i) => (
+                          <li key={i} className="flex items-start gap-2.5 text-xs text-[#211a1b]">
+                            <Check className="h-4 w-4 text-[#735c00] shrink-0 mt-0.5" />
+                            <span>{feat}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                  )}
 
-                  <div className="p-6 sm:p-8">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-xs font-bold text-[#735c00] bg-[#faeaeb] px-3 py-1 rounded-full">
-                        {pkg.duration}
-                      </span>
-                      <span className="text-xs text-[#857374]">العربون: 30%</span>
+                    <div className="p-6 pt-0 sm:p-8 sm:pt-0 space-y-2">
+                      <Button
+                        onClick={() => handleScrollToWizard(pkg.id)}
+                        className={`w-full h-12 rounded-full text-xs font-bold shadow-md cursor-pointer hover-shine ${pkg.popular
+                            ? "bg-[#4a1521] hover:bg-[#2f020d] text-white"
+                            : "bg-[#faeaeb] hover:bg-[#eedfe0] text-[#2f020d]"
+                          }`}
+                      >
+                        <Calendar className="h-4 w-4 me-2 text-[#fed65b]" />
+                        <span>{t("حجز فوري بالمعالج أعلاه ↑", "Instant Booking in Wizard ↑")}</span>
+                      </Button>
                     </div>
-
-                    <h3 className="text-xl font-bold text-[#2f020d] mb-2">{pkg.title}</h3>
-                    <p className="text-xs text-[#524345] leading-relaxed mb-6">{pkg.description}</p>
-
-                    <div className="flex items-baseline gap-2 pb-6 border-b border-[#eedfe0]">
-                      <span className="text-3xl sm:text-4xl font-bold font-serif text-[#2f020d]">
-                        {pkg.price.toLocaleString("en-US")}
-                      </span>
-                      <span className="text-sm font-bold text-[#735c00]">ر.س</span>
-                    </div>
-
-                    <ul className="space-y-3 pt-6 mb-8">
-                      {pkg.features.slice(0, 4).map((feat, i) => (
-                        <li key={i} className="flex items-start gap-2.5 text-xs text-[#211a1b]">
-                          <Check className="h-4 w-4 text-[#735c00] shrink-0 mt-0.5" />
-                          <span>{feat}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="p-6 pt-0 sm:p-8 sm:pt-0 space-y-2">
-                    <Button
-                      onClick={() => handleScrollToWizard(pkg.id)}
-                      className={`w-full h-12 rounded-full text-xs font-bold shadow-md cursor-pointer hover-shine ${pkg.popular
-                          ? "bg-[#4a1521] hover:bg-[#2f020d] text-white"
-                          : "bg-[#faeaeb] hover:bg-[#eedfe0] text-[#2f020d]"
-                        }`}
-                    >
-                      <Calendar className="h-4 w-4 ms-2 text-[#fed65b]" />
-                      <span>حجز فوري بالمعالج أدناه ↓</span>
-                    </Button>
-                  </div>
-                </Card>
-              ))}
+                  </Card>
+                );
+              })}
             </div>
           </div>
         </section>
