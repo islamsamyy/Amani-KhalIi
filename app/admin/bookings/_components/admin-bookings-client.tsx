@@ -68,25 +68,25 @@ export function AdminBookingsClient() {
       case "CONFIRMED":
         return (
           <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]">
-            مؤكد بالعربون (30%)
+            {t("مؤكد بالعربون (30%)", "Confirmed (30% Deposit)")}
           </Badge>
         );
       case "PENDING_PAYMENT":
         return (
           <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-200 text-[10px]">
-            بانتظار سداد العربون
+            {t("بانتظار سداد العربون", "Awaiting Deposit")}
           </Badge>
         );
       case "COMPLETED":
         return (
           <Badge variant="outline" className="bg-[#faeaeb] text-[#4a1521] border-[#eedfe0] text-[10px]">
-            جلسة مكتملة
+            {t("جلسة مكتملة", "Completed Session")}
           </Badge>
         );
       case "CANCELLED":
         return (
           <Badge variant="outline" className="bg-rose-50 text-rose-800 border-rose-200 text-[10px]">
-            ملغي / مفسوح
+            {t("ملغي / مفسوح", "Cancelled / Released")}
           </Badge>
         );
     }
@@ -96,7 +96,19 @@ export function AdminBookingsClient() {
     const today = new Date().toISOString().split("T")[0];
     downloadCsvFile(
       `amani-bookings-${today}.csv`,
-      ["رقم المرجع", "اسم العميلة", "الجوال", "الباقة", "التاريخ", "الفترة", "الموقع / الفندق", "الإجمالي (ر.س)", "العربون (ر.س)", "المتبقي (ر.س)", "الحالة"],
+      [
+        t("رقم المرجع", "Ref"),
+        t("اسم العميلة", "Client Name"),
+        t("الجوال", "Phone"),
+        t("الباقة", "Package"),
+        t("التاريخ", "Date"),
+        t("الفترة", "Time Slot"),
+        t("الموقع / الفندق", "Venue / Hotel"),
+        t("الإجمالي (ر.س)", "Total (SAR)"),
+        t("العربون (ر.س)", "Deposit (SAR)"),
+        t("المتبقي (ر.س)", "Remaining (SAR)"),
+        t("الحالة", "Status"),
+      ],
       filteredBookings.map((b) => [
         b.ref,
         b.clientName,
@@ -111,7 +123,12 @@ export function AdminBookingsClient() {
         b.status,
       ])
     );
-    toast.success(`تم تصدير ${filteredBookings.length} حجز بنجاح بصيغة Excel / CSV ✨`);
+    toast.success(
+      t(
+        `تم تصدير ${filteredBookings.length} حجز بنجاح بصيغة Excel / CSV ✨`,
+        `Exported ${filteredBookings.length} bookings to CSV successfully ✨`
+      )
+    );
   };
 
   return (
@@ -149,16 +166,16 @@ export function AdminBookingsClient() {
             <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full md:w-auto">
               <TabsList className="bg-[#faeaeb] p-1 rounded-full flex flex-wrap gap-1">
                 <TabsTrigger value="ALL" className="rounded-full text-xs font-semibold px-4">
-                  كافة الحجوزات ({bookings.length})
+                  {t("كافة الحجوزات", "All Bookings")} ({bookings.length})
                 </TabsTrigger>
                 <TabsTrigger value="CONFIRMED" className="rounded-full text-xs font-semibold px-3">
-                  مؤكد ({bookings.filter((b) => b.status === "CONFIRMED").length})
+                  {t("مؤكد", "Confirmed")} ({bookings.filter((b) => b.status === "CONFIRMED").length})
                 </TabsTrigger>
                 <TabsTrigger value="PENDING_PAYMENT" className="rounded-full text-xs font-semibold px-3">
-                  معلق ({bookings.filter((b) => b.status === "PENDING_PAYMENT").length})
+                  {t("معلق", "Pending")} ({bookings.filter((b) => b.status === "PENDING_PAYMENT").length})
                 </TabsTrigger>
                 <TabsTrigger value="COMPLETED" className="rounded-full text-xs font-semibold px-3">
-                  مكتمل ({bookings.filter((b) => b.status === "COMPLETED").length})
+                  {t("مكتمل", "Completed")} ({bookings.filter((b) => b.status === "COMPLETED").length})
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -169,7 +186,7 @@ export function AdminBookingsClient() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="بحث بالاسم، #AK، الجوال..."
+                placeholder={t("بحث بالاسم، #AK، الجوال...", "Search by name, #AK, phone...")}
                 className="w-full h-10 ps-10 pe-4 rounded-full border border-[#eedfe0] bg-[#fff8f7] text-xs focus:outline-none focus:border-[#735c00]"
               />
             </div>
@@ -180,21 +197,21 @@ export function AdminBookingsClient() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-28">رقم المرجع</TableHead>
-              <TableHead>اسم العميلة</TableHead>
-              <TableHead>الباقة المطلوبة</TableHead>
-              <TableHead>الموعد المحدد</TableHead>
-              <TableHead>المقر / الفندق</TableHead>
-              <TableHead>الإجمالي</TableHead>
-              <TableHead>الحالة</TableHead>
-              <TableHead className="w-24 text-center">الإجراءات</TableHead>
+              <TableHead className="w-28">{t("رقم المرجع", "Ref")}</TableHead>
+              <TableHead>{t("اسم العميلة", "Client Name")}</TableHead>
+              <TableHead>{t("الباقة المطلوبة", "Package")}</TableHead>
+              <TableHead>{t("الموعد المحدد", "Date & Time")}</TableHead>
+              <TableHead>{t("المقر / الفندق", "Venue / Hotel")}</TableHead>
+              <TableHead>{t("الإجمالي", "Total")}</TableHead>
+              <TableHead>{t("الحالة", "Status")}</TableHead>
+              <TableHead className="w-24 text-center">{t("الإجراءات", "Actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredBookings.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={8} className="text-center py-12 text-[#857374] text-xs">
-                  لا توجد أي حجوزات تطابق الفرز الحالي.
+                  {t("لا توجد أي حجوزات تطابق الفرز الحالي.", "No bookings match the current filter.")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -222,7 +239,7 @@ export function AdminBookingsClient() {
                     {b.venue}
                   </TableCell>
                   <TableCell className="text-xs font-bold font-serif text-[#2f020d]">
-                    {b.totalAmount.toLocaleString("ar-SA")} ر.س
+                    {b.totalAmount.toLocaleString("en-US")} {t("ر.س", "SAR")}
                   </TableCell>
                   <TableCell>{getStatusBadge(b.status)}</TableCell>
                   <TableCell>
@@ -230,7 +247,7 @@ export function AdminBookingsClient() {
                       <button
                         type="button"
                         onClick={() => setSelectedBooking(b)}
-                        title="معاينة تفاصيل الحجز"
+                        title={t("معاينة تفاصيل الحجز", "Inspect booking details")}
                         className="h-8 w-8 rounded-full bg-[#faeaeb] hover:bg-[#eedfe0] flex items-center justify-center text-[#2f020d] transition-colors cursor-pointer"
                       >
                         <Eye className="h-4 w-4" />
@@ -238,11 +255,18 @@ export function AdminBookingsClient() {
                       <button
                         type="button"
                         onClick={() => {
-                          if (confirm(`هل أنتِ متأكدة من حذف حجز #${b.ref} للعميلة "${b.clientName}" نهائياً؟`)) {
+                          if (
+                            confirm(
+                              t(
+                                `هل أنتِ متأكدة من حذف حجز #${b.ref} للعميلة "${b.clientName}" نهائياً؟`,
+                                `Are you sure you want to permanently delete booking #${b.ref} for "${b.clientName}"?`
+                              )
+                            )
+                          ) {
                             deleteBooking(b.ref);
                           }
                         }}
-                        title="حذف الحجز نهائياً"
+                        title={t("حذف الحجز نهائياً", "Permanently delete booking")}
                         className="h-8 w-8 rounded-full bg-white hover:bg-rose-50 text-rose-600 border border-[#eedfe0] flex items-center justify-center transition-colors cursor-pointer"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -260,10 +284,10 @@ export function AdminBookingsClient() {
           open={selectedBooking !== null}
           onOpenChange={(open) => !open && setSelectedBooking(null)}
         >
-          <DialogContent className="max-w-xl bg-[#fff8f7] border border-[#d7c1c3] p-6 text-right">
+          <DialogContent dir={dir} className="max-w-xl bg-[#fff8f7] border border-[#d7c1c3] p-6 text-start">
             {selectedBooking && (
               <div className="space-y-6">
-                <DialogHeader className="text-right">
+                <DialogHeader className="text-start">
                   <div className="flex items-center justify-between">
                     <Badge variant="gold" className="text-xs">
                       #{selectedBooking.ref}
@@ -271,7 +295,7 @@ export function AdminBookingsClient() {
                     {getStatusBadge(selectedBooking.status)}
                   </div>
                   <DialogTitle className="text-xl font-bold text-[#2f020d] mt-2">
-                    تفاصيل حجز: {selectedBooking.clientName}
+                    {t("تفاصيل حجز:", "Booking Details:")} {selectedBooking.clientName}
                   </DialogTitle>
                   <DialogDescription className="text-xs text-[#524345]">
                     {selectedBooking.packageName} • {selectedBooking.date} ({selectedBooking.timeSlot})
@@ -279,21 +303,23 @@ export function AdminBookingsClient() {
                 </DialogHeader>
 
                 <div className="p-4 rounded-2xl bg-white border border-[#eedfe0] space-y-2 text-xs">
-                  <p><strong>الجوال:</strong> {selectedBooking.phone}</p>
-                  <p><strong>المقر:</strong> {selectedBooking.venue}</p>
-                  <p><strong>الإجمالي:</strong> {selectedBooking.totalAmount.toLocaleString("ar-SA")} ر.س</p>
-                  <p><strong>العربون (30%):</strong> {selectedBooking.depositAmount.toLocaleString("ar-SA")} ر.س</p>
-                  <p><strong>المتبقي:</strong> {selectedBooking.remainingAmount.toLocaleString("ar-SA")} ر.س</p>
+                  <p><strong>{t("الجوال:", "Phone:")}</strong> {selectedBooking.phone}</p>
+                  <p><strong>{t("المقر:", "Venue:")}</strong> {selectedBooking.venue}</p>
+                  <p><strong>{t("الإجمالي:", "Total:")}</strong> {selectedBooking.totalAmount.toLocaleString("en-US")} {t("ر.س", "SAR")}</p>
+                  <p><strong>{t("العربون (30%):", "Deposit (30%):")}</strong> {selectedBooking.depositAmount.toLocaleString("en-US")} {t("ر.س", "SAR")}</p>
+                  <p><strong>{t("المتبقي:", "Remaining:")}</strong> {selectedBooking.remainingAmount.toLocaleString("en-US")} {t("ر.س", "SAR")}</p>
                   {selectedBooking.notes && (
                     <p className="pt-2 border-t border-[#eedfe0] text-[#735c00]">
-                      <strong>ملاحظات العميلة:</strong> {selectedBooking.notes}
+                      <strong>{t("ملاحظات العميلة:", "Client Notes:")}</strong> {selectedBooking.notes}
                     </p>
                   )}
                 </div>
 
                 {/* Status action buttons */}
                 <div className="space-y-2">
-                  <span className="text-xs font-bold text-[#2f020d] block">تغيير حالة الحجز:</span>
+                  <span className="text-xs font-bold text-[#2f020d] block">
+                    {t("تغيير حالة الحجز:", "Change Booking Status:")}
+                  </span>
                   <div className="flex flex-wrap gap-2">
                     <Button
                       size="sm"
@@ -303,7 +329,7 @@ export function AdminBookingsClient() {
                       }}
                       className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs"
                     >
-                      تأكيد الحجز (تم سداد العربون)
+                      {t("تأكيد الحجز (تم سداد العربون)", "Confirm Booking (Deposit Paid)")}
                     </Button>
                     <Button
                       size="sm"
@@ -313,7 +339,7 @@ export function AdminBookingsClient() {
                       }}
                       className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white text-xs"
                     >
-                      اعتماد إتمام الجلسة
+                      {t("اعتماد إتمام الجلسة", "Mark Session Complete")}
                     </Button>
                     <Button
                       size="sm"
@@ -324,7 +350,7 @@ export function AdminBookingsClient() {
                       }}
                       className="rounded-full text-rose-700 border-rose-200 hover:bg-rose-50 text-xs"
                     >
-                      إلغاء وإفساح الموعد
+                      {t("إلغاء وإفساح الموعد", "Cancel & Release Slot")}
                     </Button>
                   </div>
                 </div>
@@ -337,14 +363,21 @@ export function AdminBookingsClient() {
                     className="text-xs font-bold text-[#25D366] hover:underline flex items-center gap-1"
                   >
                     <MessageCircle className="h-4 w-4" />
-                    <span>مراسلة واتساب</span>
+                    <span>{t("مراسلة واتساب", "Message on WhatsApp")}</span>
                   </a>
                   <div className="flex items-center gap-2">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        if (confirm(`هل أنتِ متأكدة من حذف حجز #${selectedBooking.ref} نهائياً؟`)) {
+                        if (
+                          confirm(
+                            t(
+                              `هل أنتِ متأكدة من حذف حجز #${selectedBooking.ref} نهائياً؟`,
+                              `Are you sure you want to permanently delete booking #${selectedBooking.ref}?`
+                            )
+                          )
+                        ) {
                           deleteBooking(selectedBooking.ref);
                           setSelectedBooking(null);
                         }
@@ -352,14 +385,14 @@ export function AdminBookingsClient() {
                       className="rounded-full text-rose-600 border-rose-200 hover:bg-rose-50 text-xs font-bold gap-1"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
-                      <span>حذف الحجز نهائياً</span>
+                      <span>{t("حذف الحجز نهائياً", "Delete Permanently")}</span>
                     </Button>
                     <Button
                       variant="outline"
                       onClick={() => setSelectedBooking(null)}
                       className="rounded-full text-xs"
                     >
-                      إغلاق
+                      {t("إغلاق", "Close")}
                     </Button>
                   </div>
                 </div>

@@ -26,7 +26,7 @@ interface AdminCalendarClientProps {
 export function AdminCalendarClient({
   initialDate = "2025-10-09",
 }: AdminCalendarClientProps = {}) {
-  const { t, dir } = useLanguage();
+  const { t, dir, lang } = useLanguage();
   const { bookings, blockedDates, toggleBlockedDate } = useAppStore();
 
   const [dateCursor, setDateCursor] = useState(() => {
@@ -50,20 +50,41 @@ export function AdminCalendarClient({
     (_, i) => i + 1
   );
 
-  const monthNames = [
-    "يناير",
-    "فبراير",
-    "مارس",
-    "أبريل",
-    "مايو",
-    "يونيو",
-    "يوليو",
-    "أغسطس",
-    "سبتمبر",
-    "أكتوبر",
-    "نوفمبر",
-    "ديسمبر",
-  ];
+  const monthNames =
+    lang === "en"
+      ? [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ]
+      : [
+          "يناير",
+          "فبراير",
+          "مارس",
+          "أبريل",
+          "مايو",
+          "يونيو",
+          "يوليو",
+          "أغسطس",
+          "سبتمبر",
+          "أكتوبر",
+          "نوفمبر",
+          "ديسمبر",
+        ];
+
+  const weekDays =
+    lang === "en"
+      ? ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+      : ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
 
   const handlePrevMonth = () => {
     setDateCursor((prev) => {
@@ -108,10 +129,13 @@ export function AdminCalendarClient({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold font-serif text-[#2f020d]">
-              تقويم الزفاف وإشغال المواعيد
+              {t("تقويم الزفاف وإشغال المواعيد", "Wedding Calendar & Availability")}
             </h1>
             <p className="text-xs text-[#524345] mt-1">
-              متابعة مواعيد العرائس وجدول الإشغال اليومي وإغلاق الأيام الممتلئة أو فترات الإجازة.
+              {t(
+                "متابعة مواعيد العرائس وجدول الإشغال اليومي وإغلاق الأيام الممتلئة أو فترات الإجازة.",
+                "Track bridal appointments, daily occupancy, and block booked or off days."
+              )}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -129,14 +153,20 @@ export function AdminCalendarClient({
                 <>
                   <Unlock className="h-4 w-4" />
                   <span>
-                    إعادة إتاحة يوم {selectedDay} {monthNames[dateCursor.month]}
+                    {t(
+                      `إعادة إتاحة يوم ${selectedDay} ${monthNames[dateCursor.month]}`,
+                      `Reopen ${monthNames[dateCursor.month]} ${selectedDay}`
+                    )}
                   </span>
                 </>
               ) : (
                 <>
                   <Lock className="h-4 w-4" />
                   <span>
-                    إغلاق تاريخ {selectedDay} {monthNames[dateCursor.month]} (إجازة)
+                    {t(
+                      `إغلاق تاريخ ${selectedDay} ${monthNames[dateCursor.month]} (إجازة)`,
+                      `Block ${monthNames[dateCursor.month]} ${selectedDay} (Off Day)`
+                    )}
                   </span>
                 </>
               )}
@@ -161,36 +191,28 @@ export function AdminCalendarClient({
                   variant="outline"
                   onClick={handlePrevMonth}
                   className="h-8 w-8 rounded-full p-0 flex items-center justify-center cursor-pointer"
-                  title="الشهر السابق"
+                  title={t("الشهر السابق", "Previous Month")}
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  {lang === "en" ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                 </Button>
                 <Button
                   size="sm"
                   variant="outline"
                   onClick={handleNextMonth}
                   className="h-8 w-8 rounded-full p-0 flex items-center justify-center cursor-pointer"
-                  title="الشهر القادم"
+                  title={t("الشهر القادم", "Next Month")}
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  {lang === "en" ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                 </Button>
                 <Badge variant="gold" className="text-xs ms-2">
-                  عروس واحدة يومياً (VIP)
+                  {t("عروس واحدة يومياً (VIP)", "One Bride Per Day (VIP)")}
                 </Badge>
               </div>
             </div>
 
             {/* Days Grid */}
             <div className="grid grid-cols-7 gap-2 text-center text-xs">
-              {[
-                "الأحد",
-                "الاثنين",
-                "الثلاثاء",
-                "الأربعاء",
-                "الخميس",
-                "الجمعة",
-                "السبت",
-              ].map((d) => (
+              {weekDays.map((d) => (
                 <div
                   key={d}
                   className="font-bold text-[#735c00] py-2 bg-[#faeaeb] rounded-xl text-[11px]"
@@ -223,7 +245,7 @@ export function AdminCalendarClient({
                     <div className="w-full space-y-1">
                       {blocked && (
                         <span className="text-[9px] font-bold text-[#ba1a1a] block truncate">
-                          مغلق / إجازة
+                          {t("مغلق / إجازة", "Blocked / Off")}
                         </span>
                       )}
                       {dayBookings.map((b) => (
@@ -247,38 +269,48 @@ export function AdminCalendarClient({
             <Card className="rounded-3xl border border-[#eedfe0] bg-white p-6 shadow-sm space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-[#eedfe0]">
                 <h3 className="text-sm font-bold text-[#2f020d]">
-                  جدول يوم {selectedDay} {monthNames[dateCursor.month]} {dateCursor.year}
+                  {t(
+                    `جدول يوم ${selectedDay} ${monthNames[dateCursor.month]} ${dateCursor.year}`,
+                    `Schedule for ${monthNames[dateCursor.month]} ${selectedDay}, ${dateCursor.year}`
+                  )}
                 </h3>
                 {activeDayBlocked ? (
                   <Badge
                     variant="outline"
                     className="bg-[#ffdad6] text-[#ba1a1a] border-none text-[10px]"
                   >
-                    مغلق
+                    {t("مغلق", "Blocked")}
                   </Badge>
                 ) : activeDayBookings.length > 0 ? (
                   <Badge variant="gold" className="text-[10px]">
-                    {activeDayBookings.length} حجوزات
+                    {activeDayBookings.length} {t("حجوزات", "bookings")}
                   </Badge>
                 ) : (
                   <Badge
                     variant="outline"
                     className="bg-emerald-50 text-emerald-700 text-[10px]"
                   >
-                    متاح للحجز
+                    {t("متاح للحجز", "Available")}
                   </Badge>
                 )}
               </div>
 
               {activeDayBookings.length === 0 ? (
                 <div className="text-center py-8 text-xs text-[#857374] space-y-2">
-                  <p>لا توجد جلسات مؤكدة لهذا اليوم حتى الآن.</p>
+                  <p>
+                    {t(
+                      "لا توجد جلسات مؤكدة لهذا اليوم حتى الآن.",
+                      "No confirmed sessions scheduled for this day yet."
+                    )}
+                  </p>
                   <Button
                     size="sm"
                     onClick={() => toggleBlockedDate(activeDayDateStr)}
                     className="rounded-full bg-[#faeaeb] text-[#2f020d] text-xs hover:bg-[#eedfe0] cursor-pointer"
                   >
-                    {activeDayBlocked ? "إعادة إتاحة اليوم" : "إغلاق اليوم كإجازة"}
+                    {activeDayBlocked
+                      ? t("إعادة إتاحة اليوم", "Reopen Day")
+                      : t("إغلاق اليوم كإجازة", "Block Day as Off")}
                   </Button>
                 </div>
               ) : (
@@ -297,7 +329,7 @@ export function AdminCalendarClient({
                         </span>
                       </div>
                       <p className="text-[#524345]">
-                        <strong>الباقة:</strong> {b.packageName}
+                        <strong>{t("الباقة:", "Package:")}</strong> {b.packageName}
                       </p>
                       <p className="text-[#524345] flex items-center gap-1">
                         <Clock className="h-3 w-3 text-[#735c00]" />
@@ -309,7 +341,7 @@ export function AdminCalendarClient({
                       </p>
                       <div className="pt-1 flex justify-between items-center text-[11px]">
                         <span className="font-bold text-[#2f020d]">
-                          {b.totalAmount.toLocaleString("en-US")} ر.س
+                          {b.totalAmount.toLocaleString("en-US")} {t("ر.س", "SAR")}
                         </span>
                         <Badge
                           variant="outline"

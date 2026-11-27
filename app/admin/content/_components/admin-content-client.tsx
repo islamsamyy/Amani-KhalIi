@@ -101,12 +101,17 @@ export function AdminContentClient() {
   const handleSaveLook = (e: React.FormEvent) => {
     e.preventDefault();
     if (!lookTitle.trim()) {
-      toast.error("يرجى إدخال عنوان الإطلالة");
+      toast.error(t("يرجى إدخال عنوان الإطلالة", "Please enter the look title"));
       return;
     }
     const normalizedImg = normalizeImageSrc(lookImage);
     if (!normalizedImg || !isLookImageValid) {
-      toast.error("يرجى رفع صورة صالحة أو اختيار صورة من ألبوم الأتيليه قبل الحفظ");
+      toast.error(
+        t(
+          "يرجى رفع صورة صالحة أو اختيار صورة من ألبوم الأتيليه قبل الحفظ",
+          "Please upload a valid image or choose one from the Atelier album before saving"
+        )
+      );
       return;
     }
     const tags = lookTags
@@ -190,7 +195,12 @@ export function AdminContentClient() {
     try {
       localStorage.setItem("amani_contract_clauses_v1", contractClauses);
     } catch {}
-    toast.success("تم تحديث وحفظ صياغة بنود العقد والسياسات الرسمية بنجاح ✨");
+    toast.success(
+      t(
+        "تم تحديث وحفظ صياغة بنود العقد والسياسات الرسمية بنجاح ✨",
+        "Official contract clauses & policies saved successfully ✨"
+      )
+    );
   };
 
   const approvedCount = reviews.filter((r) => r.approved).length;
@@ -241,21 +251,21 @@ export function AdminContentClient() {
               className="rounded-full text-xs font-bold px-5 py-2 data-[state=active]:bg-[#4a1521] data-[state=active]:text-white transition-all"
             >
               <Star className="w-3.5 h-3.5 me-1.5 inline text-[#fed65b]" />
-              <span>تقييمات العميلات ({reviews.length})</span>
+              <span>{t("تقييمات العميلات", "Client Reviews")} ({reviews.length})</span>
             </TabsTrigger>
             <TabsTrigger
               value="gallery"
               className="rounded-full text-xs font-bold px-5 py-2 data-[state=active]:bg-[#4a1521] data-[state=active]:text-white transition-all"
             >
               <Camera className="w-3.5 h-3.5 me-1.5 inline text-[#fed65b]" />
-              <span>معرض الصور ({gallery.length})</span>
+              <span>{t("معرض الصور", "Portfolio Gallery")} ({gallery.length})</span>
             </TabsTrigger>
             <TabsTrigger
               value="contract"
               className="rounded-full text-xs font-bold px-5 py-2 data-[state=active]:bg-[#4a1521] data-[state=active]:text-white transition-all"
             >
               <ShieldCheck className="w-3.5 h-3.5 me-1.5 inline text-[#fed65b]" />
-              <span>بنود العقد والسياسات الرسمية</span>
+              <span>{t("بنود العقد والسياسات الرسمية", "Contract & Official Policies")}</span>
             </TabsTrigger>
           </TabsList>
 
@@ -264,13 +274,13 @@ export function AdminContentClient() {
             {/* Filter & Search Bar */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-white border border-[#eedfe0] shadow-sm">
               <div className="relative flex-1 max-w-md">
-                <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#857374]" />
+                <Search className="absolute start-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#857374]" />
                 <input
                   type="text"
                   value={reviewSearch}
                   onChange={(e) => setReviewSearch(e.target.value)}
-                  placeholder="بحث في اسم العميلة، الباقة، القاعة، أو نص التقييم..."
-                  className="w-full h-10 pr-10 pl-4 rounded-xl bg-[#fff8f7] border border-[#eedfe0] text-xs text-[#211a1b] placeholder:text-[#857374] focus:outline-none focus:border-[#735c00] transition-colors"
+                  placeholder={t("بحث في اسم العميلة، الباقة، القاعة، أو نص التقييم...", "Search by client name, package, venue, or comment...")}
+                  className="w-full h-10 ps-10 pe-4 rounded-xl bg-[#fff8f7] border border-[#eedfe0] text-xs text-[#211a1b] placeholder:text-[#857374] focus:outline-none focus:border-[#735c00] transition-colors"
                 />
               </div>
 
@@ -285,7 +295,7 @@ export function AdminContentClient() {
                       : "bg-[#fff0f1] text-[#524345] hover:bg-[#faeaeb]"
                   }`}
                 >
-                  الكل ({reviews.length})
+                  {t("الكل", "All")} ({reviews.length})
                 </button>
                 <button
                   type="button"
@@ -296,7 +306,7 @@ export function AdminContentClient() {
                       : "bg-emerald-50 text-emerald-800 hover:bg-emerald-100"
                   }`}
                 >
-                  المعتمدة ({approvedCount})
+                  {t("المعتمدة", "Approved")} ({approvedCount})
                 </button>
                 <button
                   type="button"
@@ -307,7 +317,7 @@ export function AdminContentClient() {
                       : "bg-amber-50 text-amber-800 hover:bg-amber-100"
                   }`}
                 >
-                  قيد المراجعة ({pendingCount})
+                  {t("قيد المراجعة", "Pending")} ({pendingCount})
                 </button>
               </div>
             </div>
@@ -316,8 +326,12 @@ export function AdminContentClient() {
             {filteredReviews.length === 0 ? (
               <div className="p-12 text-center rounded-3xl bg-white border border-[#eedfe0] space-y-3">
                 <Star className="w-10 h-10 text-[#eedfe0] mx-auto" />
-                <h3 className="text-base font-bold text-[#2f020d]">لا توجد تقييمات مطابقة</h3>
-                <p className="text-xs text-[#524345]">جربي البحث بكلمات أخرى أو تغيير الفلتر.</p>
+                <h3 className="text-base font-bold text-[#2f020d]">
+                  {t("لا توجد تقييمات مطابقة", "No matching reviews found")}
+                </h3>
+                <p className="text-xs text-[#524345]">
+                  {t("جربي البحث بكلمات أخرى أو تغيير الفلتر.", "Try different search keywords or change the filter.")}
+                </p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -341,12 +355,12 @@ export function AdminContentClient() {
                               {r.approved ? (
                                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
                                   <CheckCircle2 className="w-3 h-3" />
-                                  معتمد
+                                  {t("معتمد", "Approved")}
                                 </span>
                               ) : (
                                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">
                                   <Clock className="w-3 h-3" />
-                                  معلق
+                                  {t("معلق", "Pending")}
                                 </span>
                               )}
                             </div>
@@ -396,7 +410,7 @@ export function AdminContentClient() {
                               : "border-emerald-600 text-emerald-700 hover:bg-emerald-50"
                           }`}
                         >
-                          {r.approved ? "معتمد بالموقع ✓" : "اعتماد للنشر"}
+                          {r.approved ? t("معتمد بالموقع ✓", "Published ✓") : t("اعتماد للنشر", "Approve")}
                         </Button>
 
                         <Button
@@ -409,7 +423,7 @@ export function AdminContentClient() {
                               : "border-[#735c00] text-[#735c00] hover:bg-[#faeaeb]"
                           }`}
                         >
-                          {r.featured ? "★ مميز بالرئيسية" : "تمييز"}
+                          {r.featured ? t("★ مميز بالرئيسية", "★ Featured") : t("تمييز", "Feature")}
                         </Button>
                       </div>
 
@@ -421,13 +435,20 @@ export function AdminContentClient() {
                         <button
                           type="button"
                           onClick={() => {
-                            if (window.confirm("هل أنتِ متأكدة من رغبتكِ في حذف هذا التقييم نهائياً؟")) {
+                            if (
+                              window.confirm(
+                                t(
+                                  "هل أنتِ متأكدة من رغبتكِ في حذف هذا التقييم نهائياً؟",
+                                  "Are you sure you want to permanently delete this review?"
+                                )
+                              )
+                            ) {
                               deleteReview(r.id);
                             }
                           }}
-                          aria-label="حذف التقييم"
+                          aria-label={t("حذف التقييم", "Delete review")}
                           className="h-8.5 w-8.5 rounded-full text-[#ba1a1a] hover:bg-[#ffdad6]/60 flex items-center justify-center transition-colors cursor-pointer"
-                          title="حذف التقييم نهائياً"
+                          title={t("حذف التقييم نهائياً", "Permanently delete review")}
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -443,8 +464,15 @@ export function AdminContentClient() {
           <TabsContent value="gallery" className="space-y-4 animate-fade-in">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 p-4 rounded-2xl bg-white border border-[#eedfe0]">
               <div>
-                <h3 className="text-sm font-bold text-[#2f020d]">إجمالي الإطلالات المنشورة في المعرض</h3>
-                <p className="text-xs text-[#524345]">الصور المعروضة للزائرات في قسم معرض الأعمال وتطبيق الحجز ({gallery.length} إطلالة)</p>
+                <h3 className="text-sm font-bold text-[#2f020d]">
+                  {t("إجمالي الإطلالات المنشورة في المعرض", "Published Portfolio Looks")}
+                </h3>
+                <p className="text-xs text-[#524345]">
+                  {t(
+                    `الصور المعروضة للزائرات في قسم معرض الأعمال وتطبيق الحجز (${gallery.length} إطلالة)`,
+                    `Photos displayed to visitors in the portfolio gallery and booking flow (${gallery.length} looks)`
+                  )}
+                </p>
               </div>
               <Button
                 size="sm"
@@ -452,7 +480,7 @@ export function AdminContentClient() {
                 className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white text-xs font-bold gap-1.5 px-5 shadow-sm cursor-pointer"
               >
                 <Plus className="h-4 w-4 text-[#fed65b]" />
-                <span>إضافة إطلالة جديدة</span>
+                <span>{t("إضافة إطلالة جديدة", "Add New Look")}</span>
               </Button>
             </div>
 
@@ -469,14 +497,14 @@ export function AdminContentClient() {
                         <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center gap-2 bg-[#fff0f1]">
                           <ImageOff className="h-8 w-8 text-[#857374]" />
                           <p className="text-[11px] font-bold text-[#2f020d]">
-                            الصورة غير متوفرة
+                            {t("الصورة غير متوفرة", "Image unavailable")}
                           </p>
                           <button
                             type="button"
                             onClick={() => handleOpenEditLook(g)}
                             className="px-3 py-1 rounded-full bg-[#4a1521] text-white text-[10px] font-bold hover:bg-[#2f020d] transition-colors cursor-pointer"
                           >
-                            رفع صورة بديلة
+                            {t("رفع صورة بديلة", "Upload Replacement")}
                           </button>
                         </div>
                       ) : (
@@ -497,8 +525,8 @@ export function AdminContentClient() {
                         <button
                           type="button"
                           onClick={() => handleOpenEditLook(g)}
-                          aria-label={`تعديل إطلالة ${g.title}`}
-                          title="تعديل الإطلالة والصورة"
+                          aria-label={t(`تعديل إطلالة ${g.title}`, `Edit look ${g.title}`)}
+                          title={t("تعديل الإطلالة والصورة", "Edit look & photo")}
                           className="h-8 w-8 rounded-full bg-white/95 hover:bg-[#faeaeb] text-[#4a1521] border border-[#eedfe0] flex items-center justify-center transition-all cursor-pointer shadow-sm"
                         >
                           <Pencil className="h-3.5 w-3.5" />
@@ -506,12 +534,19 @@ export function AdminContentClient() {
                         <button
                           type="button"
                           onClick={() => {
-                            if (confirm(`هل أنتِ متأكدة من حذف إطلالة "${g.title}" نهائياً من المعرض؟`)) {
+                            if (
+                              confirm(
+                                t(
+                                  `هل أنتِ متأكدة من حذف إطلالة "${g.title}" نهائياً من المعرض؟`,
+                                  `Are you sure you want to permanently delete "${g.title}" from the gallery?`
+                                )
+                              )
+                            ) {
                               deleteGalleryLook(g.id);
                             }
                           }}
-                          aria-label={`حذف إطلالة ${g.title}`}
-                          title="حذف الإطلالة نهائياً"
+                          aria-label={t(`حذف إطلالة ${g.title}`, `Delete look ${g.title}`)}
+                          title={t("حذف الإطلالة نهائياً", "Permanently delete look")}
                           className="h-8 w-8 rounded-full bg-white/95 hover:bg-rose-50 text-rose-600 border border-[#eedfe0] flex items-center justify-center transition-all cursor-pointer shadow-sm"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
@@ -526,11 +561,11 @@ export function AdminContentClient() {
                       <button
                         type="button"
                         onClick={() => handleOpenEditLook(g)}
-                        title="تعديل الإطلالة"
+                        title={t("تعديل الإطلالة", "Edit Look")}
                         className="h-7 px-2.5 rounded-full bg-[#faeaeb] hover:bg-[#eedfe0] text-[#4a1521] text-[10px] font-bold flex items-center gap-1 transition-colors shrink-0 cursor-pointer"
                       >
                         <Pencil className="h-3 w-3" />
-                        <span>تعديل</span>
+                        <span>{t("تعديل", "Edit")}</span>
                       </button>
                     </div>
                   </div>
@@ -546,15 +581,18 @@ export function AdminContentClient() {
                 if (!open) resetLookForm();
               }}
             >
-              <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto bg-[#fff8f7] border border-[#d7c1c3] p-6 text-right rounded-3xl" dir="rtl">
-                <DialogHeader className="text-right">
+              <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto bg-[#fff8f7] border border-[#d7c1c3] p-6 text-start rounded-3xl" dir={dir}>
+                <DialogHeader className="text-start">
                   <DialogTitle className="text-lg font-bold text-[#2f020d]">
                     {editingLookId
-                      ? "تعديل الإطلالة وتحديث الصورة"
-                      : "إضافة إطلالة ملكية جديدة للمعرض"}
+                      ? t("تعديل الإطلالة وتحديث الصورة", "Edit Look & Update Photo")
+                      : t("إضافة إطلالة ملكية جديدة للمعرض", "Add New Royal Gallery Look")}
                   </DialogTitle>
                   <DialogDescription className="text-xs text-[#524345]">
-                    ارفعي صورة العمل مباشرة من جهازكِ أو اختاري من ألبوم الأتيليه ليتم عرضها بوضوح تام في المعرض وتطبيق الحجز.
+                    {t(
+                      "ارفعي صورة العمل مباشرة من جهازكِ أو اختاري من ألبوم الأتيليه ليتم عرضها بوضوح تام في المعرض وتطبيق الحجز.",
+                      "Upload an image from your device or choose from the Atelier album to display in the gallery and booking flow."
+                    )}
                   </DialogDescription>
                 </DialogHeader>
 
@@ -563,55 +601,63 @@ export function AdminContentClient() {
                     value={lookImage}
                     onChange={setLookImage}
                     onValidityChange={setIsLookImageValid}
-                    label="صورة الإطلالة *"
+                    label={t("صورة الإطلالة *", "Look Photo *")}
                     aspectClassName="aspect-[4/3]"
                   />
 
                   <div>
-                    <label className="text-xs font-bold text-[#2f020d] block mb-1">عنوان الإطلالة *</label>
+                    <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                      {t("عنوان الإطلالة *", "Look Title *")}
+                    </label>
                     <input
                       type="text"
                       required
                       value={lookTitle}
                       onChange={(e) => setLookTitle(e.target.value)}
-                      placeholder="مثال: مكياج العروس الملكي (Royal Glow)"
+                      placeholder={t("مثال: مكياج العروس الملكي (Royal Glow)", "e.g. Royal Bridal Glow")}
                       className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
                     />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="text-xs font-bold text-[#2f020d] block mb-1">التصنيف</label>
+                      <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                        {t("التصنيف", "Category")}
+                      </label>
                       <select
                         value={lookCategory}
                         onChange={(e) => handleCategoryChange(e.target.value as typeof lookCategory)}
                         className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
                       >
-                        <option value="bridal">عرائس ملكي (bridal)</option>
-                        <option value="evening">سهرات ومناسبات (evening)</option>
-                        <option value="soft">ناعم وهادئ (soft)</option>
-                        <option value="engagement">خطوبة وملكة (engagement)</option>
+                        <option value="bridal">{t("عرائس ملكي (bridal)", "Royal Bridal")}</option>
+                        <option value="evening">{t("سهرات ومناسبات (evening)", "Evening & Occasions")}</option>
+                        <option value="soft">{t("ناعم وهادئ (soft)", "Soft Glam")}</option>
+                        <option value="engagement">{t("خطوبة وملكة (engagement)", "Engagement & Milkah")}</option>
                       </select>
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-[#2f020d] block mb-1">وصف العروس / القاعة</label>
+                      <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                        {t("وصف العروس / القاعة", "Bride / Venue Description")}
+                      </label>
                       <input
                         type="text"
                         value={lookClientType}
                         onChange={(e) => setLookClientType(e.target.value)}
-                        placeholder="عروس فندق الريتز-كارلتون"
+                        placeholder={t("عروس فندق الريتز-كارلتون", "Ritz-Carlton Bride")}
                         className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-[#2f020d] block mb-1">وسوم الإطلالة (مفصولة بفاصلة)</label>
+                    <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                      {t("وسوم الإطلالة (مفصولة بفاصلة)", "Look Tags (comma-separated)")}
+                    </label>
                     <input
                       type="text"
                       value={lookTags}
                       onChange={(e) => setLookTags(e.target.value)}
-                      placeholder="مكياج عروس, فخامة ملكية, رموش 3D"
+                      placeholder={t("مكياج عروس, فخامة ملكية, رموش 3D", "bridal makeup, royal glam, 3D lashes")}
                       className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
                     />
                   </div>
@@ -626,13 +672,15 @@ export function AdminContentClient() {
                       }}
                       className="rounded-full text-xs"
                     >
-                      إلغاء
+                      {t("إلغاء", "Cancel")}
                     </Button>
                     <Button
                       type="submit"
                       className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white text-xs font-bold px-6"
                     >
-                      {editingLookId ? "حفظ التعديلات" : "نشر في المعرض"}
+                      {editingLookId
+                        ? t("حفظ التعديلات", "Save Changes")
+                        : t("نشر في المعرض", "Publish to Gallery")}
                     </Button>
                   </div>
                 </form>
@@ -645,19 +693,22 @@ export function AdminContentClient() {
             <Card className="rounded-3xl border border-[#eedfe0] bg-white p-6 sm:p-8 shadow-sm space-y-4">
               <div className="border-b border-[#eedfe0] pb-4">
                 <span className="text-xs font-bold text-[#735c00] uppercase tracking-wider">
-                  العقود والسياسات الرسمية
+                  {t("العقود والسياسات الرسمية", "Official Contracts & Policies")}
                 </span>
                 <h3 className="text-lg font-bold font-serif text-[#2f020d] mt-1">
-                  صياغة بنود العقد الإلكتروني الموثق
+                  {t("صياغة بنود العقد الإلكتروني الموثق", "Verified Digital Contract Clauses")}
                 </h3>
                 <p className="text-xs text-[#524345] mt-1 leading-relaxed">
-                  هذه البنود تظهر للعروس في الخطوة الرابعة من الحجز قبل السداد، وتُرفق تلقائياً في فاتورة وعقد الحجز الإلكتروني الرسمي المرسل عبر الواتساب والبريد.
+                  {t(
+                    "هذه البنود تظهر للعروس في الخطوة الرابعة من الحجز قبل السداد، وتُرفق تلقائياً في فاتورة وعقد الحجز الإلكتروني الرسمي المرسل عبر الواتساب والبريد.",
+                    "These clauses appear to brides in Step 4 of booking before payment and are attached automatically to the official digital invoice & contract."
+                  )}
                 </p>
               </div>
 
               <div className="space-y-2">
                 <label className="text-xs font-bold text-[#2f020d] block">
-                  نص البنود والشروط (كل بند في سطر مستقل):
+                  {t("نص البنود والشروط (كل بند في سطر مستقل):", "Terms & Clauses (one clause per line):")}
                 </label>
                 <textarea
                   rows={9}
@@ -665,22 +716,22 @@ export function AdminContentClient() {
                   onChange={(e) => setContractClauses(e.target.value)}
                   className="w-full p-4 rounded-2xl border border-[#eedfe0] bg-[#fff8f7] text-xs leading-relaxed text-[#211a1b] focus:outline-none focus:bg-white focus:border-[#735c00] transition-colors"
                 />
-                <p className="text-[11px] text-[#857374] text-left">
-                  عدد الأحرف: {contractClauses.length}
+                <p className="text-[11px] text-[#857374] text-end">
+                  {t("عدد الأحرف:", "Characters:")} {contractClauses.length}
                 </p>
               </div>
 
               <div className="flex items-center justify-between pt-4 border-t border-[#eedfe0]">
                 <span className="text-xs text-emerald-700 font-semibold flex items-center gap-1">
                   <CheckCircle2 className="w-4 h-4" />
-                  صياغة معتمدة وقانونية
+                  {t("صياغة معتمدة وقانونية", "Approved & Verified Terms")}
                 </span>
                 <Button
                   onClick={handleSaveContract}
                   className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white font-bold text-xs gap-1.5 px-6 shadow-md"
                 >
                   <Save className="h-4 w-4 text-[#fed65b]" />
-                  <span>تحديث وحفظ بنود العقد</span>
+                  <span>{t("تحديث وحفظ بنود العقد", "Save Contract Clauses")}</span>
                 </Button>
               </div>
             </Card>

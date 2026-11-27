@@ -21,7 +21,7 @@ import { toast } from "sonner";
 
 export function NewServiceClient() {
   const router = useRouter();
-  const { t, dir } = useLanguage();
+  const { t, dir, lang } = useLanguage();
   const { addPackage } = useAppStore();
 
   const [title, setTitle] = useState("");
@@ -38,7 +38,7 @@ export function NewServiceClient() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) {
-      toast.error("يرجى إدخال اسم الباقة الرسمي");
+      toast.error(t("يرجى إدخال اسم الباقة الرسمي", "Please enter the official package name"));
       return;
     }
 
@@ -66,11 +66,18 @@ export function NewServiceClient() {
             href="/admin/services"
             className="h-10 w-10 rounded-full bg-white border border-[#eedfe0] flex items-center justify-center text-[#2f020d] hover:bg-[#faeaeb] transition-colors"
           >
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className={`h-4 w-4 ${lang === "en" ? "rotate-180" : ""}`} />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold font-serif text-[#2f020d]">نافذة إضافة باقة جديدة</h1>
-            <p className="text-xs text-[#524345]">تحديد المسمى الرسمي، السعر، نسبة العربون، ونشرها فورياً في الموقع العام.</p>
+            <h1 className="text-2xl font-bold font-serif text-[#2f020d]">
+              {t("نافذة إضافة باقة جديدة", "Create New Package")}
+            </h1>
+            <p className="text-xs text-[#524345]">
+              {t(
+                "تحديد المسمى الرسمي، السعر، نسبة العربون، ونشرها فورياً في الموقع العام.",
+                "Define official name, pricing, deposit percentage, and publish immediately to the storefront."
+              )}
+            </p>
           </div>
         </div>
 
@@ -80,18 +87,22 @@ export function NewServiceClient() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-bold text-[#2f020d] block mb-1">اسم الباقة (عربي)</label>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                    {t("اسم الباقة (عربي)", "Package Name (Arabic)")}
+                  </label>
                   <input
                     type="text"
                     required
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="مثال: باقة الملكة والخطوبة الفاخرة"
+                    placeholder={t("مثال: باقة الملكة والخطوبة الفاخرة", "e.g. باقة الملكة والخطوبة الفاخرة")}
                     className="w-full h-11 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-[#2f020d] block mb-1">اسم الباقة (English)</label>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                    {t("اسم الباقة (English)", "Package Name (English)")}
+                  </label>
                   <input
                     type="text"
                     value={titleEn}
@@ -104,7 +115,9 @@ export function NewServiceClient() {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="text-xs font-bold text-[#2f020d] block mb-1">السعر الرسمي (ر.س)</label>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                    {t("السعر الرسمي (ر.س)", "Official Price (SAR)")}
+                  </label>
                   <input
                     type="number"
                     required
@@ -114,7 +127,9 @@ export function NewServiceClient() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-[#2f020d] block mb-1">نسبة العربون (%)</label>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                    {t("نسبة العربون (%)", "Deposit Percentage (%)")}
+                  </label>
                   <input
                     type="number"
                     value={depositPercentage}
@@ -123,46 +138,57 @@ export function NewServiceClient() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-[#2f020d] block mb-1">مدة الجلسة</label>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                    {t("مدة الجلسة", "Session Duration")}
+                  </label>
                   <input
                     type="text"
                     value={duration}
                     onChange={(e) => setDuration(e.target.value)}
-                    placeholder="ساعتان ونصف"
+                    placeholder={t("ساعتان ونصف", "2.5 Hours")}
                     className="w-full h-11 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-bold text-[#2f020d] block mb-1">التصنيف</label>
+                <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                  {t("التصنيف", "Category")}
+                </label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value as typeof category)}
                   className="w-full h-11 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
                 >
-                  <option value="bridal">عرائس ملكي (Bridal)</option>
-                  <option value="engagement">عقد قران وملكة (Engagement)</option>
-                  <option value="evening">سهرات ومناسبات (Evening)</option>
-                  <option value="trial">جلسات التجربة (Trial)</option>
-                  <option value="group">مرافقات ومجموعات (Group)</option>
+                  <option value="bridal">{t("عرائس ملكي (Bridal)", "Royal Bridal")}</option>
+                  <option value="engagement">{t("عقد قران وملكة (Engagement)", "Engagement & Milkah")}</option>
+                  <option value="evening">{t("سهرات ومناسبات (Evening)", "Evening & Occasions")}</option>
+                  <option value="trial">{t("جلسات التجربة (Trial)", "Bridal Trial Sessions")}</option>
+                  <option value="group">{t("مرافقات ومجموعات (Group)", "Companions & Groups")}</option>
                 </select>
               </div>
 
               <div>
-                <label className="text-xs font-bold text-[#2f020d] block mb-1">الوصف العام للباقة</label>
+                <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                  {t("الوصف العام للباقة", "Package Description")}
+                </label>
                 <textarea
                   rows={3}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="اكتبي وصفاً جذاباً يوضح تفاصيل الإطلالة والمستحضرات..."
+                  placeholder={t(
+                    "اكتبي وصفاً جذاباً يوضح تفاصيل الإطلالة والمستحضرات...",
+                    "Write an engaging description detailing the look and luxury products..."
+                  )}
                   className="w-full p-3 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
                 />
               </div>
 
               {/* Features list */}
               <div className="space-y-2 pt-2">
-                <label className="text-xs font-bold text-[#2f020d] block">أبرز المميزات المشمولة في الباقة:</label>
+                <label className="text-xs font-bold text-[#2f020d] block">
+                  {t("أبرز المميزات المشمولة في الباقة:", "Key Included Features:")}
+                </label>
                 <input
                   type="text"
                   value={feature1}
@@ -188,14 +214,14 @@ export function NewServiceClient() {
                   href="/admin/services"
                   className="h-11 px-6 rounded-full border border-[#eedfe0] bg-white hover:bg-[#faeaeb] text-xs font-bold flex items-center"
                 >
-                  إلغاء
+                  {t("إلغاء", "Cancel")}
                 </Link>
                 <Button
                   type="submit"
                   className="h-11 px-8 rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white text-xs font-bold gap-2 cursor-pointer"
                 >
                   <Save className="h-4 w-4 text-[#fed65b]" />
-                  <span>حفظ ونشر الباقة فورياً</span>
+                  <span>{t("حفظ ونشر الباقة فورياً", "Save & Publish Immediately")}</span>
                 </Button>
               </div>
             </form>
@@ -204,26 +230,28 @@ export function NewServiceClient() {
           {/* Live Preview Card (5 cols) */}
           <div className="lg:col-span-5 space-y-4">
             <span className="text-xs font-bold text-[#735c00] uppercase tracking-wider block">
-              معاينة الباقة كما ستظهر للعميلات بالموقع
+              {t("معاينة الباقة كما ستظهر للعميلات بالموقع", "Live Storefront Preview")}
             </span>
             <Card className="rounded-3xl border border-[#735c00] bg-white p-6 sm:p-8 shadow-md space-y-4">
               <div className="flex justify-between items-center">
                 <Badge variant="gold" className="text-[10px]">
-                  باقة جديدة
+                  {t("باقة جديدة", "New Package")}
                 </Badge>
-                <span className="text-xs text-[#857374]">{duration || "ساعتان"}</span>
+                <span className="text-xs text-[#857374]">{duration || t("ساعتان", "2 Hours")}</span>
               </div>
-              <h3 className="text-xl font-bold text-[#2f020d]">{title || "اسم الباقة المقترحة"}</h3>
+              <h3 className="text-xl font-bold text-[#2f020d]">
+                {(lang === "en" ? titleEn || title : title) || t("اسم الباقة المقترحة", "Proposed Package Name")}
+              </h3>
               <p className="text-xs text-[#524345] leading-relaxed">
-                {description || "وصف الإطلالة والمستحضرات العالمية المستخدمة."}
+                {description || t("وصف الإطلالة والمستحضرات العالمية المستخدمة.", "Description of the look and international luxury cosmetics used.")}
               </p>
               <div className="flex items-baseline gap-2 pb-4 border-b border-[#eedfe0]">
                 <span className="text-3xl font-bold font-serif text-[#2f020d]">
-                  {Number(price || 0).toLocaleString("ar-SA")}
+                  {Number(price || 0).toLocaleString("en-US")}
                 </span>
-                <span className="text-xs font-bold text-[#735c00]">ر.س</span>
+                <span className="text-xs font-bold text-[#735c00]">{t("ر.س", "SAR")}</span>
                 <span className="text-[11px] text-[#857374] ms-auto">
-                  عربون ({depositPercentage}%): {Math.round(((price || 0) * (depositPercentage || 30)) / 100).toLocaleString("ar-SA")} ر.س
+                  {t("عربون", "Deposit")} ({depositPercentage}%): {Math.round(((price || 0) * (depositPercentage || 30)) / 100).toLocaleString("en-US")} {t("ر.س", "SAR")}
                 </span>
               </div>
 

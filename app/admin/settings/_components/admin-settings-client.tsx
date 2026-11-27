@@ -61,7 +61,12 @@ export function AdminSettingsClient() {
         })
       );
     } catch {}
-    toast.success("تم حفظ إعدادات النظام والصلاحيات بنجاح في قاعدة البيانات المحلية ✨");
+    toast.success(
+      t(
+        "تم حفظ إعدادات النظام والصلاحيات بنجاح في قاعدة البيانات المحلية ✨",
+        "System settings & permissions saved successfully ✨"
+      )
+    );
   };
 
   return (
@@ -93,26 +98,30 @@ export function AdminSettingsClient() {
         <Tabs defaultValue="general" className="w-full">
           <TabsList className="bg-[#faeaeb] p-1 rounded-full flex flex-wrap gap-1 mb-6">
             <TabsTrigger value="general" className="rounded-full text-xs font-semibold px-4">
-              بيانات الأتيليه وساعات العمل
+              {t("بيانات الأتيليه وساعات العمل", "Atelier Info & Hours")}
             </TabsTrigger>
             <TabsTrigger value="booking_rules" className="rounded-full text-xs font-semibold px-4">
-              العربون وقواعد الحجز
+              {t("العربون وقواعد الحجز", "Deposits & Booking Rules")}
             </TabsTrigger>
             <TabsTrigger value="areas" className="rounded-full text-xs font-semibold px-4">
-              تغطية أحياء الرياض
+              {t("تغطية أحياء الرياض", "Riyadh District Coverage")}
             </TabsTrigger>
             <TabsTrigger value="whatsapp" className="rounded-full text-xs font-semibold px-4">
-              قوالب الواتساب والصلاحيات
+              {t("قوالب الواتساب والصلاحيات", "WhatsApp Templates & Roles")}
             </TabsTrigger>
           </TabsList>
 
           {/* Tab 1: General Info */}
           <TabsContent value="general">
             <Card className="rounded-3xl border border-[#eedfe0] bg-white p-6 sm:p-8 shadow-sm space-y-6">
-              <h3 className="text-base font-bold text-[#2f020d]">بيانات العمل الرسمية</h3>
+              <h3 className="text-base font-bold text-[#2f020d]">
+                {t("بيانات العمل الرسمية", "Official Business Information")}
+              </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-bold text-[#2f020d] block mb-1">اسم الأتيليه / العلامة</label>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                    {t("اسم الأتيليه / العلامة", "Atelier / Brand Name")}
+                  </label>
                   <input
                     type="text"
                     value={atelierName}
@@ -121,7 +130,9 @@ export function AdminSettingsClient() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-[#2f020d] block mb-1">رقم الواتساب المعتمد</label>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                    {t("رقم الواتساب المعتمد", "Official WhatsApp Number")}
+                  </label>
                   <input
                     type="text"
                     value={atelierPhone}
@@ -133,21 +144,30 @@ export function AdminSettingsClient() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                 <div>
-                  <label className="text-xs font-bold text-[#2f020d] block mb-1">الحد الأقصى للجلسات اليومية لكل خبيرة</label>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                    {t("الحد الأقصى للجلسات اليومية لكل خبيرة", "Max Daily Sessions per Artist")}
+                  </label>
                   <input
                     type="number"
                     value={maxSessionsPerDay}
                     onChange={(e) => setMaxSessionsPerDay(Number(e.target.value))}
                     className="w-full h-11 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
                   />
-                  <span className="text-[11px] text-[#857374] block mt-1">تفرغ تام: جلستان كحد أقصى لضمان راحة العرائس وجودة الدمج.</span>
+                  <span className="text-[11px] text-[#857374] block mt-1">
+                    {t(
+                      "تفرغ تام: جلستان كحد أقصى لضمان راحة العرائس وجودة الدمج.",
+                      "Exclusive dedication: max 2 sessions daily to ensure bridal comfort and flawless blending."
+                    )}
+                  </span>
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-[#2f020d] block mb-1">فاصل التنقل التلقائي بين المواعيد</label>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                    {t("فاصل التنقل التلقائي بين المواعيد", "Automatic Travel Buffer Between Sessions")}
+                  </label>
                   <input
                     type="text"
                     disabled
-                    value="٤٥ دقيقة (محسوبة ذكياً)"
+                    value={t("٤٥ دقيقة (محسوبة ذكياً)", "45 Minutes (Smart Calculation)")}
                     className="w-full h-11 px-3.5 rounded-xl border border-[#eedfe0] bg-gray-50 text-xs text-[#524345]"
                   />
                 </div>
@@ -158,24 +178,32 @@ export function AdminSettingsClient() {
           {/* Tab 2: Booking & Deposit Rules */}
           <TabsContent value="booking_rules">
             <Card className="rounded-3xl border border-[#eedfe0] bg-white p-6 sm:p-8 shadow-sm space-y-6">
-              <h3 className="text-base font-bold text-[#2f020d]">قواعد العربون وتثبيت التواريخ</h3>
+              <h3 className="text-base font-bold text-[#2f020d]">
+                {t("قواعد العربون وتثبيت التواريخ", "Deposit & Date Locking Rules")}
+              </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-bold text-[#2f020d] block mb-1">نسبة العربون الافتراضية (%)</label>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                    {t("نسبة العربون الافتراضية (%)", "Default Deposit Percentage (%)")}
+                  </label>
                   <input
                     type="number"
                     value={depositPct}
                     onChange={(e) => setDepositPct(Number(e.target.value))}
                     className="w-full h-11 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
                   />
-                  <span className="text-[11px] text-[#735c00] block mt-1">النسبة المعتمدة: ٣٠٪ من إجمالي الباقة والخدمات.</span>
+                  <span className="text-[11px] text-[#735c00] block mt-1">
+                    {t("النسبة المعتمدة: ٣٠٪ من إجمالي الباقة والخدمات.", "Standard policy: 30% of total package & add-ons.")}
+                  </span>
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-[#2f020d] block mb-1">مهلة تحويل العربون قبل إفساح الموعد</label>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                    {t("مهلة تحويل العربون قبل إفساح الموعد", "Deposit Transfer Window Before Auto-Release")}
+                  </label>
                   <input
                     type="text"
                     disabled
-                    value="١٢ ساعة تلقائياً"
+                    value={t("١٢ ساعة تلقائياً", "12 Hours Automatically")}
                     className="w-full h-11 px-3.5 rounded-xl border border-[#eedfe0] bg-gray-50 text-xs text-[#524345]"
                   />
                 </div>
@@ -186,7 +214,9 @@ export function AdminSettingsClient() {
           {/* Tab 3: Areas & Fees */}
           <TabsContent value="areas">
             <Card className="rounded-3xl border border-[#eedfe0] bg-white p-6 sm:p-8 shadow-sm space-y-4">
-              <h3 className="text-base font-bold text-[#2f020d]">أحياء الرياض المعتمدة وبدل التنقل</h3>
+              <h3 className="text-base font-bold text-[#2f020d]">
+                {t("أحياء الرياض المعتمدة وبدل التنقل", "Approved Riyadh Districts & Travel Fees")}
+              </h3>
               <div className="space-y-3">
                 {areas.map((area) => (
                   <div key={area.id} className="p-4 rounded-2xl bg-[#fff0f1] border border-[#eedfe0] flex items-center justify-between text-xs">
@@ -195,7 +225,9 @@ export function AdminSettingsClient() {
                       <span className="text-[11px] text-[#857374]">{area.zone}</span>
                     </div>
                     <Badge variant="gold" className="text-xs">
-                      {area.travelFee === 0 ? "مجاني مشمول" : `+${area.travelFee} ر.س`}
+                      {area.travelFee === 0
+                        ? t("مجاني مشمول", "Complimentary")
+                        : `+${area.travelFee} ${t("ر.س", "SAR")}`}
                     </Badge>
                   </div>
                 ))}
@@ -207,8 +239,15 @@ export function AdminSettingsClient() {
           <TabsContent value="whatsapp">
             <Card className="rounded-3xl border border-[#eedfe0] bg-white p-6 sm:p-8 shadow-sm space-y-6">
               <div>
-                <h3 className="text-base font-bold text-[#2f020d]">قالب رسالة تأكيد الحجز (WhatsApp)</h3>
-                <p className="text-xs text-[#524345]">يتم إرسال هذا النص فورياً للعروس عند سداد العربون وتأكيد الحجز.</p>
+                <h3 className="text-base font-bold text-[#2f020d]">
+                  {t("قالب رسالة تأكيد الحجز (WhatsApp)", "Booking Confirmation Template (WhatsApp)")}
+                </h3>
+                <p className="text-xs text-[#524345]">
+                  {t(
+                    "يتم إرسال هذا النص فورياً للعروس عند سداد العربون وتأكيد الحجز.",
+                    "Sent immediately to the bride upon deposit payment and booking confirmation."
+                  )}
+                </p>
               </div>
 
               <textarea
@@ -219,14 +258,18 @@ export function AdminSettingsClient() {
               />
 
               <div className="pt-4 border-t border-[#eedfe0] space-y-3">
-                <h4 className="text-xs font-bold text-[#2f020d]">أذونات وصلاحيات الفريق:</h4>
+                <h4 className="text-xs font-bold text-[#2f020d]">
+                  {t("أذونات وصلاحيات الفريق:", "Team Permissions & Roles:")}
+                </h4>
                 <div className="space-y-3 text-xs">
                   <div className="flex items-center justify-between p-3 rounded-2xl bg-[#fff0f1]">
-                    <span>صلاحية المالك الكاملة (أماني خليل - Owner)</span>
-                    <Badge variant="gold" className="text-[10px]">كافة الصلاحيات</Badge>
+                    <span>{t("صلاحية المالك الكاملة (أماني خليل - Owner)", "Full Owner Access (Amani Khalil - Owner)")}</span>
+                    <Badge variant="gold" className="text-[10px]">
+                      {t("كافة الصلاحيات", "Full Access")}
+                    </Badge>
                   </div>
                   <div className="flex items-center justify-between p-3 rounded-2xl bg-[#fff0f1]">
-                    <span>صلاحية المنسقة (إدارة المواعيد وتذكير العميلات فقط)</span>
+                    <span>{t("صلاحية المنسقة (إدارة المواعيد وتذكير العميلات فقط)", "Coordinator Role (Schedule & Client Reminders Only)")}</span>
                     <Switch defaultChecked />
                   </div>
                 </div>

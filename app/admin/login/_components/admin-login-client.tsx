@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useAppStore } from "@/providers/app-store-provider";
+import { useLanguage } from "@/providers/language-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,6 +35,7 @@ export function AdminLoginClient() {
   const nextPath = searchParams.get("next") || "/admin";
 
   const { isSupabaseConnected, refreshFromDatabase } = useAppStore();
+  const { t, dir, lang, toggleLang } = useLanguage();
 
   const [tab, setTab] = useState<"pass" | "otp" | "bio">("pass");
   const authMode = "signin" as "signin" | "signup";
@@ -179,7 +181,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
   return (
     <div
-      dir="rtl"
+      dir={dir}
       data-shell-ui="true"
       className="min-h-screen bg-[#fff8f7] flex flex-col justify-between"
     >
@@ -201,7 +203,7 @@ const handleSubmit = async (e: React.FormEvent) => {
             <div className="relative z-10 flex items-center justify-between">
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-medium text-[#faee9e]">
                 <ShieldCheck className="w-3.5 h-3.5" />
-                بوابة الإدارة المركزية والتحكم
+                {t("بوابة الإدارة المركزية والتحكم", "Central Admin & Control Portal")}
               </span>
               <span className="w-8 h-8 rounded-full bg-[#faee9e]/20 text-[#faee9e] flex items-center justify-center text-xs font-bold">
                 AK
@@ -214,7 +216,10 @@ const handleSubmit = async (e: React.FormEvent) => {
                 <Sparkles className="w-5 h-5" />
               </div>
               <blockquote className="font-serif text-xl sm:text-2xl font-bold leading-relaxed text-white">
-                “حيث تلتقي حرفية الفخامة بأعلى معايير الإدارة والخصوصية الرقمية.”
+                {t(
+                  "“حيث تلتقي حرفية الفخامة بأعلى معايير الإدارة والخصوصية الرقمية.”",
+                  "“Where haute-couture artistry meets executive management and digital privacy.”"
+                )}
               </blockquote>
               <div className="w-12 h-1 bg-[#faee9e] my-4 rounded-full" />
               <p className="text-xs text-white/80 leading-relaxed">
@@ -229,10 +234,13 @@ const handleSubmit = async (e: React.FormEvent) => {
                 <Lock className="w-5 h-5 text-[#faee9e]" />
                 <div>
                   <div className="text-xs font-bold text-white">
-                    حماية المسارات (Protected Routes)
+                    {t("حماية المسارات (Protected Routes)", "Protected Routes")}
                   </div>
                   <div className="text-[10px] text-white/70">
-                    جلسة مصادقة Supabase مشفرة ومحمية بـ RLS
+                    {t(
+                      "جلسة مصادقة Supabase مشفرة ومحمية بـ RLS",
+                      "Encrypted Supabase Auth session protected by RLS"
+                    )}
                   </div>
                 </div>
               </div>
@@ -261,6 +269,13 @@ const handleSubmit = async (e: React.FormEvent) => {
                     priority
                   />
                 </Link>
+                <button
+                  type="button"
+                  onClick={toggleLang}
+                  className="h-9 px-3.5 rounded-full border border-[#eedfe0] bg-[#fff8f7] hover:bg-[#faeaeb] text-xs font-bold text-[#2f020d] transition-colors cursor-pointer"
+                >
+                  {lang === "en" ? "عربي" : "EN"}
+                </button>
                 
               </div>
 
@@ -268,12 +283,12 @@ const handleSubmit = async (e: React.FormEvent) => {
                 <div className="space-y-1">
                   <h1 className="text-2xl font-bold font-serif text-[#2f020d]">
                     {authMode === "signin"
-                      ? "تسجيل الدخول الإداري"
+                      ? t("تسجيل الدخول الإداري", "Admin Sign In")
                       : "إنشاء حساب إداري جديد"}
                   </h1>
                   <p className="text-xs text-[#524345]">
                     {authMode === "signin"
-                      ? "أدخلي بيانات حسابك للوصول إلى لوحة التحكم المحمية."
+                      ? t("أدخلي بيانات حسابك للوصول إلى لوحة التحكم المحمية.", "Enter your credentials to access the protected admin dashboard.")
                       : "سجلي بريدك الإلكتروني وكلمة المرور لإنشاء حساب المديرة في Supabase Auth."}
                   </p>
                 </div>
@@ -291,19 +306,19 @@ const handleSubmit = async (e: React.FormEvent) => {
                     value="pass"
                     className="text-xs font-bold data-[state=active]:bg-white data-[state=active]:text-[#2f020d] data-[state=active]:shadow-sm rounded-xl py-2"
                   >
-                    البريد وكلمة المرور
+                    {t("البريد وكلمة المرور", "Email & Password")}
                   </TabsTrigger>
                   <TabsTrigger
                     value="otp"
                     className="text-xs font-bold data-[state=active]:bg-white data-[state=active]:text-[#2f020d] data-[state=active]:shadow-sm rounded-xl py-2"
                   >
-                    رمز OTP عبر البريد
+                    {t("رمز OTP عبر البريد", "Email OTP")}
                   </TabsTrigger>
                   <TabsTrigger
                     value="bio"
                     className="text-xs font-bold data-[state=active]:bg-white data-[state=active]:text-[#2f020d] data-[state=active]:shadow-sm rounded-xl py-2"
                   >
-                    مفتاح Passkey
+                    {t("مفتاح Passkey", "Passkey")}
                   </TabsTrigger>
                 </TabsList>
 
@@ -316,7 +331,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                   <TabsContent value="pass" className="space-y-4 m-0">
                     <div className="space-y-1.5">
                       <Label className="text-xs font-semibold text-[#2f020d]">
-                        البريد الإلكتروني الإداري
+                        {t("البريد الإلكتروني الإداري", "Admin Email")}
                       </Label>
                       <div className="relative">
                         <Input
@@ -336,14 +351,14 @@ const handleSubmit = async (e: React.FormEvent) => {
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
                         <Label className="text-xs font-semibold text-[#2f020d]">
-                          كلمة المرور المشفرة (6 أحرف على الأقل)
+                          {t("كلمة المرور المشفرة (6 أحرف على الأقل)", "Encrypted Password (min 6 chars)")}
                         </Label>
                         <button
                           type="button"
                           onClick={() => setTab("otp")}
                           className="text-[11px] text-[#735c00] hover:underline cursor-pointer"
                         >
-                          الدخول عبر رمز OTP؟
+                          {t("الدخول عبر رمز OTP؟", "Sign in with OTP?")}
                         </button>
                       </div>
                       <div className="relative">
@@ -378,7 +393,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                   <TabsContent value="otp" className="space-y-4 m-0">
                     <div className="space-y-1.5">
                       <Label className="text-xs font-semibold text-[#2f020d]">
-                        البريد الإلكتروني الإداري لاستلام رمز التحقق (Magic Link / OTP)
+                        {t("البريد الإلكتروني الإداري لاستلام رمز التحقق (Magic Link / OTP)", "Admin Email for Verification Code (Magic Link / OTP)")}
                       </Label>
                       <div className="relative">
                         <Input
@@ -439,7 +454,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                         onChange={(e) => setRememberMe(e.target.checked)}
                         className="rounded accent-[#4a1521] w-4 h-4"
                       />
-                      <span>البقاء متصلاً عبر الكوكيز الآمنة (SSR Session)</span>
+                      <span>{t("البقاء متصلاً عبر الكوكيز الآمنة (SSR Session)", "Stay signed in via secure cookies (SSR Session)")}</span>
                     </label>
                     
                   </div>
@@ -464,7 +479,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                               : "إرسال رمز التحقق "
                             : authMode === "signup"
                             ? "إنشاء الحساب الإداري والدخول"
-                            : "تسجيل الدخول الآمن"}
+                            : t("تسجيل الدخول الآمن", "Secure Sign In")}
                         </span>
                         <ArrowLeft className="w-4 h-4" />
                       </>
@@ -486,7 +501,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 rel="noreferrer"
                 className="text-[#735c00] font-semibold hover:underline inline-flex items-center gap-1"
               >
-                <span>طوارئ الدخول والدعم الفني</span>
+                <span>{t("طوارئ الدخول والدعم الفني", "Login Emergency & Support")}</span>
                 <ExternalLink className="w-3 h-3" />
               </a>
             </div>

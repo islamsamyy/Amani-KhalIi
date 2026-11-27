@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useAppStore } from "@/providers/app-store-provider";
 import { useLanguage } from "@/providers/language-provider";
+import { getLocalizedPackage } from "@/lib/package-i18n";
 import { ServicePackage } from "@/features/data/initial-data";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,7 +30,7 @@ import {
 import { toast } from "sonner";
 
 export function AdminServicesClient() {
-  const { t, dir } = useLanguage();
+  const { t, dir, lang } = useLanguage();
   const { packages, togglePackageActive, updatePackage, deletePackage } = useAppStore();
   const [editingPkg, setEditingPkg] = useState<ServicePackage | null>(null);
 
@@ -112,109 +113,130 @@ export function AdminServicesClient() {
 
         {/* Packages Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {packages.map((pkg) => (
-            <Card
-              key={pkg.id}
-              className={`rounded-3xl border flex flex-col justify-between overflow-hidden shadow-sm transition-all ${
-                pkg.active
-                  ? "bg-white border-[#eedfe0]"
-                  : "bg-gray-50 border-gray-200 opacity-75"
-              }`}
-            >
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <Badge variant={pkg.active ? "gold" : "outline"} className="text-[10px]">
-                    {pkg.active ? "نشطة بالموقع العام" : "متوقفة مؤقتاً"}
-                  </Badge>
-                  <span className="text-xs text-[#857374]">{pkg.duration}</span>
+          {packages.map((pkg) => {
+            const locPkg = getLocalizedPackage(pkg, lang);
+            return (
+              <Card
+                key={pkg.id}
+                className={`rounded-3xl border flex flex-col justify-between overflow-hidden shadow-sm transition-all ${
+                  pkg.active
+                    ? "bg-white border-[#eedfe0]"
+                    : "bg-gray-50 border-gray-200 opacity-75"
+                }`}
+              >
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <Badge variant={pkg.active ? "gold" : "outline"} className="text-[10px]">
+                      {pkg.active
+                        ? t("نشطة بالموقع العام", "Active on Storefront")
+                        : t("متوقفة مؤقتاً", "Paused")}
+                    </Badge>
+                    <span className="text-xs text-[#857374]">{locPkg.duration}</span>
+                  </div>
+
+                  <h3 className="text-base font-bold text-[#2f020d] mb-1">{locPkg.title}</h3>
+                  <p className="text-xs text-[#524345] leading-relaxed line-clamp-2 mb-4">
+                    {locPkg.description}
+                  </p>
+
+                  <div className="flex items-baseline gap-2 pb-4 border-b border-[#eedfe0]">
+                    <span className="text-2xl font-bold font-serif text-[#2f020d]">
+                      {pkg.price.toLocaleString("en-US")}
+                    </span>
+                    <span className="text-xs font-bold text-[#735c00]">{t("ر.س", "SAR")}</span>
+                    <span className="text-[11px] text-[#857374] ms-auto">
+                      {t("العربون:", "Deposit:")} {pkg.depositPercentage}%
+                    </span>
+                  </div>
+
+                  <ul className="space-y-1.5 pt-4 text-xs text-[#211a1b]">
+                    {locPkg.features.slice(0, 3).map((f, i) => (
+                      <li key={i} className="flex items-center gap-2 text-[11px] text-[#524345]">
+                        <Check className="h-3.5 w-3.5 text-[#735c00] shrink-0" />
+                        <span className="truncate">{f}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
-                <h3 className="text-base font-bold text-[#2f020d] mb-1">{pkg.title}</h3>
-                <p className="text-xs text-[#524345] leading-relaxed line-clamp-2 mb-4">
-                  {pkg.description}
-                </p>
-
-                <div className="flex items-baseline gap-2 pb-4 border-b border-[#eedfe0]">
-                  <span className="text-2xl font-bold font-serif text-[#2f020d]">
-                    {pkg.price.toLocaleString("ar-SA")}
-                  </span>
-                  <span className="text-xs font-bold text-[#735c00]">ر.س</span>
-                  <span className="text-[11px] text-[#857374] ms-auto">العربون: {pkg.depositPercentage}%</span>
-                </div>
-
-                <ul className="space-y-1.5 pt-4 text-xs text-[#211a1b]">
-                  {pkg.features.slice(0, 3).map((f, i) => (
-                    <li key={i} className="flex items-center gap-2 text-[11px] text-[#524345]">
-                      <Check className="h-3.5 w-3.5 text-[#735c00] shrink-0" />
-                      <span className="truncate">{f}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Action Buttons Footer */}
-              <div className="p-4 bg-[#fff0f1]/70 border-t border-[#eedfe0] flex items-center justify-between gap-2">
-                {/* Pause/Resume Toggle Button with material symbol for test compatibility */}
-                <button
-                  type="button"
-                  onClick={() => togglePackageActive(pkg.id)}
-                  className={`h-9 px-3 rounded-full text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
-                    pkg.active
-                      ? "bg-amber-100 text-amber-900 hover:bg-amber-200"
-                      : "bg-emerald-100 text-emerald-900 hover:bg-emerald-200"
-                  }`}
-                  title={pkg.active ? "إيقاف مؤقت" : "تفعيل الباقة"}
-                >
-                  <span className="material-symbols-outlined text-[18px]">
-                    {pkg.active ? "pause_circle" : "play_circle"}
-                  </span>
-                  <span className="hidden sm:inline">{pkg.active ? "إيقاف مؤقت" : "تفعيل"}</span>
-                </button>
-
-                <div className="flex items-center gap-1.5">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => startEdit(pkg)}
-                    className="rounded-full text-xs h-9 bg-white"
-                  >
-                    <Edit className="h-3.5 w-3.5 ms-1 text-[#735c00]" />
-                    <span>تعديل</span>
-                  </Button>
+                {/* Action Buttons Footer */}
+                <div className="p-4 bg-[#fff0f1]/70 border-t border-[#eedfe0] flex items-center justify-between gap-2">
+                  {/* Pause/Resume Toggle Button with material symbol for test compatibility */}
                   <button
                     type="button"
-                    onClick={() => {
-                      if (confirm(`هل أنتِ متأكدة من حذف باقة "${pkg.title}"؟`)) {
-                        deletePackage(pkg.id);
-                      }
-                    }}
-                    className="h-9 w-9 rounded-full bg-white hover:bg-rose-50 text-rose-600 border border-[#eedfe0] flex items-center justify-center transition-colors cursor-pointer"
-                    title="حذف الباقة"
+                    onClick={() => togglePackageActive(pkg.id)}
+                    className={`h-9 px-3 rounded-full text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                      pkg.active
+                        ? "bg-amber-100 text-amber-900 hover:bg-amber-200"
+                        : "bg-emerald-100 text-emerald-900 hover:bg-emerald-200"
+                    }`}
+                    title={pkg.active ? t("إيقاف مؤقت", "Pause") : t("تفعيل الباقة", "Activate Package")}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <span className="material-symbols-outlined text-[18px]">
+                      {pkg.active ? "pause_circle" : "play_circle"}
+                    </span>
+                    <span className="hidden sm:inline">
+                      {pkg.active ? t("إيقاف مؤقت", "Pause") : t("تفعيل", "Activate")}
+                    </span>
                   </button>
+
+                  <div className="flex items-center gap-1.5">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => startEdit(pkg)}
+                      className="rounded-full text-xs h-9 bg-white"
+                    >
+                      <Edit className="h-3.5 w-3.5 ms-1 text-[#735c00]" />
+                      <span>{t("تعديل", "Edit")}</span>
+                    </Button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (
+                          confirm(
+                            t(
+                              `هل أنتِ متأكدة من حذف باقة "${pkg.title}"؟`,
+                              `Are you sure you want to delete package "${locPkg.title}"?`
+                            )
+                          )
+                        ) {
+                          deletePackage(pkg.id);
+                        }
+                      }}
+                      className="h-9 w-9 rounded-full bg-white hover:bg-rose-50 text-rose-600 border border-[#eedfe0] flex items-center justify-center transition-colors cursor-pointer"
+                      title={t("حذف الباقة", "Delete Package")}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
         </div>
 
         {/* Edit Package Modal Dialog */}
         <Dialog open={editingPkg !== null} onOpenChange={(open) => !open && setEditingPkg(null)}>
-          <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto bg-[#fff8f7] border border-[#d7c1c3] p-6 text-right rounded-3xl" dir="rtl">
-            <DialogHeader className="text-right">
+          <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto bg-[#fff8f7] border border-[#d7c1c3] p-6 text-start rounded-3xl" dir={dir}>
+            <DialogHeader className="text-start">
               <DialogTitle className="text-lg font-bold text-[#2f020d]">
-                تعديل بيانات وتفاصيل الباقة: {editingPkg?.title}
+                {t("تعديل بيانات وتفاصيل الباقة:", "Edit Package Details:")} {editingPkg ? getLocalizedPackage(editingPkg, lang).title : ""}
               </DialogTitle>
               <DialogDescription className="text-xs text-[#524345]">
-                تحديث السعر الرسمي، نسبة العربون، تفاصيل المميزات، التصنيف، والوصف المعروض في الموقع العام.
+                {t(
+                  "تحديث السعر الرسمي، نسبة العربون، تفاصيل المميزات، التصنيف، والوصف المعروض في الموقع العام.",
+                  "Update official price, deposit percentage, features, category, and storefront description."
+                )}
               </DialogDescription>
             </DialogHeader>
 
             <form onSubmit={handleSaveEdit} className="space-y-4 my-2">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-bold text-[#2f020d] block mb-1">اسم الباقة (عربي) *</label>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                    {t("اسم الباقة (عربي) *", "Package Name (Arabic) *")}
+                  </label>
                   <input
                     type="text"
                     required
@@ -224,7 +246,9 @@ export function AdminServicesClient() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-[#2f020d] block mb-1">اسم الباقة (English)</label>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                    {t("اسم الباقة (English)", "Package Name (English)")}
+                  </label>
                   <input
                     type="text"
                     value={editTitleEn}
@@ -237,7 +261,9 @@ export function AdminServicesClient() {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="text-xs font-bold text-[#2f020d] block mb-1">السعر الرسمي (ر.س) *</label>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                    {t("السعر الرسمي (ر.س) *", "Official Price (SAR) *")}
+                  </label>
                   <input
                     type="number"
                     required
@@ -248,7 +274,9 @@ export function AdminServicesClient() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-[#2f020d] block mb-1">نسبة العربون (%) *</label>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                    {t("نسبة العربون (%) *", "Deposit (%) *")}
+                  </label>
                   <input
                     type="number"
                     required
@@ -260,13 +288,15 @@ export function AdminServicesClient() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-[#2f020d] block mb-1">مدة الجلسة *</label>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                    {t("مدة الجلسة *", "Duration *")}
+                  </label>
                   <input
                     type="text"
                     required
                     value={editDuration}
                     onChange={(e) => setEditDuration(e.target.value)}
-                    placeholder="٤ إلى ٥ ساعات"
+                    placeholder={t("٤ إلى ٥ ساعات", "4–5 Hours")}
                     className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
                   />
                 </div>
@@ -274,33 +304,39 @@ export function AdminServicesClient() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-bold text-[#2f020d] block mb-1">التصنيف</label>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                    {t("التصنيف", "Category")}
+                  </label>
                   <select
                     value={editCategory}
                     onChange={(e) => setEditCategory(e.target.value as ServicePackage["category"])}
                     className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
                   >
-                    <option value="bridal">عرائس ملكي (Bridal)</option>
-                    <option value="engagement">عقد قران وملكة (Engagement)</option>
-                    <option value="evening">سهرات ومناسبات (Evening)</option>
-                    <option value="trial">جلسات التجربة (Trial)</option>
-                    <option value="group">مرافقات ومجموعات (Group)</option>
+                    <option value="bridal">{t("عرائس ملكي (Bridal)", "Royal Bridal")}</option>
+                    <option value="engagement">{t("عقد قران وملكة (Engagement)", "Engagement & Milkah")}</option>
+                    <option value="evening">{t("سهرات ومناسبات (Evening)", "Evening & Occasions")}</option>
+                    <option value="trial">{t("جلسات التجربة (Trial)", "Bridal Trial")}</option>
+                    <option value="group">{t("مرافقات ومجموعات (Group)", "Companions & Groups")}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-[#2f020d] block mb-1">شارة الباقة (Badge)</label>
+                  <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                    {t("شارة الباقة (Badge)", "Package Badge")}
+                  </label>
                   <input
                     type="text"
                     value={editBadge}
                     onChange={(e) => setEditBadge(e.target.value)}
-                    placeholder="مثال: الأكثر طلباً للعرائس"
+                    placeholder={t("مثال: الأكثر طلباً للعرائس", "e.g. Most Requested")}
                     className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-bold text-[#2f020d] block mb-1">الوصف العام للباقة</label>
+                <label className="text-xs font-bold text-[#2f020d] block mb-1">
+                  {t("الوصف العام للباقة", "Package Description")}
+                </label>
                 <textarea
                   rows={2}
                   value={editDesc}
@@ -311,17 +347,26 @@ export function AdminServicesClient() {
 
               <div>
                 <label className="text-xs font-bold text-[#2f020d] block mb-1">
-                  المميزات والتفاصيل الملكية (كل ميزة في سطر منفصل)
+                  {t(
+                    "المميزات والتفاصيل الملكية (كل ميزة في سطر منفصل)",
+                    "Included Features (one per line)"
+                  )}
                 </label>
                 <textarea
                   rows={4}
                   value={editFeatures}
                   onChange={(e) => setEditFeatures(e.target.value)}
-                  placeholder="حضور حصري لعروس واحدة يومياً&#10;رموش Mink 3D مخصصة لمورفولوجيا العين&#10;حقيبة رتوش فاخرة هدية"
+                  placeholder={t(
+                    "حضور حصري لعروس واحدة يومياً\nرموش Mink 3D مخصصة لمورفولوجيا العين\nحقيبة رتوش فاخرة هدية",
+                    "Strictly one bride per day\nCustom 3D Mink lashes\nComplimentary luxury touch-up kit"
+                  )}
                   className="w-full p-3 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00] font-sans leading-relaxed"
                 />
                 <span className="text-[11px] text-[#857374] block mt-0.5">
-                  اكتبي كل ميزة في سطر جديد وستظهر كعلامة صح ✓ في بطاقة الباقة.
+                  {t(
+                    "اكتبي كل ميزة في سطر جديد وستظهر كعلامة صح ✓ في بطاقة الباقة.",
+                    "Enter each feature on a new line to display as a ✓ bullet on the package card."
+                  )}
                 </span>
               </div>
 
@@ -333,7 +378,7 @@ export function AdminServicesClient() {
                     onChange={(e) => setEditActive(e.target.checked)}
                     className="rounded text-[#2f020d] focus:ring-0"
                   />
-                  <span>تفعيل الباقة في الموقع العام للعميلات</span>
+                  <span>{t("تفعيل الباقة في الموقع العام للعميلات", "Active on Public Storefront")}</span>
                 </label>
 
                 <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-[#2f020d]">
@@ -343,16 +388,16 @@ export function AdminServicesClient() {
                     onChange={(e) => setEditPopular(e.target.checked)}
                     className="rounded text-[#2f020d] focus:ring-0"
                   />
-                  <span>تمييز الباقة كأكثر طلباً</span>
+                  <span>{t("تمييز الباقة كأكثر طلباً", "Highlight as Most Requested")}</span>
                 </label>
               </div>
 
               <div className="flex justify-end gap-2 pt-3 border-t border-[#eedfe0]">
                 <Button variant="outline" type="button" onClick={() => setEditingPkg(null)} className="rounded-full text-xs">
-                  إلغاء
+                  {t("إلغاء", "Cancel")}
                 </Button>
                 <Button type="submit" className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white text-xs font-bold px-6">
-                  حفظ التعديلات
+                  {t("حفظ التعديلات", "Save Changes")}
                 </Button>
               </div>
             </form>

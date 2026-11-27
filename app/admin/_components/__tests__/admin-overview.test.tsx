@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, within } from "@testing-library/react";
 import { AdminOverviewClient } from "../admin-overview-client";
 import * as AppStoreModule from "@/providers/app-store-provider";
+import { LanguageProvider } from "@/providers/language-provider";
 import type { BookingRecord, CustomerProfile } from "@/features/data/initial-data";
 
 // Mock sonner toast
@@ -213,5 +214,28 @@ describe("AdminOverviewClient - Real Data & Dynamic Actions", () => {
     fireEvent.click(refreshBtn);
 
     expect(mockRefreshFromDatabase).toHaveBeenCalled();
+  });
+
+  it("translates all KPI cards, timeline, and pending alerts when language is English", () => {
+    window.localStorage.setItem("amani_lang_v1", "en");
+
+    render(
+      <LanguageProvider>
+        <AdminOverviewClient />
+      </LanguageProvider>
+    );
+
+    expect(screen.getByText("Good Morning, Beautiful Amani ✨")).toBeInTheDocument();
+    expect(screen.getByText("Active Contracts Total")).toBeInTheDocument();
+    expect(screen.getByText("Total Registered Bookings")).toBeInTheDocument();
+    expect(screen.getByText("Deposits & Remaining Balances")).toBeInTheDocument();
+    expect(screen.getByText("Awaiting Deposit")).toBeInTheDocument();
+    expect(screen.getByText(/Latest Active Sessions/)).toBeInTheDocument();
+    expect(screen.getByText(/Pending Deposit Alerts/)).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "Notes" }).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByRole("button", { name: "Confirm" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Release" })).toBeInTheDocument();
+
+    window.localStorage.removeItem("amani_lang_v1");
   });
 });

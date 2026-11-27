@@ -38,7 +38,7 @@ import {
 import { toast } from "sonner";
 
 export function AdminOverviewClient() {
-  const { t, dir } = useLanguage();
+  const { t, dir, lang } = useLanguage();
   const {
     bookings,
     invoices,
@@ -57,23 +57,23 @@ export function AdminOverviewClient() {
   const [activeCustomerNotesDraft, setActiveCustomerNotesDraft] =
     useState<string>("");
   const [currentDateStr, setCurrentDateStr] = useState<string>(
-    "الرياض GMT+3"
+    t("الرياض GMT+3", "Riyadh GMT+3")
   );
 
   useEffect(() => {
     try {
-      const formatted = new Intl.DateTimeFormat("ar-SA", {
+      const formatted = new Intl.DateTimeFormat(lang === "en" ? "en-US" : "ar-SA", {
         weekday: "long",
         year: "numeric",
         month: "long",
         day: "numeric",
         timeZone: "Asia/Riyadh",
       }).format(new Date());
-      setCurrentDateStr(`${formatted} | الرياض GMT+3`);
+      setCurrentDateStr(`${formatted} | ${lang === "en" ? "Riyadh GMT+3" : "الرياض GMT+3"}`);
     } catch {
-      setCurrentDateStr("الرياض GMT+3");
+      setCurrentDateStr(lang === "en" ? "Riyadh GMT+3" : "الرياض GMT+3");
     }
-  }, []);
+  }, [lang]);
 
   // Filter and sort active bookings chronologically
   const activeBookings = bookings.filter((b) => b.status !== "CANCELLED");
@@ -137,7 +137,10 @@ export function AdminOverviewClient() {
     );
     window.open(`https://wa.me/${cleanPhone}?text=${msg}`, "_blank");
     toast.success(
-      `تم إرسال تذكير سداد العربون للعميلة ${clientName} عبر الواتساب بنجاح 💬`
+      t(
+        `تم إرسال تذكير سداد العربون للعميلة ${clientName} عبر الواتساب بنجاح 💬`,
+        `Deposit reminder sent to ${clientName} via WhatsApp 💬`
+      )
     );
   };
 
@@ -167,7 +170,12 @@ export function AdminOverviewClient() {
     if (matchedCustomer) {
       updateCustomerNotes(matchedCustomer.id, activeCustomerNotesDraft);
     }
-    toast.success("تم حفظ الملاحظات وتحديثها في ملف العميلة بنجاح ✨");
+    toast.success(
+      t(
+        "تم حفظ الملاحظات وتحديثها في ملف العميلة بنجاح ✨",
+        "Notes saved and updated in client profile ✨"
+      )
+    );
     setActiveSessionBooking(null);
   };
 
@@ -261,7 +269,7 @@ export function AdminOverviewClient() {
           <Card className="rounded-3xl border border-[#eedfe0] bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <span className="text-xs font-bold text-[#524345]">
-                إجمالي التعاقدات النشطة
+                {t("إجمالي التعاقدات النشطة", "Active Contracts Total")}
               </span>
               <div className="h-10 w-10 rounded-2xl bg-[#faeaeb] text-[#735c00] flex items-center justify-center font-bold">
                 <DollarSign className="h-5 w-5" />
@@ -271,11 +279,11 @@ export function AdminOverviewClient() {
               <span className="text-3xl font-bold font-serif text-[#2f020d]">
                 {totalRevenue.toLocaleString("en-US")}
               </span>
-              <span className="text-xs font-bold text-[#735c00]">ر.س</span>
+              <span className="text-xs font-bold text-[#735c00]">{t("ر.س", "SAR")}</span>
             </div>
             <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-bold mb-3">
               <TrendingUp className="h-4 w-4" />
-              <span>محدث تلقائياً من سجل الحجوزات</span>
+              <span>{t("محدث تلقائياً من سجل الحجوزات", "Auto-synced from booking ledger")}</span>
             </div>
             <Progress value={capacityRate} className="h-2" />
           </Card>
@@ -283,7 +291,7 @@ export function AdminOverviewClient() {
           <Card className="rounded-3xl border border-[#eedfe0] bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <span className="text-xs font-bold text-[#524345]">
-                إجمالي الحجوزات المسجلة
+                {t("إجمالي الحجوزات المسجلة", "Total Registered Bookings")}
               </span>
               <div className="h-10 w-10 rounded-2xl bg-[#faeaeb] text-[#4a1521] flex items-center justify-center font-bold">
                 <Calendar className="h-5 w-5" />
@@ -293,12 +301,12 @@ export function AdminOverviewClient() {
               <span className="text-3xl font-bold font-serif text-[#2f020d]">
                 {bookings.length}
               </span>
-              <span className="text-xs text-[#524345]">جلسة عرائس وسهرات</span>
+              <span className="text-xs text-[#524345]">{t("جلسة عرائس وسهرات", "bridal & soirée sessions")}</span>
             </div>
             <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-bold mb-3">
               <CheckCircle2 className="h-4 w-4" />
               <span>
-                {confirmedOrCompleted.length} مؤكدة ومكتملة
+                {confirmedOrCompleted.length} {t("مؤكدة ومكتملة", "confirmed & completed")}
               </span>
             </div>
             <Progress value={confirmedRate} className="h-2" />
@@ -307,7 +315,7 @@ export function AdminOverviewClient() {
           <Card className="rounded-3xl border border-[#eedfe0] bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <span className="text-xs font-bold text-[#524345]">
-                العرابين والمبالغ المتبقية
+                {t("العرابين والمبالغ المتبقية", "Deposits & Remaining Balances")}
               </span>
               <div className="h-10 w-10 rounded-2xl bg-[#faeaeb] text-[#735c00] flex items-center justify-center font-bold">
                 <Crown className="h-5 w-5" />
@@ -315,15 +323,15 @@ export function AdminOverviewClient() {
             </div>
             <div className="flex justify-between items-baseline mb-2 text-xs">
               <div>
-                <span className="text-[#857374] block">عرابين محصّلة:</span>
+                <span className="text-[#857374] block">{t("عرابين محصّلة:", "Deposits Collected:")}</span>
                 <span className="text-lg font-bold text-[#2f020d]">
-                  {totalDeposits.toLocaleString("en-US")} ر.س
+                  {totalDeposits.toLocaleString("en-US")} {t("ر.س", "SAR")}
                 </span>
               </div>
-              <div className="text-left">
-                <span className="text-[#857374] block">متبقٍ يوم المناسبة:</span>
+              <div className="text-end">
+                <span className="text-[#857374] block">{t("متبقٍ يوم المناسبة:", "Due on Event Day:")}</span>
                 <span className="text-lg font-bold text-[#735c00]">
-                  {totalRemaining.toLocaleString("en-US")} ر.س
+                  {totalRemaining.toLocaleString("en-US")} {t("ر.س", "SAR")}
                 </span>
               </div>
             </div>
@@ -333,10 +341,10 @@ export function AdminOverviewClient() {
           <Card className="rounded-3xl border border-[#eedfe0] bg-[#fff0f1] p-6 shadow-sm flex flex-col justify-between">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-bold text-[#735c00]">
-                طلبات بانتظار العربون
+                {t("طلبات بانتظار العربون", "Awaiting Deposit")}
               </span>
               <Badge variant="gold" className="text-[10px]">
-                عاجل
+                {t("عاجل", "Urgent")}
               </Badge>
             </div>
             <div>
@@ -344,18 +352,18 @@ export function AdminOverviewClient() {
                 <span className="text-3xl font-bold font-serif text-[#2f020d]">
                   {pendingBookings.length}
                 </span>
-                <span className="text-xs text-[#524345]">طلبات حجز وتثبيت</span>
+                <span className="text-xs text-[#524345]">{t("طلبات حجز وتثبيت", "pending booking requests")}</span>
               </div>
               <p className="text-[11px] text-[#524345]">
-                مرتبطة مباشرة بقاعدة البيانات والفواتير الرسمية
+                {t("مرتبطة مباشرة بقاعدة البيانات والفواتير الرسمية", "Directly synced with database & official invoices")}
               </p>
             </div>
             <Link
               href="/admin/bookings"
               className="text-xs font-bold text-[#4a1521] hover:underline pt-3 inline-flex items-center gap-1"
             >
-              <span>فتح صندوق الاستقبال والفرز</span>
-              <span>←</span>
+              <span>{t("فتح صندوق الاستقبال والفرز", "Open Inbox & Triage")}</span>
+              <span>{lang === "en" ? "→" : "←"}</span>
             </Link>
           </Card>
         </section>
@@ -368,23 +376,26 @@ export function AdminOverviewClient() {
               <div className="flex items-center gap-2">
                 <Clock className="h-5 w-5 text-[#735c00]" />
                 <h2 className="text-lg font-bold text-[#2f020d]">
-                  أحدث المواعيد النشطة ({activeBookingsSorted.length} موعد مرتبة بالتاريخ)
+                  {t(
+                    `أحدث المواعيد النشطة (${activeBookingsSorted.length} موعد مرتبة بالتاريخ)`,
+                    `Latest Active Sessions (${activeBookingsSorted.length} sorted by date)`
+                  )}
                 </h2>
               </div>
               <Badge variant="outline" className="text-[10px] bg-white">
-                فاصل انتقال 45 دقيقة ذكي
+                {t("فاصل انتقال 45 دقيقة ذكي", "Smart 45-min Travel Buffer")}
               </Badge>
             </div>
 
             {activeBookingsSorted.length === 0 ? (
               <Card className="rounded-3xl border border-[#eedfe0] bg-white p-8 text-center text-xs text-[#857374] space-y-2">
-                <p>لا توجد حجوزات نشطة حالياً في قاعدة البيانات.</p>
+                <p>{t("لا توجد حجوزات نشطة حالياً في قاعدة البيانات.", "No active bookings in the database right now.")}</p>
                 <Link
                   href="/book"
                   className="inline-flex items-center gap-1 text-[#735c00] font-bold hover:underline"
                 >
                   <PlusCircle className="w-4 h-4" />
-                  <span>إضافة حجز جديد للبدء</span>
+                  <span>{t("إضافة حجز جديد للبدء", "Add a new booking to start")}</span>
                 </Link>
               </Card>
             ) : (
@@ -450,10 +461,10 @@ export function AdminOverviewClient() {
                           >
                             {periodName ||
                               (booking.locationType === "STUDIO"
-                                ? "أتيليه"
+                                ? t("أتيليه", "Atelier")
                                 : booking.locationType === "CLIENT_HOME"
-                                  ? "منزلي"
-                                  : "فندقي")}
+                                  ? t("منزلي", "Home")
+                                  : t("فندقي", "Hotel"))}
                           </span>
                         </div>
 
@@ -475,21 +486,21 @@ export function AdminOverviewClient() {
                                 className="text-[10px] bg-emerald-50 text-emerald-700 border-emerald-300 font-bold px-2.5 py-0.5 flex items-center gap-1 shrink-0"
                               >
                                 <CheckCircle2 className="h-3 w-3 text-emerald-600" />
-                                <span>مكتملة الآن</span>
+                                <span>{t("مكتملة الآن", "Completed")}</span>
                               </Badge>
                             ) : isConfirmed ? (
                               <Badge
                                 variant="gold"
                                 className="text-[10px] font-bold px-2.5 py-0.5 shadow-2xs shrink-0"
                               >
-                                مؤكد بالعربون
+                                {t("مؤكد بالعربون", "Deposit Confirmed")}
                               </Badge>
                             ) : (
                               <Badge
                                 variant="outline"
                                 className="text-[10px] bg-amber-50 text-amber-800 border-amber-300 font-bold px-2.5 py-0.5 shrink-0"
                               >
-                                بانتظار السداد
+                                {t("بانتظار السداد", "Awaiting Payment")}
                               </Badge>
                             )}
                           </div>
@@ -507,11 +518,11 @@ export function AdminOverviewClient() {
                             <span>{booking.packageName}</span>
                             <span className="text-[#d7c1c3]">•</span>
                             <span className="text-[#2f020d] font-bold font-mono">
-                              {booking.totalAmount.toLocaleString("en-US")} ر.س
+                              {booking.totalAmount.toLocaleString("en-US")} {t("ر.س", "SAR")}
                             </span>
                             {booking.depositAmount > 0 && (
                               <span className="text-[10px] text-[#857374] font-normal">
-                                (عربون: {booking.depositAmount.toLocaleString("en-US")} ر.س)
+                                ({t("عربون:", "Deposit:")} {booking.depositAmount.toLocaleString("en-US")} {t("ر.س", "SAR")})
                               </span>
                             )}
                           </div>
@@ -529,7 +540,7 @@ export function AdminOverviewClient() {
                           className="h-9 px-3.5 rounded-full bg-[#25D366]/15 hover:bg-[#25D366] text-[#128C7E] hover:text-white text-xs font-bold flex items-center gap-1.5 transition-all whitespace-nowrap shadow-2xs"
                         >
                           <MessageCircle className="h-3.5 w-3.5" />
-                          <span>تواصل مباشر</span>
+                          <span>{t("تواصل مباشر", "WhatsApp")}</span>
                         </a>
 
                         <Button
@@ -538,7 +549,7 @@ export function AdminOverviewClient() {
                           onClick={() => handleOpenNotes(booking)}
                           className="rounded-full text-xs h-9 px-3.5 bg-white border-[#eedfe0] text-[#2f020d] hover:bg-[#fff0f1] font-semibold whitespace-nowrap"
                         >
-                          الملاحظات
+                          {t("الملاحظات", "Notes")}
                         </Button>
 
                         <Button
@@ -550,17 +561,24 @@ export function AdminOverviewClient() {
                               : "bg-[#faeaeb] text-[#2f020d] hover:bg-[#4a1521] hover:text-white border border-[#eedfe0]"
                           }`}
                         >
-                          {isCompleted ? "مكتمل ✓" : "تم التوثيق"}
+                          {isCompleted ? t("مكتمل ✓", "Completed ✓") : t("تم التوثيق", "Mark Complete")}
                         </Button>
 
                         <button
                           type="button"
                           onClick={() => {
-                            if (confirm(`هل أنتِ متأكدة من حذف حجز #${booking.ref.replace(/^#/, "")} نهائياً؟`)) {
+                            if (
+                              confirm(
+                                t(
+                                  `هل أنتِ متأكدة من حذف حجز #${booking.ref.replace(/^#/, "")} نهائياً؟`,
+                                  `Are you sure you want to permanently delete booking #${booking.ref.replace(/^#/, "")}?`
+                                )
+                              )
+                            ) {
                               deleteBooking(booking.ref);
                             }
                           }}
-                          title="حذف الحجز نهائياً"
+                          title={t("حذف الحجز نهائياً", "Permanently delete booking")}
                           className="h-9 w-9 rounded-full bg-white hover:bg-rose-50 text-rose-600 border border-[#eedfe0] flex items-center justify-center transition-colors cursor-pointer shrink-0"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -578,27 +596,30 @@ export function AdminOverviewClient() {
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
                               <span className="font-bold text-xs text-[#4a1521]">
-                                فاصل التنقل وتجهيز الحقيبة الملكية:
+                                {t("فاصل التنقل وتجهيز الحقيبة الملكية:", "Travel & Royal Kit Prep Buffer:")}
                               </span>
                               <Badge
                                 variant="outline"
                                 className="text-[10px] font-bold bg-white text-[#735c00] border-[#eedfe0] px-2"
                               >
-                                45 دقيقة
+                                {t("45 دقيقة", "45 mins")}
                               </Badge>
                             </div>
                             <p
                               className="text-[11px] text-[#524345] truncate mt-0.5"
-                              title={`من: ${booking.venue} ← إلى: ${nextBooking.venue}`}
+                              title={`${t("من:", "From:")} ${booking.venue} → ${t("إلى:", "To:")} ${nextBooking.venue}`}
                             >
-                              المسار: من {booking.venue.split("—")[0].trim()} ← إلى {nextBooking.venue.split("—")[0].trim()}
+                              {t(
+                                `المسار: من ${booking.venue.split("—")[0].trim()} ← إلى ${nextBooking.venue.split("—")[0].trim()}`,
+                                `Route: From ${booking.venue.split("—")[0].trim()} → To ${nextBooking.venue.split("—")[0].trim()}`
+                              )}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
                           <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                           <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                            حركة المرور: سلسة
+                            {t("حركة المرور: سلسة", "Traffic: Smooth")}
                           </span>
                         </div>
                       </div>
@@ -615,19 +636,30 @@ export function AdminOverviewClient() {
               <div className="flex items-center justify-between pb-3 border-b border-[#eedfe0]">
                 <h3 className="text-sm font-bold text-[#ba1a1a] flex items-center gap-1.5">
                   <AlertCircle className="h-4 w-4" />
-                  <span>تنبيهات العرابين المعلقة ({pendingBookings.length})</span>
+                  <span>
+                    {t(
+                      `تنبيهات العرابين المعلقة (${pendingBookings.length})`,
+                      `Pending Deposit Alerts (${pendingBookings.length})`
+                    )}
+                  </span>
                 </h3>
                 {pendingBookings.length > 0 && (
                   <span className="w-2.5 h-2.5 rounded-full bg-[#ba1a1a] animate-ping" />
                 )}
               </div>
               <p className="text-xs text-[#524345] leading-relaxed">
-                طلبات حجز بانتظار تحويل العربون لتثبيت الموعد رسمياً في الأجندة:
+                {t(
+                  "طلبات حجز بانتظار تحويل العربون لتثبيت الموعد رسمياً في الأجندة:",
+                  "Booking requests awaiting deposit transfer to officially lock the date:"
+                )}
               </p>
 
               {pendingBookings.length === 0 ? (
                 <div className="p-4 rounded-2xl bg-[#f8fdf9] border border-emerald-200 text-center text-xs text-emerald-800">
-                  لا توجد طلبات معلقة بانتظار سداد العربون حالياً ✓
+                  {t(
+                    "لا توجد طلبات معلقة بانتظار سداد العربون حالياً ✓",
+                    "No pending deposit requests right now ✓"
+                  )}
                 </div>
               ) : (
                 pendingBookings.map((hold) => (
@@ -643,13 +675,13 @@ export function AdminOverviewClient() {
                         variant="outline"
                         className="text-[10px] bg-[#ffdad6] text-[#93000a] border-none font-bold"
                       >
-                        معلق
+                        {t("معلق", "Pending")}
                       </Badge>
                     </div>
                     <div className="text-[11px] text-[#524345] flex justify-between">
-                      <span>تاريخ المناسبة: {hold.date}</span>
+                      <span>{t("تاريخ المناسبة:", "Event Date:")} {hold.date}</span>
                       <span className="font-bold text-[#735c00]">
-                        العربون: {hold.depositAmount.toLocaleString("en-US")} ر.س
+                        {t("العربون:", "Deposit:")} {hold.depositAmount.toLocaleString("en-US")} {t("ر.س", "SAR")}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 pt-1">
@@ -666,7 +698,7 @@ export function AdminOverviewClient() {
                         className="flex-1 rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white text-[11px] h-8"
                       >
                         <Send className="h-3 w-3 ms-1" />
-                        <span>تذكير واتساب سريع</span>
+                        <span>{t("تذكير واتساب سريع", "WhatsApp Reminder")}</span>
                       </Button>
                       <Button
                         size="sm"
@@ -675,27 +707,39 @@ export function AdminOverviewClient() {
                         }
                         className="rounded-full text-[11px] h-8 bg-white text-[#2f020d] border border-[#eedfe0] font-bold"
                       >
-                        تثبيت يدوي
+                        {t("تثبيت يدوي", "Confirm")}
                       </Button>
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => {
                           updateBookingStatus(hold.ref, "CANCELLED");
-                          toast.success("تم إفساح الموعد وإلغاء الحجز المعلق");
+                          toast.success(
+                            t(
+                              "تم إفساح الموعد وإلغاء الحجز المعلق",
+                              "Slot released and pending booking cancelled"
+                            )
+                          );
                         }}
                         className="rounded-full text-[11px] h-8 text-[#857374]"
                       >
-                        إفساح
+                        {t("إفساح", "Release")}
                       </Button>
                       <button
                         type="button"
                         onClick={() => {
-                          if (confirm(`هل أنتِ متأكدة من حذف هذا الطلب المعلق #${hold.ref} نهائياً؟`)) {
+                          if (
+                            confirm(
+                              t(
+                                `هل أنتِ متأكدة من حذف هذا الطلب المعلق #${hold.ref} نهائياً؟`,
+                                `Are you sure you want to permanently delete pending request #${hold.ref}?`
+                              )
+                            )
+                          ) {
                             deleteBooking(hold.ref);
                           }
                         }}
-                        title="حذف الحجز نهائياً"
+                        title={t("حذف الحجز نهائياً", "Permanently delete booking")}
                         className="h-8 w-8 rounded-full bg-white hover:bg-rose-50 text-rose-600 border border-[#eedfe0] flex items-center justify-center transition-colors cursor-pointer shrink-0"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -710,7 +754,7 @@ export function AdminOverviewClient() {
             {featuredLook && (
               <Card className="rounded-3xl border border-[#eedfe0] bg-white p-6 shadow-sm space-y-3">
                 <span className="text-xs font-bold text-[#735c00] uppercase tracking-wider block">
-                  إطلالة العروس الأكثر تميزاً من المعرض
+                  {t("إطلالة العروس الأكثر تميزاً من المعرض", "Signature Bridal Look Spotlight")}
                 </span>
                 <div className="aspect-[16/10] rounded-2xl overflow-hidden relative shadow-inner">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -740,12 +784,12 @@ export function AdminOverviewClient() {
           open={activeSessionBooking !== null}
           onOpenChange={(open) => !open && setActiveSessionBooking(null)}
         >
-          <DialogContent className="max-w-md bg-[#fff8f7] border border-[#d7c1c3] p-6 text-right">
+          <DialogContent dir={dir} className="max-w-md bg-[#fff8f7] border border-[#d7c1c3] p-6 text-start">
             {activeSessionBooking && (
               <>
-                <DialogHeader className="text-right">
+                <DialogHeader className="text-start">
                   <DialogTitle className="text-lg font-bold text-[#2f020d]">
-                    ملاحظات الجلسة: {activeSessionBooking.clientName}
+                    {t("ملاحظات الجلسة:", "Session Notes:")} {activeSessionBooking.clientName}
                   </DialogTitle>
                   <DialogDescription className="text-xs text-[#524345]">
                     {activeSessionBooking.packageName} • #{activeSessionBooking.ref}
@@ -759,16 +803,16 @@ export function AdminOverviewClient() {
                       {cust && (
                         <div className="p-3 bg-white rounded-xl border border-[#eedfe0] space-y-1.5">
                           <p>
-                            • <strong>نوع البشرة:</strong> {cust.skinType} (
+                            • <strong>{t("نوع البشرة:", "Skin Type:")}</strong> {cust.skinType} (
                             {cust.undertone})
                           </p>
                           <p>
-                            • <strong>المستحضرات المفضلة:</strong>{" "}
+                            • <strong>{t("المستحضرات المفضلة:", "Favorite Palette:")}</strong>{" "}
                             {cust.favoritePalette}
                           </p>
                           {cust.allergies && (
                             <p className="text-rose-700">
-                              • <strong>تنبيه تحسس:</strong> {cust.allergies}
+                              • <strong>{t("تنبيه تحسس:", "Allergy Alert:")}</strong> {cust.allergies}
                             </p>
                           )}
                         </div>
@@ -776,7 +820,7 @@ export function AdminOverviewClient() {
 
                       <div className="space-y-1">
                         <label className="text-xs font-bold text-[#2f020d] block">
-                          ملاحظات خبيرة التجميل لملف العميلة:
+                          {t("ملاحظات خبيرة التجميل لملف العميلة:", "Makeup Artist Notes for Client Profile:")}
                         </label>
                         <textarea
                           rows={3}
@@ -785,7 +829,10 @@ export function AdminOverviewClient() {
                             setActiveCustomerNotesDraft(e.target.value)
                           }
                           className="w-full p-3 rounded-xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
-                          placeholder="أدخلي تفاصيل الفاونديشن وتفضيلات المكياج..."
+                          placeholder={t(
+                            "أدخلي تفاصيل الفاونديشن وتفضيلات المكياج...",
+                            "Enter foundation shades and makeup preferences..."
+                          )}
                         />
                       </div>
                     </div>
@@ -798,14 +845,14 @@ export function AdminOverviewClient() {
                     onClick={() => setActiveSessionBooking(null)}
                     className="rounded-full text-xs"
                   >
-                    إلغاء
+                    {t("إلغاء", "Cancel")}
                   </Button>
                   <Button
                     onClick={handleSaveCustomerNotes}
                     className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white text-xs font-bold gap-1"
                   >
                     <Save className="w-3.5 h-3.5 text-[#fed65b]" />
-                    <span>حفظ الملاحظة</span>
+                    <span>{t("حفظ الملاحظة", "Save Note")}</span>
                   </Button>
                 </div>
               </>

@@ -11,6 +11,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useLanguage } from "@/providers/language-provider";
 import {
   compressImageFileToDataUrl,
   normalizeImageSrc,
@@ -29,9 +30,11 @@ export function AdminImageUploader({
   value,
   onChange,
   onValidityChange,
-  label = "صورة العمل / الغلاف",
+  label,
   aspectClassName = "aspect-[4/3]",
 }: AdminImageUploaderProps) {
+  const { t, dir } = useLanguage();
+  const resolvedLabel = label || t("صورة العمل / الغلاف", "Work / Cover Photo");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [mode, setMode] = useState<"upload" | "studio" | "url">("upload");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -63,10 +66,10 @@ export function AdminImageUploader({
       const dataUrl = await compressImageFileToDataUrl(file);
       setPreviewError(false);
       onChange(dataUrl);
-      toast.success("تم رفع وتجهيز الصورة بنجاح ✨");
+      toast.success(t("تم رفع وتجهيز الصورة بنجاح ✨", "Image uploaded and optimized ✨"));
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "تعذر معالجة الصورة المختارة";
+        err instanceof Error ? err.message : t("تعذر معالجة الصورة المختارة", "Failed to process selected image");
       toast.error(message);
     } finally {
       setIsProcessing(false);
@@ -91,9 +94,9 @@ export function AdminImageUploader({
   };
 
   return (
-    <div className="space-y-3" dir="rtl">
+    <div className="space-y-3" dir={dir}>
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <label className="text-xs font-bold text-[#2f020d]">{label}</label>
+        <label className="text-xs font-bold text-[#2f020d]">{resolvedLabel}</label>
         <div className="flex items-center gap-1 bg-[#faeaeb] p-0.5 rounded-full border border-[#eedfe0]">
           <button
             type="button"
@@ -105,7 +108,7 @@ export function AdminImageUploader({
             }`}
           >
             <Upload className="h-3 w-3" />
-            <span>رفع صورة</span>
+            <span>{t("رفع صورة", "Upload")}</span>
           </button>
           <button
             type="button"
@@ -117,7 +120,7 @@ export function AdminImageUploader({
             }`}
           >
             <Sparkles className="h-3 w-3" />
-            <span>ألبوم الأتيليه</span>
+            <span>{t("ألبوم الأتيليه", "Atelier Album")}</span>
           </button>
           <button
             type="button"
@@ -129,7 +132,7 @@ export function AdminImageUploader({
             }`}
           >
             <LinkIcon className="h-3 w-3" />
-            <span>رابط صورة</span>
+            <span>{t("رابط صورة", "Image URL")}</span>
           </button>
         </div>
       </div>
@@ -141,21 +144,21 @@ export function AdminImageUploader({
         {isProcessing ? (
           <div className="flex flex-col items-center gap-2 text-[#4a1521]">
             <Loader2 className="h-6 w-6 animate-spin" />
-            <span className="text-xs font-bold">جارٍ تجهيز وضغط الصورة...</span>
+            <span className="text-xs font-bold">{t("جارٍ تجهيز وضغط الصورة...", "Optimizing image...")}</span>
           </div>
         ) : normalizedValue && !previewError ? (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={normalizedValue}
-              alt="معاينة الصورة"
+              alt={t("معاينة الصورة", "Image preview")}
               onLoad={() => setPreviewError(false)}
               onError={() => setPreviewError(true)}
               className="w-full h-full object-cover"
             />
-            <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 rounded-full bg-emerald-700/90 backdrop-blur-sm px-2.5 py-0.5 text-[10px] font-bold text-white shadow-sm">
+            <span className="absolute bottom-2 end-2 inline-flex items-center gap-1 rounded-full bg-emerald-700/90 backdrop-blur-sm px-2.5 py-0.5 text-[10px] font-bold text-white shadow-sm">
               <CheckCircle2 className="h-3 w-3" />
-              صورة صالحة وجاهزة
+              {t("صورة صالحة وجاهزة", "Valid & Ready")}
             </span>
           </>
         ) : (
@@ -164,17 +167,17 @@ export function AdminImageUploader({
               <>
                 <AlertTriangle className="h-6 w-6 text-rose-600" />
                 <p className="text-xs font-bold text-rose-700">
-                  تعذر تحميل الصورة من المسار أو الرابط الحالي
+                  {t("تعذر تحميل الصورة من المسار أو الرابط الحالي", "Unable to load image from current path or URL")}
                 </p>
                 <p className="text-[11px] text-[#524345]">
-                  ارفعي الصورة مباشرة من جهازكِ أو اختاري صورة من ألبوم الأتيليه
+                  {t("ارفعي الصورة مباشرة من جهازكِ أو اختاري صورة من ألبوم الأتيليه", "Upload directly from your device or choose from the Atelier album")}
                 </p>
               </>
             ) : (
               <>
                 <ImageIcon className="h-6 w-6 text-[#857374]" />
                 <p className="text-xs font-bold text-[#524345]">
-                  لم يتم اختيار صورة بعد
+                  {t("لم يتم اختيار صورة بعد", "No image selected yet")}
                 </p>
               </>
             )}
@@ -210,7 +213,7 @@ export function AdminImageUploader({
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            aria-label="رفع صورة من الجهاز"
+            aria-label={t("رفع صورة من الجهاز", "Upload image from device")}
             onChange={(e) => void handleFileSelected(e.target.files?.[0])}
             className="hidden"
           />
@@ -219,10 +222,10 @@ export function AdminImageUploader({
               <Upload className="h-4 w-4" />
             </div>
             <p className="text-xs font-bold text-[#2f020d]">
-              اضغطي لاختيار صورة من جهازكِ أو اسحبيها هنا
+              {t("اضغطي لاختيار صورة من جهازكِ أو اسحبيها هنا", "Click to select an image or drag & drop here")}
             </p>
             <p className="text-[10px] text-[#857374]">
-              يدعم JPG, PNG, WEBP — يتم ضغطها وتجهيزها تلقائياً للعرض الفوري
+              {t("يدعم JPG, PNG, WEBP — يتم ضغطها وتجهيزها تلقائياً للعرض الفوري", "Supports JPG, PNG, WEBP — automatically compressed for instant display")}
             </p>
           </div>
         </div>
@@ -267,12 +270,12 @@ export function AdminImageUploader({
             type="text"
             value={urlInput}
             onChange={(e) => handleUrlChange(e.target.value)}
-            placeholder="https://example.com/photo.jpg أو /gallery/IMG_5729.webp"
+            placeholder={t("https://example.com/photo.jpg أو /gallery/IMG_5729.webp", "https://example.com/photo.jpg or /gallery/IMG_5729.webp")}
             dir="ltr"
             className="w-full h-10 px-3.5 rounded-xl border border-[#eedfe0] bg-white text-xs text-left focus:outline-none focus:border-[#735c00]"
           />
           <p className="text-[10px] text-[#857374]">
-            تأكدي أن الرابط ينتهي بملف صورة مباشر وتظهر معاينته أعلاه قبل الحفظ.
+            {t("تأكدي أن الرابط ينتهي بملف صورة مباشر وتظهر معاينته أعلاه قبل الحفظ.", "Ensure the URL points to a direct image file and previews above before saving.")}
           </p>
         </div>
       )}

@@ -79,7 +79,7 @@ export function AdminCustomersClient() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="بحث باسم العميلة أو الجوال..."
+                placeholder={t("بحث باسم العميلة أو الجوال...", "Search by client name or phone...")}
                 className="w-full h-11 ps-10 pe-4 rounded-2xl border border-[#eedfe0] bg-white text-xs focus:outline-none focus:border-[#735c00]"
               />
             </div>
@@ -115,11 +115,18 @@ export function AdminCustomersClient() {
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (confirm(`هل أنتِ متأكدة من حذف ملف العميلة "${c.name}"؟`)) {
+                            if (
+                              confirm(
+                                t(
+                                  `هل أنتِ متأكدة من حذف ملف العميلة "${c.name}"؟`,
+                                  `Are you sure you want to delete "${c.name}"?`
+                                )
+                              )
+                            ) {
                               deleteCustomer(c.id);
                             }
                           }}
-                          title="حذف العميلة"
+                          title={t("حذف العميلة", "Delete Client")}
                           className="h-6 w-6 rounded-full hover:bg-rose-50 text-rose-600 flex items-center justify-center transition-colors cursor-pointer"
                         >
                           <Trash2 className="h-3 w-3" />
@@ -128,8 +135,10 @@ export function AdminCustomersClient() {
                     </div>
 
                     <div className="flex items-center justify-between text-[11px] text-[#524345] pt-2 border-t border-[#eedfe0]/60">
-                      <span>البشرة: {c.skinType}</span>
-                      <span className="font-bold text-[#735c00]">{c.totalBookings} حجوزات</span>
+                      <span>{t("البشرة:", "Skin:")} {c.skinType}</span>
+                      <span className="font-bold text-[#735c00]">
+                        {c.totalBookings} {t("حجوزات", "bookings")}
+                      </span>
                     </div>
                   </Card>
                 );
@@ -163,23 +172,30 @@ export function AdminCustomersClient() {
                       className="h-10 px-4 rounded-full bg-[#25D366]/15 hover:bg-[#25D366] text-[#25D366] hover:text-white text-xs font-bold flex items-center gap-1.5 transition-colors"
                     >
                       <MessageCircle className="h-4 w-4" />
-                      <span>واتساب</span>
+                      <span>{t("واتساب", "WhatsApp")}</span>
                     </a>
                     <a
                       href={`tel:${selectedCustomer.phone}`}
                       className="h-10 px-4 rounded-full bg-[#faeaeb] hover:bg-[#eedfe0] text-[#2f020d] text-xs font-bold flex items-center gap-1.5 transition-colors"
                     >
                       <Phone className="h-4 w-4" />
-                      <span>اتصال</span>
+                      <span>{t("اتصال", "Call")}</span>
                     </a>
                     <button
                       type="button"
                       onClick={() => {
-                        if (confirm(`هل أنتِ متأكدة من حذف ملف العميلة "${selectedCustomer.name}" نهائياً من سجل CRM؟`)) {
+                        if (
+                          confirm(
+                            t(
+                              `هل أنتِ متأكدة من حذف ملف العميلة "${selectedCustomer.name}" نهائياً من سجل CRM؟`,
+                              `Are you sure you want to permanently delete "${selectedCustomer.name}" from CRM?`
+                            )
+                          )
+                        ) {
                           deleteCustomer(selectedCustomer.id);
                         }
                       }}
-                      title="حذف ملف العميلة"
+                      title={t("حذف ملف العميلة", "Delete Client Profile")}
                       className="h-10 w-10 rounded-full bg-white hover:bg-rose-50 text-rose-600 border border-[#eedfe0] flex items-center justify-center transition-colors cursor-pointer"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -190,26 +206,34 @@ export function AdminCustomersClient() {
                 {/* Skin & Aesthetics Specs */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                   <div className="p-4 rounded-2xl bg-[#fff0f1] border border-[#eedfe0] space-y-1">
-                    <span className="text-[#735c00] font-bold block">نوع البشرة والأندر تون:</span>
+                    <span className="text-[#735c00] font-bold block">
+                      {t("نوع البشرة والأندر تون:", "Skin Type & Undertone:")}
+                    </span>
                     <p className="text-[#2f020d] font-semibold">{selectedCustomer.skinType} • {selectedCustomer.undertone}</p>
                   </div>
                   <div className="p-4 rounded-2xl bg-[#fff0f1] border border-[#eedfe0] space-y-1">
-                    <span className="text-[#735c00] font-bold block">الباليت والمستحضرات المفضلة:</span>
+                    <span className="text-[#735c00] font-bold block">
+                      {t("الباليت والمستحضرات المفضلة:", "Favorite Palette & Products:")}
+                    </span>
                     <p className="text-[#2f020d] font-semibold truncate">{selectedCustomer.favoritePalette}</p>
                   </div>
                 </div>
 
                 {selectedCustomer.allergies && (
                   <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900">
-                    <strong>تنبيه تحسس مسجل:</strong> {selectedCustomer.allergies}
+                    <strong>{t("تنبيه تحسس مسجل:", "Recorded Allergy Alert:")}</strong> {selectedCustomer.allergies}
                   </div>
                 )}
 
                 {/* Editable Artist Notes */}
                 <div className="space-y-2 pt-2">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold text-[#2f020d]">ملاحظات خبيرة التجميل أماني خليل:</label>
-                    <span className="text-[10px] text-[#857374]">تُحفظ في ملف العميلة الشخصي</span>
+                    <label className="text-xs font-bold text-[#2f020d]">
+                      {t("ملاحظات خبيرة التجميل أماني خليل:", "Amani Khalil Artist Notes:")}
+                    </label>
+                    <span className="text-[10px] text-[#857374]">
+                      {t("تُحفظ في ملف العميلة الشخصي", "Saved to client's private profile")}
+                    </span>
                   </div>
                   <textarea
                     rows={4}
@@ -224,14 +248,14 @@ export function AdminCustomersClient() {
                       className="rounded-full bg-[#4a1521] hover:bg-[#2f020d] text-white text-xs font-bold gap-1.5"
                     >
                       <Save className="h-3.5 w-3.5 text-[#fed65b]" />
-                      <span>حفظ الملاحظة</span>
+                      <span>{t("حفظ الملاحظة", "Save Note")}</span>
                     </Button>
                   </div>
                 </div>
               </Card>
             ) : (
               <div className="text-center py-16 text-xs text-[#857374]">
-                يرجى اختيار عميلة من القائمة لمعاينة ملفها.
+                {t("يرجى اختيار عميلة من القائمة لمعاينة ملفها.", "Select a client from the list to view their profile.")}
               </div>
             )}
           </div>
